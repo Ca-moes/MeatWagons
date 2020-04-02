@@ -30,7 +30,7 @@ ___
 # Relatório - Projeto de Concepção e Análise de Algoritmos
 ## Meat Wagons (Tema 8) - Parte 1 - Truma 3 - Grupo 1
 ### André Gomes    up201806224@fe.up.pt
-### Gonçalo Batalhao Alves    up201806451@fe.up.pt
+### Gonçalo  de Batalhão Alves    up201806451@fe.up.pt
 ### Pedro Jorge Fonseca Seixas    up201806227@fe.up.pt
 
 ## Descrição do Tema
