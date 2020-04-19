@@ -84,9 +84,9 @@ Gi = (Vi, Ei) - Grafo Dirigido Pesado (Dirigido -> sentido da rua|Pesado -> Dist
   - ID - identificador único da aresta
   - dest ∈ Vi ‐ vértice de destino
   
-S ∈ Vi ‐ vérce inicial (central de camiões)
+S ∈ Vi ‐ vértice inicial (Estabelecimento prisional)
 
-T ⊆ Vi ‐ vérces finais (estações de tratamento do lixo)
+T ⊆ Vi ‐ vértices finais (Destinos)
 
 
 ### Dados de Saída
