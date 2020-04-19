@@ -41,7 +41,8 @@ Estado 3:
 in Ciberdúvidas da Língua Portuguesa, https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/estabelecimento-prisional-penitenciaria-carcere-e-prisao/34536 [consultado em 19-04-2020]
 ___
 # Relatório - Projeto de Concepção e Análise de Algoritmos
-## Meat Wagons (Tema 8) - Parte 1 - Truma 3 - Grupo 1
+## Meat Wagons (Tema 8) - Parte 1
+### Turma 3 - Grupo 1
 ### André Gomes - up201806224@fe.up.pt
 ### Gonçalo de Batalhão Alves - up201806451@fe.up.pt
 ### Pedro Jorge Fonseca Seixas - up201806227@fe.up.pt
@@ -58,7 +59,7 @@ Tendo uma lista dos prisioneiros, e sabendo para cada um o seu destino, o objeti
 Certas vias podem ser inacessíveis por razões diversas (obras, cortes de estrada, largura de rua não ser suficiente). Assim, durante o processamento do grafo será necessário desprezar certas arestas.
 
 ### Fase 2 : Diferentes Veiculos, capacidade ilimitada
-Nesta fase cada Vertice do Grafo terá a informação extra sobre a sua Densidade Populacional (Cidade, Periferia ou Campo). Os prisioneiros serão previamente divididos pelos Veiculos tendo em conta o seu destino e cada veiculo estará especializado para uma Densidade Populacional. Começaremos por ter uma camioneta (Campo e Periferia) e um carro (Cidade), ambos com capacidade ilimitada, para testar a divisão dos prisioneiros e a formulação de rotas.
+Nesta fase cada Vértice do Grafo terá a informação extra sobre a sua Densidade Populacional (Cidade, Periferia ou Campo). Os prisioneiros serão previamente divididos pelos Veiculos tendo em conta o seu destino e cada veiculo estará especializado para uma Densidade Populacional. Começaremos por ter uma camioneta (Campo e Periferia) e um carro (Cidade), ambos com capacidade ilimitada, para testar a divisão dos prisioneiros e a formulação de rotas.
 
 ### Fase 3 : Mais veiculos, capacidade Limitada
 Na fase final teremos uma frota de veiculos com capacidade limitada e um conjunto de prisioneiros com o seu destino. A leitura de dados inicial será para o dia, ou seja, ao executar o programa fica em memório os prisioneiros com o seu destino e a frota disponivel. Caso toda a frota esteja ocupada e ainda sobrarem prisioneiros, tendo em conta o seu destino, será retornado para a origem os veiculos necessários para refazer rotas e os transportar.
@@ -73,11 +74,12 @@ O número identificador de destino terá duas partes, a primeira parte de 1 digi
 
 Fi - Lista de veiculos da frota, sendo F(i) o i-nésimo elemento, cada um é caracterizado por:
 - ID - número identificador do veículo (tal como em Destino, será um numero que terá implicito o tipo de veiculo)
-- Capacidade - número de assentos destinados a prisioneiros
+- cap - número de assentos destinados a prisioneiros
 
 Gi = (Vi, Ei) - Grafo Dirigido Pesado (Dirigido -> sentido da rua|Pesado -> Distância entre vértices)
 - V - vértices representativos de pontos da cidade com:
   - type - Penitenciária, tribunal, esquadra policial ou estabelecimento prisional (cada um terá um ID igual a Destino)(Caso não seja nenhum desses, ID = 0)
+  - dens - Informação sobre densidade populacional (Cidade, Periferia ou Campo)
   - Adj ⊆ E ‐ conjunto de arestas que partem do vérce
 - E - arestas representativas das vias de comunicação
   - w - peso da aresta a (representa a distância entre os dois vérces que a delimitam)
@@ -90,7 +92,30 @@ T ⊆ Vi ‐ vértices finais (Destinos)
 
 
 ### Dados de Saída
+
+Gf = (Vf,Ef) grafo dirigido pesado, tendo Vf e Ef os mesmos atributos que Vi e Ei.
+
+Ff‐ Lista ordenada de todos os veiculos usados, sendo Ff(i) o seu i‐ésimo elemento.
+Cada um tem os seguintes valores:
+- cap ‐ número de assentos utilizados
+- P = {e ∈ Ei | 1 ≤ j ≤ |P|} ‐ sequência ordenada (com repetidos) de arestas a visitar, sendo ej o seu j‐ésimo elemento.
+
 ### Restrições
+#### Sobre os Dados de entrada
+- ∀ i ∈ [1 ; |Cf| ], cap(Cf[i]) >= 0, dado que uma capacidade representa os assentos usadas, caso um veiculo não seja usado, cap = 0;
+- ∀ v ∈ Vi, type ≥ 0;
+- ∀ e ∈ Ei, w > 0, dado que o peso de uma aresta representa uma distância entre
+pontos de um mapa.
+- ∀ e ∈ Ei, e deve ser utilizável pelo elemento da frota. Senão, não é incluída no grafo Gi.
+
+#### Sobre os Dados de Saída
+No grafo Gf:
+- ∀ vf ∈ Vf, ∃ vi ∈ Vi tal que vi e vf têm os mesmos valores para todos os atributos
+- ∀ ef ∈ Ef, ∃ ei ∈ Ei tal que ei e ef têm os mesmos valores para todos os atributos.
+
+
+#### Na Sequência P
+
 ### Funções Objetivo
 
 ### Perspetiva de solução
