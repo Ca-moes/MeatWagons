@@ -9,7 +9,7 @@ Algumas vezes, obras nas vias públicas podem fazer com que certas zonas tornem-
 Considere a possibilidade de utilizar mapas reais, extraídos do [OpenStreetMaps](www.openstreetmap.org) e coordenadas geográficas dos centros de saúde e hospitais, na implementação desta aplicação.
 
 ## Calendário de entregas / Submission Schedule
-- 1ª Entrega: Especificação e Formalização - 10 de Abril (até às 24:00)
+- 1ª Entrega: Especificação e Formalização - 24 de Abril (até às 24:00)
 - 2ª Entrega: Implementação - 22 de Maio (até às 24:00)
 
 ## Notas sobre o relatório da 1ª parte / Notes on the 1st report:
