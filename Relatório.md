@@ -1,45 +1,3 @@
-# Notes
-
-- Objetivo : Otimizar percursos dos veiculos.
-- Tipos de veiculos :
-  - Camioneta - para levar mais prisioneiros de cada vez 
-  - Carro - Para usar em zonas de maior densidade populacional
-- Nota : 
-  - Pode ocorrer obras na via pública, necessário mudar percurso;
-  - Usar mapas reais.
-- Prisioneiro : Nome, ID, local de origem, local de destino
-- Veiculo : Quantidade que consegue levar, apto para zonas urbanas (bool)
-
-Quais são os pontos (vértices) de interesse aka POI?
-  - prisões
-  - esquadras
-  - tribunais
-
-## Iterações/Estados
-
-Estado inicial:
-  - Uma Camioneta para todos os serviços
-
-Estado 2:
-  - Diferentes veiculos, capacidades diferentes
-  - (Ideia: Destino é mais importante, caso destino seja em cidade, usar carro, else usar camioneta)
-
-Estado 3:
-  - Obras na via pública
-
-
-♦ **Estabelecimento prisional** é uma unidade estrutural-funcional instalada em edificação, dirigida por polícia prisional e respetiva cadeia de comando do Estado, onde cidadãos são colocados e mantidos privados de liberdade, seja por força de ordem de prisão preventiva, em fase de pré-julgamento, seja em cumprimento de pena de prisão a que foram condenados por sentença dum tribunal criminal;
-
-♦ **Penitenciária** é um estabelecimento prisional onde cidadãos cumprem penas de prisão a que foram condenados por sentença dum tribunal criminal;
-
-♦ **Cárcere** é uma cela individual ou coletiva dentro dum estabelecimento prisional. 
-
-♦ **Cárcere privado** é a privação dolosa da liberdade de um cidadão por outro fora de estabelecimento prisional por iniciativa privada, além de certo número de horas – constitui crime punível.
-
-♦ **Prisão** é qualquer uma destas coisas.
-
-in Ciberdúvidas da Língua Portuguesa, https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/estabelecimento-prisional-penitenciaria-carcere-e-prisao/34536 [consultado em 19-04-2020]
-___
 # Relatório - Projeto de Concepção e Análise de Algoritmos
 ## Meat Wagons (Tema 8) - Parte 1
 ### Turma 3 - Grupo 1
@@ -123,7 +81,7 @@ No grafo Gf:
 - ∀ ef ∈ Ef, ∃ ei ∈ Ei tal que ei e ef têm os mesmos valores para todos os atributos.
 
 #### Função Objetivo
-Diminuir a distância total percorrida pela frota
+Diminuir a distância total percorrida pela frota que será a soma dos valores das arestas percorridas por cada veículo.
 
 ## Perspetiva de solução
 // Ver Issues referentes a esta parte
@@ -163,4 +121,11 @@ A contagem dos DP para cada prisioneiro terá em conta apenas a rota inicial e n
 A diferença principal desta fase para a anterior é o limite em cada veiculo, com isso em conta, para esta fase adotamos os mesmos passos da hipótese 2 da fase 2 até à divisão dos prisioneiros pelos veiculos, mas neste caso teremos que fazer um cálculo do resto de prisioneiros caso não haja transporte para todos. Caso haja transporte para todos o problema torna-se igual á fase 2. Em caso contrário faz-se um cálculo dos veiculos que terão de retornar ao estabelecimento prisional inicial tendo em conta a sua capacidade, o número de prisioneiros e o grupo à qual os prisioneiros restantes estão designados.
 Assim que este cálculo for realizado repete-se este método a partir do ponto em que se calcula o resto dos prisioneiros.
 
+## Casos de utilização
+Not sure o que pôr aqui. Pode ser usado para calcular as rotas para um dia.
 
+## Funcionalidade a implementar
+Also not sure o que pôr aqui. Cálculo de rotas, Divisão de prisioneiros, Adição de tags a vértices do grafo, Adição de pesos a arestas do grafo. Criação de POI's personalizados ao nosso tema.
+
+## Conclusão
+Temos um plano traçado e bem dividido, esperamos que na altura da implementação consigamos tratar de forma eficiente de todas as partes, principalmente do uso da parte gráfica de criação de grafos, visto que será a primeira vez neste curso que faremos uso de algo semelhante.
