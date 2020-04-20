@@ -104,8 +104,60 @@ Para a Rota de ida será usado o algoritmo de Dijkstra:
 
 da seguinte forma: Começando no estabelecimento prisional onde se encontram os prisioneiros é usado o algoritmo até encontrar um vértice que é uma paragem de um dos prisioneiros. Neste ponto é usado outra vez o algoritmo de Dijkstra mas com o vértice encontrado a ser usado como vértice de inicio para encontrar a próxima paragem. Assim que todos os prisioneiros estiverem distribuidos será necessário encontrar o caminho de volta. Para isso é aplicado o algoritmo de Dijkstra Bi-Direcional para encontrar o caminho mais curto entre o Vértice final do passo anterior e o estabelecimento prisional inicial.
 
+## ALGORITMO A*
+```
+function reconstruct_path(cameFrom, current)
+    total_path := {current}
+    while current in cameFrom.Keys:
+        current := cameFrom[current]
+        total_path.prepend(current)
+    return total_path
+
+// A* finds a path from start to goal.
+// h is the heuristic function. h(n) estimates the cost to reach goal from node n.
+function A_Star(start, goal, h)
+    // The set of discovered nodes that may need to be (re-)expanded.
+    // Initially, only the start node is known.
+    // This is usually implemented as a min-heap or priority queue rather than a hash-set.
+    openSet := {start}
+
+    // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
+    // to n currently known.
+    cameFrom := an empty map
+
+    // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
+    gScore := map with default value of Infinity
+    gScore[start] := 0
+
+    // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
+    // how short a path from start to finish can be if it goes through n.
+    fScore := map with default value of Infinity
+    fScore[start] := h(start)
+
+    while openSet is not empty
+        // This operation can occur in O(1) time if openSet is a min-heap or a priority queue
+        current := the node in openSet having the lowest fScore[] value
+        if current = goal
+            return reconstruct_path(cameFrom, current)
+
+        openSet.Remove(current)
+        for each neighbor of current
+            // d(current,neighbor) is the weight of the edge from current to neighbor
+            // tentative_gScore is the distance from start to the neighbor through current
+            tentative_gScore := gScore[current] + d(current, neighbor)
+            if tentative_gScore < gScore[neighbor]
+                // This path to neighbor is better than any previous one. Record it!
+                cameFrom[neighbor] := current
+                gScore[neighbor] := tentative_gScore
+                fScore[neighbor] := gScore[neighbor] + h(neighbor)
+                if neighbor not in openSet
+                    openSet.add(neighbor)
+
+    // Open set is empty but goal was never reached
+    return failure
+```
 ### Fase 2
-Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vértices e 2 veículos, cada um especializado para os seus valores de DP. Iso leva-nos a 2 formas de encontrar o caminho mais curto, tendo em conta uma divisão prévia dos prisioneiros:
+Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vértices e 2 veículos, cada um especializado para os seus valores de DP. Iso leva-nos a 3 formas de encontrar o caminho mais curto, tendo em conta uma divisão prévia dos prisioneiros:
 
 #### Hipótese 1 - Não tendo em conta o caminho
 Como primeira hipótese considera-se apenas a DP dos destinos de cada um dos prisioneiros. Tendo isso em conta é feita uma divisão em dois grupos baseado no DP do destino de cada prisioneiro. Um grupo será levado por um carro (com capacidade infinita) para destinos com DP de *cidade* enquanto que o outro grupo será levado por um autocarro (também com capacidade infinita) para destinos com DP de *periferia* ou *campo*.
@@ -114,6 +166,9 @@ Feita a divisão o problema simplifica-se a aplicar o método da fase 1 para cad
 #### Hipótese 2 - Tendo em conta o caminho
 Nesta Hipótese, que à primeira vista parece mais precisa, será feito no inicio o cálculo de uma rota como na fase 1 para todos os prisioneiros. A partir do processamento da rota, cada prisioneiro ficará com o valor de cada DP dos vértices pela qual passou. Tendo em conta o DP máximo de cada prisioneiro fazem-se as divisões em 2 grupos e segue-se como na hipótese anterior para a divisão nos veiculos e calculo de rotas.
 A contagem dos DP para cada prisioneiro terá em conta apenas a rota inicial e não as rotas criadas pelos veiculos a qual ficaram designados, isto poderá não trazer os melhores resultados quanto á divisão dos prisioneiros entre veiculos mas é uma melhoria face à hipótese anterior.
+
+#### Hipótese 3 - Apenas considerando os vértices onde o veículo pode transportar
+Nesta hipótese consideram-se diferentes tipos de veículo para transportar em *cidade* ou nao. Quando são selecionados veículos que não estão aptos para transportar prisioneiros em cidades, o grafo será filtrado, removendo temporariamente todos os vértices em que a densidade populacional corresponde a uma cidade, de forma a que encontre o caminho mais curto apenas passando por vértices com DP de *campo* ou *periferia*. Desta forma, será descoberto o caminho mais curto para cada tipo de veículo.
 
 ### Fase 3
 
