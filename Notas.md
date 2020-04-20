@@ -64,6 +64,14 @@ Nesta fase cada Vértice do Grafo terá a informação extra sobre a sua Densida
 ### Fase 3 : Mais veiculos, capacidade Limitada
 Na fase final teremos uma frota de veiculos com capacidade limitada e um conjunto de prisioneiros com o seu destino. A leitura de dados inicial será para o dia, ou seja, ao executar o programa fica em memório os prisioneiros com o seu destino e a frota disponivel. Caso toda a frota esteja ocupada e ainda sobrarem prisioneiros, tendo em conta o seu destino, será retornado para a origem os veiculos necessários para refazer rotas e os transportar.
 
+## Possiveis Problemas a Encontrar
+- Leitura dos mapas proveninentes do Open Street Maps
+- Peso das arestas do grafo
+- Conversão dos dados de modo a possibilitar a utilização do GraphViewer
+- Cruzamento de ruas com o mesmo nome
+- Acentuação nos nomes das ruas
+- Nos ficheiros de mapas não são disponibilizadas tags referentes a tribunais ou estabelecimentos prisionais
+
 ## Formalização do Problema
 ### Dados de Entrada
 Pi - Lista de prisioneiros com destinos para o dia, sendo P(i) o i-nésimo elemento, cada um é caracterizado por:
