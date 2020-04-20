@@ -131,4 +131,6 @@ Diminuir a distância total percorrida pela frota
 Esta primeira fase terá varios passos referentes á preparação do ambiente de trabalho, começando pela:
 
 #### 1. Preparação dos ficheiros de entrada
+Serão utilizados os ficheiros de nodes e edges fornecidos pelos professores. A informação lida dos ficheiros será guardada num grafo G. Será criada uma tag para cada tipo de edifício de interesse (prisões, esquadras e tribunais) de forma a facilitar a identificação dos pontos de interesse.
 #### 2. Criação de POI's
+Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros das tags de forma a identificar os pontos de interesse, alterando, para esse node, a sua variável type, inicializada a 0, para o seu valor correspondente ao tipo de ponto de interesse.
