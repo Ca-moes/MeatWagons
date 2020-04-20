@@ -84,7 +84,6 @@ No grafo Gf:
 Diminuir a distância total percorrida pela frota que será a soma dos valores das arestas percorridas por cada veículo.
 
 ## Perspetiva de solução
-// Ver Issues referentes a esta parte
 ### Fase 1
 Esta primeira fase terá varios passos referentes á preparação do ambiente de trabalho, começando pela:
 
@@ -129,3 +128,5 @@ Also not sure o que pôr aqui. Cálculo de rotas, Divisão de prisioneiros, Adi�
 
 ## Conclusão
 Temos um plano traçado e bem dividido, esperamos que na altura da implementação consigamos tratar de forma eficiente de todas as partes, principalmente do uso da parte gráfica de criação de grafos, visto que será a primeira vez neste curso que faremos uso de algo semelhante.
+
+<img src="https://media.giphy.com/media/3owyphXV8TcO2muXGU/giphy.gif" width="550" height="300" />
