@@ -132,14 +132,29 @@ Esta primeira fase terá varios passos referentes á preparação do ambiente de
 
 #### 1. Preparação dos ficheiros de entrada
 Serão utilizados os ficheiros de nodes e edges fornecidos pelos professores. A informação lida dos ficheiros será guardada num grafo G. Será criada uma tag para cada tipo de edifício de interesse (prisões, esquadras e tribunais) de forma a facilitar a identificação dos pontos de interesse.
-#### 2. Criação de POI's
+#### 2. Analise da Conectividade do Grafo
+Para verificar as ruas que estão inacessiveis
+#### 3. Criação de POI's
 Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros das tags de forma a identificar os pontos de interesse, alterando, para esse node, a sua variável type, inicializada a 0, para o seu valor correspondente ao tipo de ponto de interesse.
 
 Assim que a preparação estiver pronta é possivel seguir para a implementação de código. Nesta fase será necessário que o programa consiga criar 2 rotas, uma de ida e outra de volta.
 
 Para a Rota de ida será usado o algoritmo de Dijkstra:
 
-| DIJKSTRA(G, s): // G=(V,E), s in V                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
-|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-|     1. for each v in V do<br>    2. &emsp;dist(v) <- INF<br>    3. &emsp;path(v) <- nil<br>    4. dist(s) <- 0<br>    5. Q <- 0 // min-priority queue<br>    6. INSERT(Q, (s, 0)) // inserts s with key 0<br>    7. while Q != 0 do<br>    8. &emsp;v <- EXTRACT-MIN(Q) // greedy<br>    9. &emsp;for each w in Adj(v) do<br>    10.&emsp;&emsp;if dist(w) > dist(v) + weight(v,w) then<br>    11.&emsp;&emsp;&emsp;dist(w) <- dist(v)+ weight(v,w)<br>    12.&emsp;&emsp;&emsp;path(w) <- v<br>    13.&emsp;&emsp;&emsp;if w not in Q then // old dist(w) was <br>    14.&emsp;&emsp;&emsp;&emsp;INSERT(Q, (w, dist(w)))<br>    15.&emsp;&emsp;&emsp;else<br>    16.&emsp;&emsp;&emsp;&emsp;DECREASE-KEY(Q, (w, dist(w))) |
+| DIJKSTRA(G, s): // G=(V,E), s in V  | BIDIRECTIONAL DIJKSTRA(G, s): <br> |
+|--------------|-----------------|
+|     1. for each v in V do<br>    2. &emsp;dist(v) <- INF<br>    3. &emsp;path(v) <- nil<br>    4. dist(s) <- 0<br>    5. Q <- 0 // min-priority queue<br>    6. INSERT(Q, (s, 0)) // inserts s with key 0<br>    7. while Q != 0 do<br>    8. &emsp;v <- EXTRACT-MIN(Q) <br>    9. &emsp;for each w in Adj(v) do<br>    10.&emsp;&emsp;if dist(w) > dist(v) + weight(v,w) then<br>    11.&emsp;&emsp;&emsp;dist(w) <- dist(v)+ weight(v,w)<br>    12.&emsp;&emsp;&emsp;path(w) <- v<br>    13.&emsp;&emsp;&emsp;if w not in Q then <br>    14.&emsp;&emsp;&emsp;&emsp;INSERT(Q, (w, dist(w)))<br>    15.&emsp;&emsp;&emsp;else<br>    16.&emsp;&emsp;&emsp;&emsp;DECREASE-KEY(Q, (w, dist(w))) | A COMPLETAR                                          |
+
+da seguinte forma: Começando no estabelecimento prisional onde se encontram os prisioneiros é usado o algoritmo até encontrar um vértice que é uma paragem de um dos prisioneiros. Neste ponto é usado outra vez o algoritmo de Dijkstra mas com o vértice encontrado a ser usado como vértice de inicio para encontrar a próxima paragem. Assim que todos os prisioneiros estiverem distribuidos será necessário encontrar o caminho de volta. Para isso é aplicado o algoritmo de Dijkstra Bi-Direcional para encontrar o caminho mais curto entre O Vértice final do passo anterior e o estabelecimento prisional inicial.
+
+### Fase 2
+Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vértices e 2 veículos, cada um especializado para os seus valores de DP. Iso leva-nos a 2 formas de encontrar o caminho mais curto, tendo em conta uma divisão prévia dos prisioneiros
+
+#### Hipótese 1 - Não tendo em conta o caminho
+Como primeira hipótese considera-se apenas a DP dos destinos de cada um dos prisioneiros. Tendo isso em conta é feita uma divisão em dois grupos. Um grupo será levado por um carro (com capacidade infinita) para destinos com DP de *cidade* enquanto que o outro grupo será levado por um autocarro (também com capacidade infinita) para destinos com DP de *periferia* ou *campo*.
+Feita a divisão o problema simplifica-se a aplicar o método da fase 1 para cada veículo.
+
+#### Hipótese 2 - Tendo em conta o caminho
+Nesta Hipótese, que à primeira vista parece mais precisa
+
 
