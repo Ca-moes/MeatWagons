@@ -71,6 +71,7 @@ Na fase final teremos uma frota de veiculos com capacidade limitada e um conjunt
 - Cruzamento de ruas com o mesmo nome
 - Acentuação nos nomes das ruas
 - Nos ficheiros de mapas não são disponibilizadas tags referentes a tribunais ou estabelecimentos prisionais
+- distribuição de tag densidade populacional pelos vertices do grafo 
 
 ## Formalização do Problema
 ### Dados de Entrada
@@ -121,9 +122,13 @@ No grafo Gf:
 - ∀ vf ∈ Vf, ∃ vi ∈ Vi tal que vi e vf têm os mesmos valores para todos os atributos
 - ∀ ef ∈ Ef, ∃ ei ∈ Ei tal que ei e ef têm os mesmos valores para todos os atributos.
 
+#### Função Objetivo
+Diminuir a distância total percorrida pela frota
 
-#### Na Sequência P
+## Perspetiva de solução
+// Ver Issues referentes a esta parte
+### Fase 1
+Esta primeira fase terá varios passos referentes á preparação do ambiente de trabalho, começando pela:
 
-### Funções Objetivo
-
-### Perspetiva de solução
+#### 1. Preparação dos ficheiros de entrada
+#### 2. Criação de POI's
