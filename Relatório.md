@@ -22,6 +22,8 @@ Nesta fase cada Vértice do Grafo terá a informação extra sobre a sua Densida
 ### Fase 3 : Mais veiculos, capacidade Limitada
 Na fase final teremos uma frota de veiculos com capacidade limitada e um conjunto de prisioneiros com o seu destino. A leitura de dados inicial será para o dia, ou seja, ao executar o programa fica em memório os prisioneiros com o seu destino e a frota disponivel. Caso toda a frota esteja ocupada e ainda sobrarem prisioneiros, tendo em conta o seu destino, será retornado para a origem os veiculos necessários para refazer rotas e os transportar.
 
+<div style="page-break-after: always;"></div>
+
 ## Possiveis Problemas a Encontrar
 - Leitura dos mapas proveninentes do Open Street Maps
 - Peso das arestas do grafo
@@ -67,6 +69,7 @@ Cada um tem os seguintes valores:
 - cap ‐ número de assentos utilizados
 - P = {e ∈ Ei | 1 ≤ j ≤ |P|} ‐ sequência ordenada (com repetidos) de arestas a visitar, sendo ej o seu j‐ésimo elemento.
 
+
 ### Restrições
 #### Sobre os Dados de entrada
 - ∀ i ∈ [1 ; |Cf| ], cap(Cf[i]) >= 0, dado que uma capacidade representa os assentos usadas, caso um veiculo não seja usado, cap = 0;
@@ -89,8 +92,10 @@ Esta primeira fase terá varios passos referentes á preparação do ambiente de
 
 #### 1. Preparação dos ficheiros de entrada
 Serão utilizados os ficheiros de nodes e edges fornecidos pelos professores. A informação lida dos ficheiros será guardada num grafo G. Será criada uma tag para cada tipo de edifício de interesse (prisões, esquadras e tribunais) de forma a facilitar a identificação dos pontos de interesse.
+
 #### 2. Analise da Conectividade do Grafo
 Para verificar as ruas que estão inacessiveis
+
 #### 3. Criação de POI's
 Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros das tags de forma a identificar os pontos de interesse, alterando, para esse node, a sua variável type, inicializada a 0, para o seu valor correspondente ao tipo de ponto de interesse.
 
@@ -105,7 +110,7 @@ Para a Rota de ida será usado o algoritmo de Dijkstra:
 da seguinte forma: Começando no estabelecimento prisional onde se encontram os prisioneiros é usado o algoritmo até encontrar um vértice que é uma paragem de um dos prisioneiros. Neste ponto é usado outra vez o algoritmo de Dijkstra mas com o vértice encontrado a ser usado como vértice de inicio para encontrar a próxima paragem. Assim que todos os prisioneiros estiverem distribuidos será necessário encontrar o caminho de volta. Para isso é aplicado o algoritmo de Dijkstra Bi-Direcional para encontrar o caminho mais curto entre o Vértice final do passo anterior e o estabelecimento prisional inicial.
 
 ## ALGORITMO A*
-```
+```c++
 function reconstruct_path(cameFrom, current)
     total_path := {current}
     while current in cameFrom.Keys:
