@@ -55,7 +55,7 @@ O objetivo é desenvolver um programa que calcule para o dia as rotas a tomar pa
 Nesta fase inicial o projeto encontra-se dividido em 3 fases.
 
 ### Fase 1 : Um veiculo para todos os prisioneiros
-Tendo uma lista dos prisioneiros, e sabendo para cada um o seu destino, o objetivo desta primeira parte é ter um autocarro com capacidade ilimitada que passe por todos os POI designados para cada prisioneiro (Travelling salesman problem), tendo em conta o caminho mais curto que passe em todos os POI e que depois retorne para a origem.
+Tendo uma lista dos prisioneiros, e sabendo para cada um o seu destino, o objetivo desta primeira parte é ter um autocarro com capacidade ilimitada que passe por todos os POI designados para cada prisioneiro, tendo em conta o caminho mais curto que passe em todos os POI e que depois retorne para a origem.
 Certas vias podem ser inacessíveis por razões diversas (obras, cortes de estrada, largura de rua não ser suficiente). Assim, durante o processamento do grafo será necessário desprezar certas arestas.
 
 ### Fase 2 : Diferentes Veiculos, capacidade ilimitada
@@ -130,5 +130,15 @@ Diminuir a distância total percorrida pela frota
 ### Fase 1
 Esta primeira fase terá varios passos referentes á preparação do ambiente de trabalho, começando pela:
 
-#### 1. Preparação dos ficheiros de entrada
+#### 1. Leitura dos Dados - Preparação dos ficheiros de entrada
+Será necessário, para criar o grafo, usar os mapas fornecidos no moodle e conseguir guardar os seus valores em memória
 #### 2. Criação de POI's
+Modificar alguns vertices para serem POI's
+
+Assim que a preparação estiver pronta é possivel seguir para a implementação de código. Nesta fase será necessário que o programa consiga criar 2 rotas, uma de ida e outra de volta.
+
+Para a Rota de ida será usado o algoritmo de Dijkstra:
+
+| DIJKSTRA(G, s): // G=(V,E), s in V                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          |
+|-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+|     1. for each v in V do<br>    2. &emsp;dist(v) <- INF<br>    3. &emsp;path(v) <- nil<br>    4. dist(s) <- 0<br>    5. Q <- 0 // min-priority queue<br>    6. INSERT(Q, (s, 0)) // inserts s with key 0<br>    7. while Q != 0 do<br>    8. &emsp;v <- EXTRACT-MIN(Q) // greedy<br>    9. &emsp;for each w in Adj(v) do<br>    10.&emsp;&emsp;if dist(w) > dist(v) + weight(v,w) then<br>    11.&emsp;&emsp;&emsp;dist(w) <- dist(v)+ weight(v,w)<br>    12.&emsp;&emsp;&emsp;path(w) <- v<br>    13.&emsp;&emsp;&emsp;if w not in Q then // old dist(w) was <br>    14.&emsp;&emsp;&emsp;&emsp;INSERT(Q, (w, dist(w)))<br>    15.&emsp;&emsp;&emsp;else<br>    16.&emsp;&emsp;&emsp;&emsp;DECREASE-KEY(Q, (w, dist(w))) |
