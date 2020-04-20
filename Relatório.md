@@ -121,10 +121,10 @@ A diferença principal desta fase para a anterior é o limite em cada veiculo, c
 Assim que este cálculo for realizado repete-se este método a partir do ponto em que se calcula o resto dos prisioneiros.
 
 ## Casos de utilização
-Not sure o que pôr aqui. Pode ser usado para calcular as rotas para um dia.
+Será implementado um pequeno menu, muito intuitivo, para indicar os prisioneiros a ser transportados nesse dia, bem como o ponto de origem e, para cada um, o destino, dentro de uma lista previamente extraída do conjunto de pontos de interesse, constituida pelos tribunais, prisões e esquadras. Será também possivél visualizar o grafo com o percurso através do GraphViewer para cada um dos prisioneiros.
 
 ## Funcionalidade a implementar
-Also not sure o que pôr aqui. Cálculo de rotas, Divisão de prisioneiros, Adição de tags a vértices do grafo, Adição de pesos a arestas do grafo. Criação de POI's personalizados ao nosso tema.
+Uma possível funcionalidade a implementar seria diferenciar os veículos, não só pela capacidade mas também pela sua segurança, podendo selecionar a importância do prisioneiro e escolher o tipo de veículo.
 
 ## Conclusão
 Temos um plano traçado e bem dividido, esperamos que na altura da implementação consigamos tratar de forma eficiente de todas as partes, principalmente do uso da parte gráfica de criação de grafos, visto que será a primeira vez neste curso que faremos uso de algo semelhante.
