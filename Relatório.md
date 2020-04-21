@@ -133,56 +133,37 @@ O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v)
 Optamos então pela implementação deste algoritmo usando como função heurística a distância euclidiana ao destino, isto é, permite que o custo de cada vértice seja calculado tendo em conta, nao só o seu custo, mas também se se aproxima ou não do destino.
 
 ```c++
-function reconstruct_path(cameFrom, current)
-    total_path := {current}
-    while current in cameFrom.Keys:
-        current := cameFrom[current]
-        total_path.prepend(current)
-    return total_path
+Input: A Graph G(V, E) with source node start and goal node end.
+Output: Least cost path from start to end
+Initializitation:
+  open_list = {start}                       // List of nodes to be traversed
+  closed_list = {}                          // List of already traversed nodes
+  g(start) = 0                              // Cost from source node to a node
+  h(start) = heuristic_function(start,end)  // Estimated cost from node to goal node
+  f(start) = g(start) + h(start)            // Total cost from source to goal node
 
-// A* finds a path from start to goal.
-// h is the heuristic function. h(n) estimates the cost to reach goal from node n.
-function A_Star(start, goal, h)
-    // The set of discovered nodes that may need to be (re-)expanded.
-    // Initially, only the start node is known.
-    // This is usually implemented as a min-heap or priority queue rather than a hash-set.
-    openSet := {start}
-
-    // For node n, cameFrom[n] is the node immediately preceding it on the cheapest path from start
-    // to n currently known.
-    cameFrom := an empty map
-
-    // For node n, gScore[n] is the cost of the cheapest path from start to n currently known.
-    gScore := map with default value of Infinity
-    gScore[start] := 0
-
-    // For node n, fScore[n] := gScore[n] + h(n). fScore[n] represents our current best guess as to
-    // how short a path from start to finish can be if it goes through n.
-    fScore := map with default value of Infinity
-    fScore[start] := h(start)
-
-    while openSet is not empty
-        // This operation can occur in O(1) time if openSet is a min-heap or a priority queue
-        current := the node in openSet having the lowest fScore[] value
-        if current = goal
-            return reconstruct_path(cameFrom, current)
-
-        openSet.Remove(current)
-        for each neighbor of current
-            // d(current,neighbor) is the weight of the edge from current to neighbor
-            // tentative_gScore is the distance from start to the neighbor through current
-            tentative_gScore := gScore[current] + d(current, neighbor)
-            if tentative_gScore < gScore[neighbor]
-                // This path to neighbor is better than any previous one. Record it!
-                cameFrom[neighbor] := current
-                gScore[neighbor] := tentative_gScore
-                fScore[neighbor] := gScore[neighbor] + h(neighbor)
-                if neighbor not in openSet
-                    openSet.add(neighbor)
-
-    // Open set is empty but goal was never reached
-    return failure
+while open_list is not empty
+  m = Node on top of open_list with lowest f 
+  if m == end                   // if current note is end node the solution was found
+    return success
+  remove m from open_list       
+  add m to closed_list
+  for each n in child(m)        // traverse the child nodes
+    if n in closed_list
+      continue
+    cost = g(m) + distance(m,n)
+    if n in open_list and cost < g(n)
+      remove n from open_list as new path is betetr
+    if n in closed_list and cost < g(n)
+      remove n from closed_list
+    if n not in open_list and n not in closed_list
+      add n to open_list
+      g(n) = cost
+      h(n) = heuristic_function(n,end)
+      f(n) = g(n) + h(n)
+return failure
 ```
+
 ### Fase 2
 Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vértices e 2 veículos, cada um especializado para os seus valores de DP. Iso leva-nos a 3 formas de encontrar o caminho mais curto, tendo em conta uma divisão prévia dos prisioneiros:
 
