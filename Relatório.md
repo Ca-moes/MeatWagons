@@ -27,9 +27,9 @@ Na fase final, teremos uma frota de veículos com capacidade limitada e um conju
 ## Possíveis Problemas a Encontrar
 - Leitura dos mapas provenientes do Open Street Maps
 - Peso das arestas do grafo
-- Conversão dos dados de modo a possibilitar a utilização do GraphViewer (Já estão num formato que dá para usar)
-- Cruzamento de ruas com o mesmo nome (?)
-- Acentuação nos nomes das ruas (Não tem nomes de ruas)
+- Conversão dos dados de modo a possibilitar a utilização do GraphViewer 
+- Cruzamento de ruas com o mesmo nome 
+- Acentuação nos nomes das ruas 
 - Nos ficheiros de mapas não são disponibilizadas tags referentes a tribunais ou estabelecimentos prisionais
 - Distribuição de tag densidade populacional pelos vértices do grafo 
 
@@ -37,18 +37,19 @@ Na fase final, teremos uma frota de veículos com capacidade limitada e um conju
 ### Dados de Entrada
 Pi - Lista de prisioneiros com destinos para o dia, sendo P(i) o i-nésimo elemento, cada um é caracterizado por:
 - ID - número identificador de prisioneiro
-- Destino - número identificador de destino
+- Destino - ID do node de destino
 
 O número identificador de destino terá duas partes: a primeira parte, de 1 dígito, é correspondente ao tipo de destino; a segunda parte, de 3 digitos, é correspondente ao destino concreto de um certo tipo. Como exemplo: Um tribunal poderá ter um Destino de 1001 enquanto que um estabelecimento prisional poderá ter um Destino de 2001.
 
 Fi - Lista de veiculos da frota, sendo F(i) o i-nésimo elemento, cada um é caracterizado por:
-- ID - número identificador do veículo (tal como em Destino, será um numero que terá implicito o tipo de veiculo)
+- ID - número identificador do veículo (tal como em Destino, será um número que terá implicito o tipo de veiculo)
 - cap - número de assentos destinados a prisioneiros
 
 Gi = (Vi, Ei) - Grafo Dirigido Pesado (Dirigido -> sentido da rua|Pesado -> Distância entre vértices)
 - V - vértices representativos de pontos da cidade com:
-  - type - Penitenciária, tribunal, esquadra policial ou estabelecimento prisional (cada um terá um ID igual a Destino)(Caso não seja nenhum desses, ID = 0)
-  - dens - Informação sobre densidade populacional (Cidade, Periferia ou Campo)
+  - ID do Node - retirado do ficheiro de nós fornecidos pelos mapas
+  - tag - Penitenciária, tribunal, esquadra policial ou estabelecimento prisional (cada um terá um ID igual a Destino)(Caso não seja nenhum desses, ID = 0)
+  - DP - Informação sobre densidade populacional (Cidade, Periferia ou Campo)
   - Adj ⊆ E ‐ conjunto de arestas que partem do vértice
 - E - arestas representativas das vias de comunicação
   - w - peso da aresta (representa a distância entre os dois vértices que a delimitam)
@@ -67,13 +68,14 @@ Gf = (Vf,Ef) grafo dirigido pesado, tendo Vf e Ef os mesmos atributos que Vi e E
 Ff‐ Lista ordenada de todos os veículos usados, sendo Ff(i) o seu i‐nésimo elemento.
 Cada um tem os seguintes valores:
 - cap ‐ número de assentos utilizados
+- I - Lista de *Inmates* que o veículo transportará por ordem de paragem. 
 - P = {e ∈ Ei | 1 ≤ j ≤ |P|} ‐ sequência ordenada (com repetidos) de arestas a visitar, sendo ej o seu j‐ésimo elemento.
 
 
 ### Restrições
 #### Sobre os Dados de entrada
-- ∀ i ∈ [1 ; |Cf| ], cap(Cf[i]) >= 0, dado que uma capacidade representa os assentos usadas, caso um veículo não seja usado, cap = 0;
-- ∀ v ∈ Vi, type ≥ 0;
+- ∀ i ∈ [1 ; |Fi| ], cap(Fi[i]) > 0, dado que uma capacidade representa os assentos disponiveis.
+- ∀ v ∈ Vi, tag ≥ 0;
 - ∀ e ∈ Ei, w > 0, dado que o peso de uma aresta representa uma distância entre
 pontos de um mapa.
 - ∀ e ∈ Ei, e deve ser utilizável pelo elemento da frota. Senão, não é incluída no grafo Gi.
@@ -85,6 +87,7 @@ No grafo Gf:
 
 #### Função Objetivo
 Diminuir a distância total percorrida pela frota, que será a soma dos valores das arestas percorridas por cada veículo.
+// por imagem com formula matemática de somatório ∑ 
 
 ## Perspetiva de solução
 ### Fase 1
@@ -94,14 +97,26 @@ Esta primeira fase terá vários passos referentes à preparação do ambiente d
 Serão utilizados os ficheiros de nodes e edges fornecidos pelos professores. A informação lida dos ficheiros será guardada num grafo G. Será criada uma tag para cada tipo de edifício de interesse (prisões, esquadras e tribunais) de forma a facilitar a identificação dos pontos de interesse.
 
 #### 2. Análise da Conectividade do Grafo
-Com recurso a uma Pesquisa em Largura/Pesquisa em Profundidade, é possível verificar se de facto há um caminho entre o ponto de origem e o destino. (Fazer análise com origem na esquadra e destino a verificar pela lista de prisoneiros)
+Para certificar que haverá um caminho de retorno para qualquer rota calculada o grafo terá de ter uma componente fortemente conexa. Para fazer essa avaliação num grafo dirigido pesado será preciso seguir o método fornecido nas aulas teóricas:
+
+>**Método**
+>- Pesquisa em profundidade no grafo G determina floresta de expansão, numerando vértices em pós-ordem (ordem inversa de numeração em pré-ordem)
+>- Inverter todas as arestas de G (grafo resultante é Gr)
+>- Segunda pesquisa em profundidade, em Gr, começando sempre pelo vértice de numeração mais alta ainda não visitado
+>- Cada árvore obtida é um componente fortemente conexo, i.e., a partir de um qualquer dos nós pode chegar-se a todos os outros
+
+Com recurso a uma Pesquisa em Profundidade, é possível verificar se de facto há um caminho de ida entre o ponto de origem e o destino e um caminho de volta para o estabelecimento prisional original.
 
 #### 3. Criação de POI's
-Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros das tags de forma a identificar os pontos de interesse, alterando, para esse node, a sua variável type, inicializada a 0, para o seu valor correspondente ao tipo de ponto de interesse.
+Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros das tags de forma a identificar os pontos de interesse, alterando, para esse node, a sua variável *tag*, inicializada a 0, para o seu valor correspondente ao tipo de ponto de interesse.
+
+No ficheiro de tags disponibilizado não existem tags referentes ao nosso tema, tendo isso em mente, numa parte inicial do projeto poderá ser possível haver uma seleção aleatória de vértices para terem uma tag personalizada, feita pelos elementos do grupo, para simbolizar pontos referentes ao nosso tema.
+
+---
 
 Assim que a preparação estiver pronta, é possivel seguir para a implementação de código. Nesta fase será necessário que o programa consiga criar 2 rotas, uma de ida e outra de volta.
 
-Para a Rota de ida será usado o algoritmo de Dijkstra:
+Como primeira tentativa decidimos usar para a Rota de ida o algoritmo de Dijkstra:
 
 | DIJKSTRA(G, s): // G=(V,E), s in V  | BIDIRECTIONAL DIJKSTRA(G, s): <br> |
 |--------------|-----------------|

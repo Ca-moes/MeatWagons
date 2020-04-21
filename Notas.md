@@ -40,3 +40,19 @@ Estado 3:
 
 in Ciberdúvidas da Língua Portuguesa, https://ciberduvidas.iscte-iul.pt/consultorio/perguntas/estabelecimento-prisional-penitenciaria-carcere-e-prisao/34536 [consultado em 19-04-2020]
 ___
+
+Info sobre Dijkstra e Traveling Salesman Problem : http://www.gitta.info/Accessibiliti/en/html/unit_Dijkstra.html
+
+```
+BiDirectional Dijkstra:
+1. Qi.Insert(x1) and mark xi as visited
+2. Qg.Insert(xg) and mark xg as visited
+3. **while** Qi not empty **and** Qg not empty **do**
+4.   **if** Qi not empty
+5.     x <- Qi.GetFirst()
+6.     **if** x = xg **or** x ∈ Qg
+```
+
+| DIJKSTRA(G, s): // G=(V,E), s in V  | BIDIRECTIONAL DIJKSTRA(G, s): <br> |
+|--------------|-----------------|
+|     1. **for** each v **in** V do<br>    2. &emsp;dist(v) <- INF<br>    3. &emsp;path(v) <- nil<br>    4. dist(s) <- 0<br>    5. Q <- 0 // min-priority queue<br>    6. INSERT(Q, (s, 0)) // inserts s with key 0<br>    7. **while** Q != 0 do<br>    8. &emsp;v <- EXTRACT-MIN(Q) <br>    9. &emsp;**for** each w **in** Adj(v) do<br>    10.&emsp;&emsp;**if** dist(w) > dist(v) + weight(v,w) **then**<br>    11.&emsp;&emsp;&emsp;dist(w) <- dist(v)+ weight(v,w)<br>    12.&emsp;&emsp;&emsp;path(w) <- v<br>    13.&emsp;&emsp;&emsp;**if** w not in Q **then** <br>    14.&emsp;&emsp;&emsp;&emsp;INSERT(Q, (w, dist(w)))<br>    15.&emsp;&emsp;&emsp;**else**<br>    16.&emsp;&emsp;&emsp;&emsp;DECREASE-KEY(Q, (w, dist(w))) | 1. Qi.Insert(x1) and mark xi as visited<br> 2. Qg.Insert(xg) and mark xg as visited<br>
