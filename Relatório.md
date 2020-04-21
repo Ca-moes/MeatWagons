@@ -85,9 +85,12 @@ No grafo Gf:
 - ∀ vf ∈ Vf, ∃ vi ∈ Vi tal que vi e vf têm os mesmos valores para todos os atributos
 - ∀ ef ∈ Ef, ∃ ei ∈ Ei tal que ei e ef têm os mesmos valores para todos os atributos.
 
-#### Função Objetivo
-Diminuir a distância total percorrida pela frota, que será a soma dos valores das arestas percorridas por cada veículo.
-// por imagem com formula matemática de somatório ∑ 
+#### Funções Objetivo
+É possível determinar trÊs funcões objetivo para o nosso projeto, as quais apresentamos por ordem de prioridade:<br> 
+Diminuir a distância total percorrida pela frota, que será a soma dos valores das arestas percorridas por cada veículo; Diminuir o tempo de execução do cálculo das rotas; Diminuir o número de veículos da frota usados
+1. ∑ dos valores das arestas percorridas pelos elementos da frota
+2. ∑ tempos de execução dos algoritmos
+3. h = |Ff|
 
 ## Perspetiva de solução
 ### Fase 1
@@ -112,7 +115,7 @@ Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros da
 
 No ficheiro de tags disponibilizado não existem tags referentes ao nosso tema, tendo isso em mente, numa parte inicial do projeto poderá ser possível haver uma seleção aleatória de vértices para terem uma tag personalizada, feita pelos elementos do grupo, para simbolizar pontos referentes ao nosso tema.
 
----
+#### 4. Identificação de Técnicas de Concepção
 
 Assim que a preparação estiver pronta, é possivel seguir para a implementação de código. Nesta fase será necessário que o programa consiga criar 2 rotas, uma de ida e outra de volta.
 
@@ -125,11 +128,13 @@ Como primeira tentativa decidimos usar para a Rota de ida o algoritmo de Dijkstr
 da seguinte forma: Começando no estabelecimento prisional, onde se encontram os prisioneiros, é usado o algoritmo até encontrar um vértice, que será uma paragem de um dos prisioneiros. Neste ponto é usado outra vez o algoritmo de Dijkstra, mas com o vértice encontrado a ser usado como vértice de início, para encontrar a próxima paragem. Assim que todos os prisioneiros estiverem distribuidos será necessário encontrar o caminho de volta. Para isso, é aplicado o algoritmo de Dijkstra Bi-Direcional, de modo a encontrar o caminho mais curto entre o Vértice final do passo anterior e o estabelecimento prisional inicial.
 
 ## ALGORITMO A*
-Após alguma reflexão sobre qual seria o melhor algoritmo para o cálculo mais eficiente das rotas percebemos que o algoritmo A* seria melhor, quando comparado com o algoritmo de Dijkstra e o algoritmo Dijkstra Bi-Directional. Este algoritmo funciona de forma semelhante aos dois previamente apresentados mas com uma ligeira diferença. 
+Após alguma reflexão sobre qual seria o melhor algoritmo para o cálculo mais eficiente das rotas percebemos que o algoritmo A* seria melhor, quando comparado com o algoritmo de Dijkstra e o algoritmo Dijkstra Bi-Directional. Este algoritmo funciona de forma semelhante aos dois previamente apresentados mas com uma ligeira diferença. <br>
 O cálculo dos pesos da aresta segue a função:
+
 *f(v) = h(v) + g(v)*
+
 sendo h(v) a função heurística. 
-O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v) = 0. Utilizando uma função melhor, é possível optimizar o cálculo do custo de cada vértice e desta forma melhorar significativamente a eficiência do algoritmo. 
+O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v) = 0. Utilizando uma função melhor, é possível optimizar o cálculo do custo de cada vértice e desta forma melhorar significativamente a eficiência do algoritmo.<br>
 Optamos então pela implementação deste algoritmo usando como função heurística a distância euclidiana ao destino, isto é, permite que o custo de cada vértice seja calculado tendo em conta, nao só o seu custo, mas também se se aproxima ou não do destino.
 
 ```c++
@@ -151,10 +156,10 @@ while open_list is not empty
   for each n in child(m)        // traverse the child nodes
     if n in closed_list
       continue
-    cost = g(m) + distance(m,n)
-    if n in open_list and cost < g(n)
-      remove n from open_list as new path is betetr
-    if n in closed_list and cost < g(n)
+    cost = g(m) + distance(m,n) // cost of current child
+    if n in open_list and cost < g(n) 
+      remove n from open_list as new path is better
+    if n in closed_list and cost < g(n)  
       remove n from closed_list
     if n not in open_list and n not in closed_list
       add n to open_list
@@ -163,6 +168,13 @@ while open_list is not empty
       f(n) = g(n) + h(n)
 return failure
 ```
+
+| X             | Dijkstra | A* |
+|---------------|--------------------------------------|--------------------------------------|
+| Normal        | ![](https://i.imgur.com/hk4TYfe.png) | ![](https://i.imgur.com/M0GOBfp.png) |
+| BiDirectional | ![](https://i.imgur.com/0qtlaBd.png) | ![](https://i.imgur.com/SOKOEon.png) |
+
+> Imagens obtidas a partir de https://qiao.github.io/PathFinding.js/visual/
 
 ### Fase 2
 Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vértices e 2 veículos, cada um especializado para os seus valores de DP. Iso leva-nos a 3 formas de encontrar o caminho mais curto, tendo em conta uma divisão prévia dos prisioneiros:

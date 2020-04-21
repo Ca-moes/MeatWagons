@@ -166,3 +166,16 @@ efetuados, terem encontrado localizações de partilha completamente inatingíve
 estas serem geradas de forma aleatória. No entanto, tal como explicado acima, determinados
 nós podem ser inalcançáveis se a pesquisa começar num determinado local que apenas parte
 para sentidos contrários
+
+
+Análise entre algoritmos 
+Dijkstra, BiDIr Dijkstra, A*,  BiDir A*
+
+bidir dijkstra > dikstra -> ganho em speedup, mais área processada
+a* > bidir dijkstra -> ganho em speedup e menos área processada
+a* > bidir a* -> poupa espaço com mesmo resultado, sem ganho de speedup
+
+| X             | Dijkstra | A* |
+|---------------|--------------------------------------|--------------------------------------|
+| Normal        | ![](https://i.imgur.com/hk4TYfe.png) | ![](https://i.imgur.com/M0GOBfp.png) |
+| BiDirectional | ![](https://i.imgur.com/0qtlaBd.png) | ![](https://i.imgur.com/SOKOEon.png) |
