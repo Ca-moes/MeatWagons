@@ -125,6 +125,13 @@ Como primeira tentativa decidimos usar para a Rota de ida o algoritmo de Dijkstr
 da seguinte forma: Começando no estabelecimento prisional, onde se encontram os prisioneiros, é usado o algoritmo até encontrar um vértice, que será uma paragem de um dos prisioneiros. Neste ponto é usado outra vez o algoritmo de Dijkstra, mas com o vértice encontrado a ser usado como vértice de início, para encontrar a próxima paragem. Assim que todos os prisioneiros estiverem distribuidos será necessário encontrar o caminho de volta. Para isso, é aplicado o algoritmo de Dijkstra Bi-Direcional, de modo a encontrar o caminho mais curto entre o Vértice final do passo anterior e o estabelecimento prisional inicial.
 
 ## ALGORITMO A*
+Após alguma reflexão sobre qual seria o melhor algoritmo para o cálculo mais eficiente das rotas percebemos que o algoritmo A* seria melhor, quando comparado com o algoritmo de Dijkstra e o algoritmo Dijkstra Bi-Directional. Este algoritmo funciona de forma semelhante aos dois previamente apresentados mas com uma ligeira diferença. 
+O cálculo dos pesos da aresta segue a função:
+*f(v) = h(v) + g(v)*
+sendo h(v) a função heurística. 
+O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v) = 0. Utilizando uma função melhor, é possível optimizar o cálculo do custo de cada vértice e desta forma melhorar significativamente a eficiência do algoritmo. 
+Optamos então pela implementação deste algoritmo usando como função heurística a distância euclidiana ao destino, isto é, permite que o custo de cada vértice seja calculado tendo em conta, nao só o seu custo, mas também se se aproxima ou não do destino.
+
 ```c++
 function reconstruct_path(cameFrom, current)
     total_path := {current}
