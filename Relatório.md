@@ -137,7 +137,7 @@ sendo h(v) a função heurística.
 O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v) = 0. Utilizando uma função melhor, é possível optimizar o cálculo do custo de cada vértice e desta forma melhorar significativamente a eficiência do algoritmo.<br>
 Optamos então pela implementação deste algoritmo usando como função heurística a distância euclidiana ao destino, isto é, permite que o custo de cada vértice seja calculado tendo em conta, nao só o seu custo, mas também se se aproxima ou não do destino.
 
-```c++
+```java
 Input: A Graph G(V, E) with source node start and goal node end.
 Output: Least cost path from start to end
 Initializitation:
