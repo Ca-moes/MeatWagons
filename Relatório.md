@@ -5,6 +5,8 @@
 ### Gonçalo de Batalhão Alves - up201806451@fe.up.pt
 ### Pedro Jorge Fonseca Seixas - up201806227@fe.up.pt
 
+<div style="page-break-after: always;"></div>
+
 ## Descrição do Tema
 Um estabelecimento prisional necessita de gerir o transporte dos seus prisioneiros entre diferentes penitenciárias, tribunais, estabelecimentos prisionais ou esquadras policiais, tendo ao seu dispor diferentes veículos e sendo preciso ter em conta: prisioneiros com o mesmo destino, propriedades do destino para escolher o veículo e planeamento de rotas.
 
@@ -21,8 +23,6 @@ Nesta fase cada Vértice do Grafo terá a informação extra sobre a sua Densida
 
 ### Fase 3 : Mais veículos, capacidade limitada
 Na fase final, teremos uma frota de veículos com capacidade limitada e um conjunto de prisioneiros com o seu destino. A leitura de dados inicial será para o dia, ou seja, ao executar o programa ficam em memória os prisioneiros, com o seu destino, e a frota disponível. Caso toda a frota esteja ocupada e ainda sobrarem prisioneiros, tendo em conta o seu destino, serão retornados para a origem os veiculos necessários para refazer rotas e os transportarem.
-
-<div style="page-break-after: always;"></div>
 
 ## Possíveis Problemas a Encontrar
 - Leitura dos mapas provenientes do Open Street Maps
@@ -115,6 +115,31 @@ Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros da
 
 No ficheiro de tags disponibilizado não existem tags referentes ao nosso tema, tendo isso em mente, numa parte inicial do projeto poderá ser possível haver uma seleção aleatória de vértices para terem uma tag personalizada, feita pelos elementos do grupo, para simbolizar pontos referentes ao nosso tema.
 
+> ex
+> pli
+> ca
+> ção
+
+```
+script de python
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+a
+```
+
 #### 4. Identificação de Técnicas de Concepção
 
 Assim que a preparação estiver pronta, é possivel seguir para a implementação de código. Nesta fase será necessário que o programa consiga criar 2 rotas, uma de ida e outra de volta.
@@ -168,6 +193,7 @@ while open_list is not empty
       f(n) = g(n) + h(n)
 return failure
 ```
+<div style="page-break-after: always;"></div>
 
 | X             | Dijkstra                             | A*                                   |
 |:-------------:|:------------------------------------:|:------------------------------------:|
