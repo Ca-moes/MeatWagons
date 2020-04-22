@@ -113,32 +113,73 @@ Com recurso a uma Pesquisa em Profundidade, é possível verificar se de facto h
 #### 3. Criação de POI's
 Após a leitura dos ficheiros com os nodes e edges, serão lidos os ficheiros das tags de forma a identificar os pontos de interesse, alterando, para esse node, a sua variável *tag*, inicializada a 0, para o seu valor correspondente ao tipo de ponto de interesse.
 
-No ficheiro de tags disponibilizado não existem tags referentes ao nosso tema, tendo isso em mente, numa parte inicial do projeto poderá ser possível haver uma seleção aleatória de vértices para terem uma tag personalizada, feita pelos elementos do grupo, para simbolizar pontos referentes ao nosso tema.
+No ficheiro de tags disponibilizado não existem tags referentes ao nosso tema, tendo isso em mente, será necessário obter os nós referentes a prisões, tribunais e esquadras.
+Após alguma pesquisa sobre como obter essa informação, percebemos que a melhor forma seria através da ferramenta disponível no site https://overpass-turbo.eu/. Esta ferramenta permite o acesso à informação do OpenStreetMap em formato json.
 
-> ex
-> pli
-> ca
-> ção
+Foram utilizadas as seguintes querys para esse acesso:
+#### Prisões
+```
+[out:json];{{geocodeArea:Portugal}}->.searchArea;
+(
+  node[amenity=prison](area.searchArea);>;
+  way[amenity=prison](area.searchArea);>;
+  relation[amenity=prison](area.searchArea);>;
+);
+out;
+```
+#### Tribunais
+```
+[out:json];{{geocodeArea:Portugal}}->.searchArea;
+(
+  node[amenity=courthouse](area.searchArea);>;
+  way[amenity=courthouse](area.searchArea);>;
+  relation[amenity=courthouse](area.searchArea);>;
+);
+out;
+```
+#### Esquadras
+```
+[out:json];{{geocodeArea:Portugal}}->.searchArea;
+(
+  node[amenity=police](area.searchArea);>;
+  way[amenity=police](area.searchArea);>;
+  relation[amenity=police](area.searchArea);>;
+);
+out;
+```
 
+Após obter os ficheiros json com a informação pretendida, será necessário fazer um script (será feito em python devido à maior facilidade com o tratamento de dados) com o objetivo de filtrar a informação e obter apenas os ID's dos nodes que correspondem aos POI's. O seguinte pseudo-código mostra o procedimento necessário para isso:
+
+```py
+1. loadPrisonJSON()
+2.
+3. for prison in data:
+4.   for node in prison['nodes']:
+5.     for locationFile in nodeFilesFolder:
+6.       for availableNode in locationFile.read():
+7.         if node.ID == availableNode.ID:
+8.           write node.ID to file (location + 'tags.txt')
+9.
+10. loadCourtJSON()
+12.
+13. for court in data:
+14.   for node in court['nodes']:
+15.     for locationFile in nodeFilesFolder:
+16.       for availableNode in locationFile.read():
+17.         if node.ID == availableNode.ID:
+18.           write node.ID to file (location + 'tags.txt')
+19.
+20. loadPoliceJSON()
+21.
+22. for police in data:
+23.   for node in police['nodes']:
+24.     for locationFile in nodeFilesFolder:
+25.       for availableNode in locationFile.read():
+26.         if node.ID == availableNode.ID:
+27.           write node.ID to file (location + 'tags.txt')
 ```
-script de python
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-a
-```
+No fim deste script o resultado obtido serão um conjunto de ficheiros de tags (um para cada cidade) com o conjunto de nodes correspondesntes a cada uma das tags necessárias para o nosso trabalho. Estes ficheiros permitirão a identificação dos POI's no Grafo. 
+
 
 #### 4. Identificação de Técnicas de Concepção
 
