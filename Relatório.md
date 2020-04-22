@@ -137,7 +137,7 @@ sendo h(v) a função heurística.
 O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v) = 0. Utilizando uma função melhor, é possível optimizar o cálculo do custo de cada vértice e desta forma melhorar significativamente a eficiência do algoritmo.<br>
 Optamos então pela implementação deste algoritmo usando como função heurística a distância euclidiana ao destino, isto é, permite que o custo de cada vértice seja calculado tendo em conta, nao só o seu custo, mas também se se aproxima ou não do destino.
 
-```c++
+```java
 Input: A Graph G(V, E) with source node start and goal node end.
 Output: Least cost path from start to end
 Initializitation:
@@ -198,10 +198,21 @@ A diferença principal desta fase para a anterior é o limite em cada veiculo. C
 Assim que este cálculo for realizado repete-se este método, a partir do ponto em que se calcula o resto dos prisioneiros.
 
 ## Casos de utilização
-Será implementado um pequeno menu, muito intuitivo, para indicar os prisioneiros a ser transportados nesse dia, bem como o ponto de origem e, para cada um, o destino, dentro de uma lista previamente extraída do conjunto de pontos de interesse, constituida pelos tribunais, prisões e esquadras. Será também possível visualizar o grafo com o percurso, através do GraphViewer, para cada um dos prisioneiros.
+A aplicação utilizará uma interface simples, de texto, de modo a interagir com o utilizador. Para isso, será usado um conjunto de menus com diversas opções.
 
-## Funcionalidade a implementar
-Uma possível funcionalidade a implementar será diferenciar os veículos, não só pela capacidade mas também pela sua segurança, podendo selecionar a importância do prisioneiro e escolher o tipo de veículo.
+Inicialmente, o programa apresentará um menu que permita ao utilizador selecionar o distrito que pretende explorar.
+Após essa seleção, o utilizador poderá selecionar uma das seguintes opções:
+
+- **Visualização do mapa**, através do GraphViewer;
+- **Seleção da origem** (um dos estabelecimentos prisionais desse distrito). É de notar que, após esta seleção, o utilizador terá que criar 	pelo menos um prisioneiro, com informação de ID e Destino;
+- **Conectividade da origem**: através dos algoritmos de Pesquisa em Largura/Profundidade, será calculada a quantidade de esquadras, prisões e tribunais que podem ser alcançados a partir da origem selecionada. Estes pontos poderão ser apresentados ao utilizador.
+- **Edição da lista de prisioneiros**: caso não haja um caminho possível entre a origem selecionada ou caso o utilizador queira alterar o destino de um prisioneiro, será possível alterar a lista de prisioneiros;
+- **Cálculo do caminho ótimo**: esta opção calculará o caminho ótimo através do algoritmo de Dijkstra/Dijkstra Bidireciona/A* e apresentará o 	caminho ótimo sob forma de um grafo;
+
+_Notas_:
+_Numa fase posterior, com a implementação de diferentes tipos de veículos serão apresentadas todas as rotas, quando o utilizador selecionar a opção de 'Cálculo do caminho ótimo'.
+Numa fase ainda mais avançada, poderá ser dada a opção do utilizador escolher um tipo de veículo, de modo a transportar um prisioneiro específico._
+
 
 ## Conclusão
 Temos um plano traçado e bem dividido. Esperamos que na altura da implementação consigamos tratar de forma eficiente de todas as partes, principalmente, do uso da parte gráfica de criação de grafos, visto que será a primeira vez neste curso que faremos uso de algo semelhante.
