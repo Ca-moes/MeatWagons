@@ -33,6 +33,8 @@ Na fase final, teremos uma frota de veículos com capacidade limitada e um conju
 - Nos ficheiros de mapas não são disponibilizadas tags referentes a tribunais ou estabelecimentos prisionais
 - Distribuição de tag densidade populacional pelos vértices do grafo 
 
+<div style="page-break-after: always;"></div>
+
 ## Formalização do Problema
 ### Dados de Entrada
 Pi - Lista de prisioneiros com destinos para o dia, sendo P(i) o i-nésimo elemento, cada um é caracterizado por:
@@ -99,6 +101,8 @@ Esta primeira fase terá vários passos referentes à preparação do ambiente d
 #### 1. Preparação dos ficheiros de entrada
 Serão utilizados os ficheiros de nodes e edges fornecidos pelos professores. A informação lida dos ficheiros será guardada num grafo G. Será criada uma tag para cada tipo de edifício de interesse (prisões, esquadras e tribunais) de forma a facilitar a identificação dos pontos de interesse.
 
+<div style="page-break-after: always;"></div>
+
 #### 2. Análise da Conectividade do Grafo
 Para certificar que haverá um caminho de retorno para qualquer rota calculada o grafo terá de ter uma componente fortemente conexa. Para fazer essa avaliação num grafo dirigido pesado será preciso seguir o método fornecido nas aulas teóricas:
 
@@ -118,7 +122,7 @@ Após alguma pesquisa sobre como obter essa informação, percebemos que a melho
 
 Foram utilizadas as seguintes querys para esse acesso:
 #### Prisões
-```
+```java
 [out:json];{{geocodeArea:Portugal}}->.searchArea;
 (
   node[amenity=prison](area.searchArea);>;
@@ -127,8 +131,11 @@ Foram utilizadas as seguintes querys para esse acesso:
 );
 out;
 ```
+
+<div style="page-break-after: always;"></div>
+
 #### Tribunais
-```
+```javascript
 [out:json];{{geocodeArea:Portugal}}->.searchArea;
 (
   node[amenity=courthouse](area.searchArea);>;
@@ -138,7 +145,7 @@ out;
 out;
 ```
 #### Esquadras
-```
+```json
 [out:json];{{geocodeArea:Portugal}}->.searchArea;
 (
   node[amenity=police](area.searchArea);>;
@@ -194,13 +201,12 @@ Como primeira tentativa decidimos usar para a Rota de ida o algoritmo de Dijkstr
 da seguinte forma: Começando no estabelecimento prisional, onde se encontram os prisioneiros, é usado o algoritmo até encontrar um vértice, que será uma paragem de um dos prisioneiros. Neste ponto é usado outra vez o algoritmo de Dijkstra, mas com o vértice encontrado a ser usado como vértice de início, para encontrar a próxima paragem. Assim que todos os prisioneiros estiverem distribuidos será necessário encontrar o caminho de volta. Para isso, é aplicado o algoritmo de Dijkstra Bi-Direcional, de modo a encontrar o caminho mais curto entre o Vértice final do passo anterior e o estabelecimento prisional inicial.
 
 ## ALGORITMO A*
-Após alguma reflexão sobre qual seria o melhor algoritmo para o cálculo mais eficiente das rotas percebemos que o algoritmo A* seria melhor, quando comparado com o algoritmo de Dijkstra e o algoritmo Dijkstra Bi-Directional. Este algoritmo funciona de forma semelhante aos dois previamente apresentados mas com uma ligeira diferença. <br>
-O cálculo dos pesos da aresta segue a função:
+Após alguma reflexão sobre qual seria o melhor algoritmo para o cálculo mais eficiente das rotas percebemos que o algoritmo A* seria melhor, quando comparado com o algoritmo de Dijkstra e o algoritmo Dijkstra Bi-Directional. Este algoritmo funciona de forma semelhante aos dois previamente apresentados mas com uma ligeira diferença. O cálculo dos pesos da aresta segue a função:
 
 *f(v) = h(v) + g(v)*
 
 sendo h(v) a função heurística. 
-O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v) = 0. Utilizando uma função melhor, é possível optimizar o cálculo do custo de cada vértice e desta forma melhorar significativamente a eficiência do algoritmo.<br>
+O algoritmo de Dijkstra é uma variância deste algoritmo em que a função h(v) = 0. Utilizando uma função melhor, é possível optimizar o cálculo do custo de cada vértice e desta forma melhorar significativamente a eficiência do algoritmo.
 Optamos então pela implementação deste algoritmo usando como função heurística a distância euclidiana ao destino, isto é, permite que o custo de cada vértice seja calculado tendo em conta, nao só o seu custo, mas também se se aproxima ou não do destino.
 
 ```java
@@ -212,7 +218,6 @@ Initializitation:
   g(start) = 0                              // Cost from source node to a node
   h(start) = heuristic_function(start,end)  // Estimated cost from node to goal node
   f(start) = g(start) + h(start)            // Total cost from source to goal node
-
 while open_list is not empty
   m = Node on top of open_list with lowest f 
   if m == end                   // if current note is end node the solution was found
@@ -232,9 +237,8 @@ while open_list is not empty
       g(n) = cost
       h(n) = heuristic_function(n,end)
       f(n) = g(n) + h(n)
-return failure
+return failure 
 ```
-<div style="page-break-after: always;"></div>
 
 | X             | Dijkstra                             | A*                                   |
 |:-------------:|:------------------------------------:|:------------------------------------:|
@@ -252,6 +256,8 @@ Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vér
 #### Hipótese 1 - Não tendo em conta o caminho
 Como primeira hipótese considera-se apenas a DP dos destinos de cada um dos prisioneiros. Tendo isso em conta é feita uma divisão em dois grupos baseado na DP do destino de cada prisioneiro. Um grupo será levado por um carro (com capacidade infinita) para destinos com DP de *cidade* enquanto que o outro grupo será levado por um autocarro (também com capacidade infinita) para destinos com DP de *periferia* ou *campo*.
 Feita a divisão o problema simplifica-se a aplicar o método da fase 1 para cada veículo.
+
+<div style="page-break-after: always;"></div>
 
 #### Hipótese 2 - Tendo em conta o caminho
 Nesta hipótese, que parece mais precisa, será feito, no início, o cálculo de uma rota, como na fase 1, para todos os prisioneiros. A partir do processamento da rota, cada prisioneiro ficará com o valor de cada DP dos vértices pela qual passou. Tendo em conta a DP máxima de cada prisioneiro fazem-se as divisões em 2 grupos e segue-se como na hipótese anterior para a divisão nos veiculos e cálculo de rotas.
@@ -283,5 +289,3 @@ Numa fase ainda mais avançada, poderá ser dada a opção do utilizador escolhe
 
 ## Conclusão
 Temos um plano traçado e bem dividido. Esperamos que na altura da implementação consigamos tratar de forma eficiente de todas as partes, principalmente, do uso da parte gráfica de criação de grafos, visto que será a primeira vez neste curso que faremos uso de algo semelhante.
-
-<img src="https://media.giphy.com/media/3owyphXV8TcO2muXGU/giphy.gif" width="550" height="300" />
