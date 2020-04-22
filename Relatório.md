@@ -169,29 +169,32 @@ while open_list is not empty
 return failure
 ```
 
-| X             | Dijkstra | A* |
-|---------------|--------------------------------------|--------------------------------------|
+| X             | Dijkstra                             | A*                                   |
+|:-------------:|:------------------------------------:|:------------------------------------:|
 | Normal        | ![](https://i.imgur.com/hk4TYfe.png) | ![](https://i.imgur.com/M0GOBfp.png) |
 | BiDirectional | ![](https://i.imgur.com/0qtlaBd.png) | ![](https://i.imgur.com/SOKOEon.png) |
 
 > Imagens obtidas a partir de https://qiao.github.io/PathFinding.js/visual/
 
+Como observações finais para esta fase temos a comparação e decisão dos algoritmos tendo em conta a informação revista: Já ficou provado que será melhor usar o algoritmos A* invés dos algoritmos Dijkstra e Bi-Directional Dijkstra. Restou-nos então a decisão entre A* normal ou A* Bidirectional.
+Como, diferente do exemplo, num grafo que representa vias e estradas não haverá uma *parede* que perturbe de forma significativa o algoritmo A*, causando, por exemplo, que este processe demasiados nós à volta do sítio bloqueado pela parede em vez de avançar de forma direta para o nó destino, juntamente com o facto de que o speedup ganho não é tão significativo entre os algoritmos A* como entre os algoritmos de Djikstra, decidimos que usaremos o algoritmo A* normal.
+
 ### Fase 2
-Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vértices e 2 veículos, cada um especializado para os seus valores de DP. Iso leva-nos a 3 formas de encontrar o caminho mais curto, tendo em conta uma divisão prévia dos prisioneiros:
+Na segunda fase teremos em conta o valor de densidade populacional (DP) dos vértices e 2 veículos, cada um especializado para os seus valores de DP. Isso leva-nos a 3 formas de encontrar o caminho mais curto, tendo em conta uma divisão prévia dos prisioneiros:
 
 #### Hipótese 1 - Não tendo em conta o caminho
 Como primeira hipótese considera-se apenas a DP dos destinos de cada um dos prisioneiros. Tendo isso em conta é feita uma divisão em dois grupos baseado na DP do destino de cada prisioneiro. Um grupo será levado por um carro (com capacidade infinita) para destinos com DP de *cidade* enquanto que o outro grupo será levado por um autocarro (também com capacidade infinita) para destinos com DP de *periferia* ou *campo*.
 Feita a divisão o problema simplifica-se a aplicar o método da fase 1 para cada veículo.
 
 #### Hipótese 2 - Tendo em conta o caminho
-Nesta hipótese, que parece mais precisa, será feito, no início, o cálculo de uma rota, como na fase 1, para todos os prisioneiros. A partir do processamento da rota, cada prisioneiro ficará com o valor de cada DP dos vértices pela qual passou. Tendo em conta a DP máxima de cada prisioneiro fazem-se as divisões em 2 grupos e segue-se como na hipótese anterior para a divisão nos veiculos e calculo de rotas.
+Nesta hipótese, que parece mais precisa, será feito, no início, o cálculo de uma rota, como na fase 1, para todos os prisioneiros. A partir do processamento da rota, cada prisioneiro ficará com o valor de cada DP dos vértices pela qual passou. Tendo em conta a DP máxima de cada prisioneiro fazem-se as divisões em 2 grupos e segue-se como na hipótese anterior para a divisão nos veiculos e cálculo de rotas.
 A contagem das DP para cada prisioneiro terá em conta apenas a rota inicial e não as rotas criadas pelos veiculos aos quais ficaram designados, isto poderá não trazer os melhores resultados quanto à divisão dos prisioneiros entre veículos mas é uma melhoria face à hipótese anterior.
 
 #### Hipótese 3 - Apenas considerando os vértices onde o veículo pode transportar
-Nesta hipótese consideram-se diferentes tipos de veículo para transportar em *cidade* ou não. Quando são selecionados veículos que não estão aptos para transportar prisioneiros em cidades, o grafo será filtrado, removendo temporariamente todos os vértices em que a Densidade Populacional corresponde a uma cidade, de forma a que encontre o caminho mais curto, apenas passando por vértices com DP de *campo* ou *periferia*. Desta forma, será descoberto o caminho mais curto para cada tipo de veículo.
+Nesta hipótese consideram-se diferentes tipos de veículo para transportar em *cidade* ou não. Quando são selecionados veículos que não estão aptos para transportar prisioneiros em cidades, o grafo será filtrado, removendo temporariamente todos os vértices em que a Densidade Populacional corresponde a uma cidade (não seguindo por arestas cujo destino é cidade), de forma a que encontre o caminho mais curto, apenas passando por vértices com DP de *campo* ou *periferia*. Desta forma, será descoberto o caminho mais curto para cada tipo de veículo.
 
 ### Fase 3
-A diferença principal desta fase para a anterior é o limite em cada veiculo. Com isso em conta, para esta fase, adotamos os mesmos passos da hipótese 2 da fase 2, até à divisão dos prisioneiros pelos veículos, mas neste caso teremos que fazer um cálculo do resto de prisioneiros, caso não haja transporte para todos. Caso haja transporte para todos, o problema torna-se igual à fase 2. Em caso contrário, faz-se um cálculo dos veículos que terão de retornar ao estabelecimento prisional inicial tendo em conta: a sua capacidade, o número de prisioneiros e o grupo ao qual os prisioneiros restantes estão designados.
+A diferença principal desta fase para a anterior é o limite em cada veiculo. Com isso em conta, para esta fase, adotamos os mesmos passos da hipótese 2 da fase 2, até à divisão dos prisioneiros pelos veículos, excepto que neste caso teremos que fazer um cálculo do *resto* de prisioneiros, caso não haja transporte para todos. Caso haja transporte para todos, o problema torna-se igual à fase 2. Em caso contrário, faz-se um cálculo dos veículos que terão de retornar ao estabelecimento prisional inicial tendo em conta: a sua capacidade, o número de prisioneiros restantes e o grupo ao qual os prisioneiros restantes estão designados.
 Assim que este cálculo for realizado repete-se este método, a partir do ponto em que se calcula o resto dos prisioneiros.
 
 ## Casos de utilização
