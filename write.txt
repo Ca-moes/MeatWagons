@@ -1,7 +1,0 @@
-BiDirectional Dijkstra:
-1. Qi.Insert(x1) and mark xi as visited
-2. Qg.Insert(xg) and mark xg as visited
-3. **while** Qi not empty **and** Qg not empty **do**
-4.   **if** Qi not empty
-5.     x <- Qi.GetFirst()
-6.     **if** x = xg **or** x ∈ Qg
