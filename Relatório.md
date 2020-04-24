@@ -39,9 +39,9 @@ Na fase final, teremos uma frota de veículos com capacidade limitada e um conju
 ### Dados de Entrada
 Pi - Lista de prisioneiros com destinos para o dia, sendo P(i) o i-nésimo elemento, cada um é caracterizado por:
 - ID - número identificador de prisioneiro
-- Destino - ID do node de destino
+- Destino - Identificador de Destino
 
-O número identificador de destino terá duas partes: a primeira parte, de 1 dígito, é correspondente ao tipo de destino; a segunda parte, de 3 digitos, é correspondente ao destino concreto de um certo tipo. Como exemplo: Um tribunal poderá ter um Destino de 1001 enquanto que um estabelecimento prisional poderá ter um Destino de 2001.
+O número identificador de destino terá duas partes: a primeira parte, de 1 dígito, é correspondente ao tipo de destino; a segunda parte, com numero de dígitos variavel, é correspondente ao ID do node de destino. Como exemplo: Um tribunal poderá ter um Destino de 1000001 enquanto que um estabelecimento prisional poderá ter um Destino de 2000001.
 
 Fi - Lista de veiculos da frota, sendo F(i) o i-nésimo elemento, cada um é caracterizado por:
 - ID - número identificador do veículo (tal como em Destino, será um número que terá implicito o tipo de veiculo)
