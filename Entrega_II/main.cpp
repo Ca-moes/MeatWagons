@@ -1,6 +1,9 @@
 #include <iostream>
 
-#include "src/menus.h"
+#include "menu/menus.h"
+#include "graph/Graph.h"
+#include "src/util/Parser.h"
+#include "src/gui/GUI.h"
 
 using namespace std;
 
@@ -10,6 +13,10 @@ int main() {
     vector<Prisoner*> vec;
     int op;
     int num = 0;
+    Graph<coord> graph = parseMap("../Mapas-20200420/GridGraphs/GridGraphs/4x4/nodes.txt", "../Mapas-20200420/GridGraphs/GridGraphs/4x4/edges.txt");
+
+    GUI gui = GUI(graph, 600, 600);
+    gui.show();
 
     while ((op = mainMenu()) != 0) {
         switch (op) {
@@ -32,6 +39,7 @@ int main() {
                 break;
         }
     }
+
 
     return 0;
 }
