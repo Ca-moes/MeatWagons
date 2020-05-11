@@ -11,6 +11,7 @@
 #include <fstream>
 #include <sstream>
 #include "graph/Graph.h"
+#include "utils.h"
 using namespace std;
 Graph<coord> parseMap(const string &node_file, const string &edge_file);
 

@@ -13,9 +13,9 @@ int main() {
     vector<Prisoner*> vec;
     int op;
     int num = 0;
-    //Graph<coord> graph = parseMap("../Mapas-20200420/GridGraphs/GridGraphs/16x16/nodes.txt", "../Mapas-20200420/GridGraphs/GridGraphs/16x16/edges.txt");
+    Graph<coord> graph = parseMap("../Mapas-20200420/GridGraphs/GridGraphs/16x16/nodes.txt", "../Mapas-20200420/GridGraphs/GridGraphs/16x16/edges.txt");
 
-    Graph<coord> graph = parseMap("../Mapas-20200420/Porto/nodes_x_y_porto.txt", "../Mapas-20200420/Porto/edges_porto.txt");
+    //Graph<coord> graph = parseMap("../Mapas-20200420/Porto/nodes_x_y_porto.txt", "../Mapas-20200420/Porto/edges_porto.txt");
 
     GUI gui = GUI(graph, 1500, 1500);
     gui.show();

@@ -20,15 +20,16 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         getline(node, line);
         stringstream ss(line);
         string temp;
-        int id,x, y;
+        int id; double x, y;
         getline(ss,temp,'(');
         getline(ss,temp,',');
         id=stoi(temp);
         getline(ss,temp,',');
-        x=stoi(temp);
+        x=stod(temp);
         getline(ss,temp,',');
-        y=stoi(temp);
-        graph.addVertex(make_pair(x, y));
+        y=stod(temp);
+        cout<<id<<"\t"<<x<<"\t"<<y<<"\t"<<endl;
+        graph.addVertex(id,make_pair(x, y));
 
     }
     cout<<"Done Nodes\n";
@@ -41,7 +42,6 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
 
     getline(edge, line);
     int num_edges = stoi(line);
-
     for (int i = 0; i < num_edges; i++) {
         getline(edge, line);
         stringstream ss(line);
@@ -53,8 +53,12 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         o=stoi(temp);
         getline(ss,temp,',');
         d=stoi(temp);
-        graph.addEdge(o, d, 1);
-        graph.addEdge(d, o, 1);
+        cout<<o<<"\t"<<graph.findVertex(o)->getInfo().first<<"\t"<<graph.findVertex(o)->getInfo().second<<endl;
+        cout<<d<<"\t"<<graph.findVertex(d)->getInfo().first<<"\t"<<graph.findVertex(d)->getInfo().second<<endl;
+        double weight = euclidianDistance(graph.findVertex(o)->getInfo(),graph.findVertex(d)->getInfo());
+        cout<<weight<<endl;
+        graph.addEdge(o, d, weight);
+        graph.addEdge(d, o, weight);
     }
     cout<<"Done Edges\n";
     edge.close();
