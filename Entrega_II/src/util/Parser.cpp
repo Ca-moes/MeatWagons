@@ -28,7 +28,7 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         x=stod(temp);
         getline(ss,temp,',');
         y=stod(temp);
-        cout<<id<<"\t"<<x<<"\t"<<y<<"\t"<<endl;
+        //cout<<id<<"\t"<<x<<"\t"<<y<<"\t"<<endl;
         graph.addVertex(id,make_pair(x, y));
 
     }
@@ -53,10 +53,10 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         o=stoi(temp);
         getline(ss,temp,',');
         d=stoi(temp);
-        cout<<o<<"\t"<<graph.findVertex(o)->getInfo().first<<"\t"<<graph.findVertex(o)->getInfo().second<<endl;
-        cout<<d<<"\t"<<graph.findVertex(d)->getInfo().first<<"\t"<<graph.findVertex(d)->getInfo().second<<endl;
+        //cout<<o<<"\t"<<graph.findVertex(o)->getInfo().first<<"\t"<<graph.findVertex(o)->getInfo().second<<endl;
+        //cout<<d<<"\t"<<graph.findVertex(d)->getInfo().first<<"\t"<<graph.findVertex(d)->getInfo().second<<endl;
         double weight = euclidianDistance(graph.findVertex(o)->getInfo(),graph.findVertex(d)->getInfo());
-        cout<<weight<<endl;
+        //cout<<weight<<endl;
         graph.addEdge(o, d, weight);
         graph.addEdge(d, o, weight);
     }

@@ -13,13 +13,18 @@ void GUI::setGraph(Graph<coord> &graph) { this->graph = graph; }
 
 void GUI::show() {
     gv->createWindow(gv_w, gv_h);
-    int id = 0;
+    double yPercent, xPercent;
+
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
-        gv->addNode(id, vertex->getInfo().first, vertex->getInfo().second);
-        gv->setVertexLabel(id, to_string(vertex->getID()));
-        id++;
+        yPercent = 1.0 - ((vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
+        xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
+
+        gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
+        gv->setVertexLabel(vertex->getID(), to_string(vertex->getID()));
+        gv->setVertexSize(vertex->getID(), 10);
     }
-    id = 0;
+
+    int id = 0;
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
         for (Edge<coord>* edge : vertex->getAdj()) {
             gv->addEdge(id, vertex->getID(), edge->getDest()->getID(), EdgeType::DIRECTED);
@@ -27,6 +32,13 @@ void GUI::show() {
             id++;
         }
     }
+
+    cout << "Press Enter to exit graph viewer." << endl;
+    int character = getchar();
+    if (character == '\n')	// enter key is pressed
+        gv->closeWindow();
+    else
+        cin.ignore(1000, '\n');
 }
 
 void GUI::showPath(vector<int> path) {

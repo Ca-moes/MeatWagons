@@ -77,6 +77,11 @@ template <class T>
 class Graph {
 	vector<Vertex<T> *> vertexSet;
 
+	double maxX;
+    double minX;
+    double maxY;
+    double minY;
+
     Vertex<T>* findVertex(const T &info) const;
 public:
 	vector<Vertex<T> *> getVertexSet() const;
@@ -84,6 +89,11 @@ public:
     Vertex<T> *addVertex(const int & id, const T &info);
 	Edge<T> *addEdge(const int &sourc, const int &dest, double w);
     Vertex<T>* findVertex(const int &id) const;
+
+    double getMaxX() {return this->maxX;}
+    double getMinX() {return this->minX;}
+    double getMaxY() {return this->maxY;}
+    double getMinY() {return this->minY;}
 
     vector<T>  dfs() const;
     void dfsVisit(Vertex<T> *v, vector<T> & res) const;
@@ -175,6 +185,18 @@ Vertex<T> *Graph<T>::addVertex(const int &id, const T &info) {
     v = new Vertex<T>(id);
     v->id=id;
     v->info=info;
+    if (vertexSet.empty()) {
+        this->minY = v->info.second;
+        this->minX = v->info.first;
+        this->maxX = v->info.first;
+        this->maxY = v->info.second;
+    }
+    else {
+        if(v->info.first > maxX) maxX = v->info.first;
+        else if(v->info.first < minX) minX = v->info.first;
+        if(v->info.second > maxY) maxY = v->info.second;
+        else if (v->info.second < minY) minY = v->info.second;
+    }
     vertexSet.push_back(v);
     return v;
 }
