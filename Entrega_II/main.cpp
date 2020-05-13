@@ -13,7 +13,8 @@ int main() {
     int num = 0;
 
     //Graph<coord> graph = parseMap("../Mapas-20200420/GridGraphs/GridGraphs/16x16/nodes.txt", "../Mapas-20200420/GridGraphs/GridGraphs/16x16/edges.txt");
-    Graph<coord> graph = parseMap("../Mapas-20200420/Porto/nodes_x_y_porto.txt", "../Mapas-20200420/Porto/edges_porto.txt");
+    //Graph<coord> graph = parseMap("../Mapas-20200420/Porto/nodes_x_y_porto.txt", "../Mapas-20200420/Porto/edges_porto.txt");
+    Graph<coord> graph = parseMap("../Mapas-20200420/Fafe/nodes_x_y_fafe.txt", "../Mapas-20200420/Fafe/edges_fafe.txt");
 
     GUI gui = GUI(graph, 1900, 1000);
 
@@ -39,6 +40,6 @@ int main() {
                 break;
         }
     }
-    
+
     return 0;
 }
