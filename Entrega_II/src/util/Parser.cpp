@@ -5,7 +5,9 @@
 
 #include "Parser.h"
 
-void parseMap(Graph<coord> &graph, const string &node_file, const string &edge_file) {
+void parseMap(Graph<coord> &graph, const string &location) {
+    string node_file = "../Mapas/"+location+"/nodes_x_y_"+location+".txt";
+    parseTag(graph,location);
     string line;
 
     ifstream node;
@@ -19,7 +21,7 @@ void parseMap(Graph<coord> &graph, const string &node_file, const string &edge_f
         getline(node, line);
         stringstream ss(line);
         string temp;
-        int id; double x, y;
+        int id, tag; double x, y;
         getline(ss,temp,'(');
         getline(ss,temp,',');
         id=stoi(temp);
@@ -28,12 +30,19 @@ void parseMap(Graph<coord> &graph, const string &node_file, const string &edge_f
         getline(ss,temp,',');
         y=stod(temp);
         //cout<<id<<"\t"<<x<<"\t"<<y<<"\t"<<endl;
-        graph.addVertex(id,make_pair(x, y));
+        tag=0;
+        for(auto p : graph.getPOIs()){
+            for(auto id_poi : p->getIDs())
+                if(id_poi==id)
+                    tag=1;
+        }
+        graph.addVertex(id,make_pair(x, y),tag);
 
     }
     cout<<"Done Nodes\n";
     node.close();
 
+    string edge_file="../Mapas/"+location+"/edges_"+location+".txt";
     ifstream edge;
     edge.open(edge_file);
 
@@ -61,4 +70,33 @@ void parseMap(Graph<coord> &graph, const string &node_file, const string &edge_f
     }
     cout<<"Done Edges\n";
     edge.close();
+}
+
+void parseTag(Graph<coord> &graph, const string &location) {
+    string tag_file = "../Mapas/Tags/tags_"+location+".txt";
+    string line;
+
+    ifstream tag;
+    tag.open(tag_file);
+    if (!tag.is_open()) { cout<<"Couldn't open tag file\n"; }
+
+    while(!tag.eof()){
+        getline(tag, line);
+        string name = line;
+        getline(tag, line);
+        int num_tags = stoi(line);
+        vector<int> ids;
+        for (int i = 0; i < num_tags; i++) {
+            getline(tag, line);
+            int id=stoi(line);
+            ids.push_back(id);
+
+        }
+        graph.addPOI(name,ids);
+
+    }
+
+    cout<<"Done Tags\n";
+    tag.close();
+
 }

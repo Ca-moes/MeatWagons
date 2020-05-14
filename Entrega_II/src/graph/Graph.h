@@ -4,7 +4,9 @@
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
+#include <iostream>
 #include <vector>
+#include <algorithm>
 #include <queue>
 #include <limits>
 #include <cmath>
@@ -27,7 +29,7 @@ constexpr auto INF = std::numeric_limits<double>::max();
 template <class T>
 class Vertex {
 	int id;
-	int tag;
+	int tag; // 0, for normal ; 1, for relevant
 	int dp;
 	T info;
 	vector<Edge<T> *> outgoing;
@@ -41,6 +43,7 @@ class Vertex {
 
 public:
 	int getID() const;
+	int getTag() const;
 	T getInfo() const;
 	vector<Edge<T> *> getAdj() const;
     double getCostTo(int dest_id) const;
@@ -68,6 +71,19 @@ public:
 	friend class Vertex<T>;
 };
 
+template <class T>
+class POI {
+    string name;
+    vector<int> id;
+
+
+public:
+    POI(string name,vector<int> id) ;
+    string getName() const;
+    vector<int> getIDs() const;
+};
+
+
 
 /* ================================================================================================
  * Class Graph
@@ -76,6 +92,7 @@ public:
 template <class T>
 class Graph {
 	vector<Vertex<T> *> vertexSet;
+    vector<POI<T>*> pois;
 
 	double maxX;
     double minX;
@@ -85,10 +102,14 @@ class Graph {
     Vertex<T>* findVertex(const T &info) const;
 public:
 	vector<Vertex<T> *> getVertexSet() const;
+	vector<POI<T>*> getPOIs() const;
 	Vertex<T> *addVertex(const T &id);
-    Vertex<T> *addVertex(const int & id, const T &info);
+    Vertex<T> *addVertex(const int & id, const T &info, const int &tag);
 	Edge<T> *addEdge(const int &sourc, const int &dest, double w);
     Vertex<T>* findVertex(const int &id) const;
+    POI<T>* addPOI(const string &name, const vector<int> &ids);
+    POI<T>* findPOI(const string &name);
+    POI<T>* findPOI(const int &id);
 
     double getMaxX() {return this->maxX;}
     double getMinX() {return this->minX;}
@@ -102,6 +123,11 @@ public:
     void dijkstraShortestPath(const T &origin);
     vector<int> astarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
 };
+
+/* ================================================================================================
+ * Class Vertex
+ * ================================================================================================
+ */
 
 template<class T>
 Vertex<T>::Vertex(int id): id(id) {}
@@ -142,6 +168,11 @@ double Vertex<T>::getCostTo(int dest_id) const {
     return -1;
 }
 
+template<class T>
+int Vertex<T>::getTag() const {
+    return tag;
+}
+
 
 /* ================================================================================================
  * Class Edge
@@ -161,6 +192,26 @@ Vertex<T>* Edge<T>::getDest() const {
     return dest;
 }
 
+/* ================================================================================================
+ * Class POI
+ * ================================================================================================
+ */
+
+template<class T>
+POI<T>::POI(string name, vector<int> id) {
+    this->name=name;
+    this->id=id;
+}
+
+template<class T>
+string POI<T>::getName() const {
+    return this->name;
+}
+
+template<class T>
+vector<int> POI<T>::getIDs() const {
+    return this->id;
+}
 
 /* ================================================================================================
  * Class Graph
@@ -178,13 +229,14 @@ Vertex<T> * Graph<T>::addVertex(const T &id) {
 }
 
 template<class T>
-Vertex<T> *Graph<T>::addVertex(const int &id, const T &info) {
+Vertex<T> *Graph<T>::addVertex(const int &id, const T &info, const int &tag) {
     Vertex<T> *v = findVertex(id);
     if (v != nullptr)
         return v;
     v = new Vertex<T>(id);
     v->id=id;
     v->info=info;
+    v->tag=tag;
     if (vertexSet.empty()) {
         this->minY = v->info.second;
         this->minX = v->info.first;
@@ -229,6 +281,41 @@ Vertex<T> *Graph<T>::findVertex(const T &info) const {
     for (auto v : vertexSet)
         if (v->info == info)
             return v;
+    return nullptr;
+}
+
+template<class T>
+vector<POI<T>*> Graph<T>::getPOIs() const{
+    return pois;
+}
+
+
+template<class T>
+POI<T>* Graph<T>::addPOI(const string &name, const vector<int> &ids) {
+    POI<T>* p = findPOI(name);
+    if (p != nullptr)
+        return p;
+    p = new POI<T>(name,ids);
+    pois.push_back(p);
+    return p;
+}
+
+template<class T>
+POI<T>* Graph<T>::findPOI(const string &name) {
+    for(auto p: pois){
+        if(p->getName() == name)
+            return p;
+    }
+    return nullptr;
+}
+
+template<class T>
+POI<T>* Graph<T>::findPOI(const int &id) {
+    for(auto p: pois){
+        for(auto id_poi : p->getIDs())
+            if(id_poi==id)
+                return p;
+    }
     return nullptr;
 }
 

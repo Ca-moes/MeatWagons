@@ -20,8 +20,17 @@ void GUI::show() {
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
 
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        gv->setVertexLabel(vertex->getID(), to_string(vertex->getID()));
-        gv->setVertexSize(vertex->getID(), 10);
+        if(vertex->getTag()>0){
+            gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
+            gv->setVertexSize(vertex->getID(), 15);
+            gv->defineVertexColor("RED");
+        }
+        else{
+            gv->setVertexLabel(vertex->getID(), "");
+            gv->setVertexSize(vertex->getID(), 5);
+            gv->defineVertexColor("YELLOW");
+        }
+
     }
 
     int id = 0;
