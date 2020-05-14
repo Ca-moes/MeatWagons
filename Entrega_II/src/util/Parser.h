@@ -13,6 +13,6 @@
 #include "graph/Graph.h"
 #include "utils.h"
 using namespace std;
-Graph<coord> parseMap(const string &node_file, const string &edge_file);
+void parseMap(Graph<coord> &graph, const string &node_file, const string &edge_file);
 
 #endif //ENTREGA_II_PARSER_H

@@ -5,8 +5,7 @@
 
 #include "Parser.h"
 
-Graph<coord> parseMap(const string &node_file, const string &edge_file) {
-    Graph<coord> graph;
+void parseMap(Graph<coord> &graph, const string &node_file, const string &edge_file) {
     string line;
 
     ifstream node;
@@ -58,10 +57,8 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         double weight = euclidianDistance(graph.findVertex(o)->getInfo(),graph.findVertex(d)->getInfo());
         //cout<<weight<<endl;
         graph.addEdge(o, d, weight);
-        graph.addEdge(d, o, weight);
+        //graph.addEdge(d, o, weight);
     }
     cout<<"Done Edges\n";
     edge.close();
-
-    return graph;
 }

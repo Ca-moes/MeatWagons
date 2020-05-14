@@ -12,9 +12,13 @@ int main() {
     int op;
     int num = 0;
 
-    //Graph<coord> graph = parseMap("../Mapas-20200420/GridGraphs/GridGraphs/16x16/nodes.txt", "../Mapas-20200420/GridGraphs/GridGraphs/16x16/edges.txt");
-    //Graph<coord> graph = parseMap("../Mapas-20200420/Porto/nodes_x_y_porto.txt", "../Mapas-20200420/Porto/edges_porto.txt");
-    Graph<coord> graph = parseMap("../Mapas-20200420/Fafe/nodes_x_y_fafe.txt", "../Mapas-20200420/Fafe/edges_fafe.txt");
+    Graph<coord> graph;
+    //parseMap(graph, "../Mapas-20200420/GridGraphs/GridGraphs/16x16/nodes.txt", "../Mapas-20200420/GridGraphs/GridGraphs/16x16/edges.txt");
+    parseMap(graph, "../Mapas-20200420/Porto/nodes_x_y_porto.txt", "../Mapas-20200420/Porto/edges_porto.txt");
+    parseMap(graph, "../Mapas-20200420/Maia/nodes_x_y_maia.txt", "../Mapas-20200420/Maia/edges_maia.txt");
+    //parseMap(graph, "../Mapas-20200420/Gondomar/nodes_x_y_gondomar.txt", "../Mapas-20200420/Gondomar/edges_gondomar.txt");
+    //parseMap(graph, "../Mapas-20200420/Ermesinde/nodes_x_y_ermesinde.txt", "../Mapas-20200420/Ermesinde/edges_ermesinde.txt");
+    //parseMap(graph, "../Mapas-20200420/Braga/nodes_x_y_braga.txt", "../Mapas-20200420/Braga/edges_braga.txt");
 
     GUI gui = GUI(graph, 1900, 1000);
 
