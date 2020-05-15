@@ -99,7 +99,6 @@ class Graph {
     double maxY;
     double minY;
 
-    Vertex<T>* findVertex(const T &info) const;
 public:
 	vector<Vertex<T> *> getVertexSet() const;
 	vector<POI<T>*> getPOIs() const;
@@ -122,6 +121,8 @@ public:
 
     void dijkstraShortestPath(const T &origin);
     vector<int> astarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
+
+    Vertex<T>* findVertex(const T &info) const;
 };
 
 /* ================================================================================================
@@ -353,9 +354,9 @@ void Graph<T>::dfsVisit(Vertex<T> *v, vector<T> & res) const {
     // DONE (7 lines)
     v->visited=true;
     res.push_back(v->info); //inserts the vertex
-    for(Edge<T> edge:v->adj){
-        if(!edge.dest->visited){
-            dfsVisit(edge.dest,res);
+    for(Edge<T> * edge:v->outgoing){
+        if(!edge->dest->visited){
+            dfsVisit(edge->dest,res);
         }
     }
 }
@@ -382,10 +383,10 @@ vector<T> Graph<T>::bfs(const T & source) const {
         vertex=aux.front();                 //Get Vertex
         aux.pop();                          //Pop from auxiliary queue
         res.push_back(vertex->info);        //Put into info vector
-        for(Edge<T> edges: vertex->adj){    //Search for Edges
-            if(!edges.dest->visited){       //If not previously visited
-                aux.push(edges.dest);       //Put into queue for posterior processing
-                edges.dest->visited=true;   //Mark as visited
+        for(Edge<T> * edges: vertex->outgoing){    //Search for Edges
+            if(!edges->dest->visited){       //If not previously visited
+                aux.push(edges->dest);       //Put into queue for posterior processing
+                edges->dest->visited=true;   //Mark as visited
             }
         }
     }

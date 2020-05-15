@@ -5,9 +5,20 @@
 
 #include "Parser.h"
 
-void parseMap(Graph<coord> &graph, const string &location) {
-    string node_file = "../Mapas/"+location+"/nodes_x_y_"+location+".txt";
-    parseTag(graph,location);
+void parseMap(Graph<coord> &graph, const string &location, bool grid) {
+
+    string node_file;
+    string edge_file;
+
+    if (grid) {
+        node_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/nodes.txt";
+        edge_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/edges.txt";
+    }
+    else {
+        node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
+        edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
+        parseTag(graph, location);
+    }
     string line;
 
     ifstream node;
@@ -42,7 +53,6 @@ void parseMap(Graph<coord> &graph, const string &location) {
     cout<<"Done Nodes\n";
     node.close();
 
-    string edge_file="../Mapas/"+location+"/edges_"+location+".txt";
     ifstream edge;
     edge.open(edge_file);
 
@@ -66,7 +76,8 @@ void parseMap(Graph<coord> &graph, const string &location) {
         double weight = euclidianDistance(graph.findVertex(o)->getInfo(),graph.findVertex(d)->getInfo());
         //cout<<weight<<endl;
         graph.addEdge(o, d, weight);
-        //graph.addEdge(d, o, weight);
+        if (grid)
+            graph.addEdge(d, o, weight);
     }
     cout<<"Done Edges\n";
     edge.close();

@@ -19,6 +19,6 @@ public:
     GUI(Graph<coord> &graph,int w,int h);
     void setGraph(Graph<coord> &graph);
     void show();
-    void showPath(vector<int> path);
+    void showPath(vector<coord> path);
 };
 #endif //ENTREGA_II_GUI_H

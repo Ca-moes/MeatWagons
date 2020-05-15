@@ -13,12 +13,13 @@ int main() {
     int num = 0;
 
     Graph<coord> graph;
-    //parseMap(graph, "../Mapas/GridGraphs/GridGraphs/16x16/nodes.txt", "../Mapas/GridGraphs/GridGraphs/16x16/edges.txt");
-    parseMap(graph, "porto");
-    //parseMap(graph, "maia");
-    //parseMap(graph, "../Mapas/gondomar/nodes_x_y_gondomar.txt", "../Mapas/gondomar/edges_gondomar.txt");
-    //parseMap(graph, "../Mapas/ermesinde/nodes_x_y_ermesinde.txt", "../Mapas/ermesinde/edges_ermesinde.txt");
-    //parseMap(graph, "../Mapas/braga/nodes_x_y_braga.txt", "../Mapas/braga/edges_braga.txt");
+    //parseMap(graph, "porto", false);
+    parseMap(graph, "16x16", true);
+    //parseMap(graph, "8x8", true);
+    //parseMap(graph, "4x4", true);
+    //parseMap(graph, "braga", false);
+    //parseMap(graph, "fafe", false);
+    //parseMap(graph, "maia", false);
 
     GUI gui = GUI(graph, 1900, 1000);
 
@@ -38,7 +39,9 @@ int main() {
                 showCurrentPrisoners(vec);
                 break;
             case 4:
-                gui.show();
+                //gui.show();
+                //gui.showPath(graph.bfs(coord(0.0,0.0)));
+                //gui.showPath(graph.dfs());
                 break;
             default:
                 break;
