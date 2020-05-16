@@ -12,6 +12,7 @@
 #include <cmath>
 #include <functional>
 #include "MutablePriorityQueue.h"
+#include "Path.h"
 
 using namespace std;
 
@@ -97,6 +98,8 @@ public:
     POI(string name,vector<int> id) ;
     string getName() const;
     vector<int> getIDs() const;
+
+    string toString() const;
 };
 
 
@@ -141,7 +144,9 @@ public:
     vector<int> bfs(const T & source) const;
 
     void dijkstraShortestPath(const T &origin);
-    vector<int> aStarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
+    Path aStarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearest(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearestNeighbourSearch(const int id_src, const int id_dest, vector<int> &POIs, Path &Path, function <double (pair<double, double>, pair<double, double>)> h);
 };
 
 /* ================================================================================================
@@ -256,6 +261,19 @@ template<class T>
 vector<int> POI<T>::getIDs() const {
     return this->id;
 }
+
+template<class T>
+string POI<T>::toString() const {
+    string line;
+
+    line=name+" ID's:";
+
+    for(auto i: id){
+        line+=" "+to_string(i)+";";
+    }
+    return line;
+}
+
 
 /* ================================================================================================
  * Class Graph
@@ -440,6 +458,7 @@ vector<int> Graph<T>::bfs(const T & source) const {
 
 template<class T>
 void Graph<T>::dijkstraShortestPath(const T &origin) {
+
     for(Vertex<T>* vertex: vertexSet){
         vertex->dist=INT_MAX;
         vertex->path=NULL;
@@ -468,7 +487,7 @@ void Graph<T>::dijkstraShortestPath(const T &origin) {
 //A-Star
 
 template<class T>
-vector<int> Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<double (pair<double, double>, pair<double, double>)> h) {
+Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<double (pair<double, double>, pair<double, double>)> h) {
     for (Vertex<T> *vert: vertexSet) {
         vert->dist = INT_MAX;
         vert->path = NULL;
@@ -506,20 +525,56 @@ vector<int> Graph<T>::aStarShortestPath(const int id_src, const int id_dest, fun
         }
     }
 
-    cout << iter << endl;
+    //cout << iter << endl;
 
     vector<int> path;
     path.push_back(dest->id);
     Vertex<T>* vertex = dest;
+    double length=0;
 
     while (vertex->path != NULL) {
+        length+= vertex->path->getCostTo(vertex->getID());
         vertex = vertex->path;
         path.emplace(path.begin(), vertex->id);
     }
 
-    cout << "Size: " << path.size() << endl;
+    cout << "Size: " << path.size() << " Length: "<<length<<" Begin: "<<path.front()<<" End: "<<path.back()<<endl;
 
+    return Path(length,path);
+}
+
+//Nearest Neighbour Search
+template<class T>
+Path Graph<T>::nearest(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h) {
+    Path path = Path(INT_MAX,vector<int>());
+
+    for(auto i: POIs){
+        cout<<"POI: "<<i<<endl;
+        Path newPath = aStarShortestPath(id_src,i,h);
+        if(newPath.getLength()<path.getLength()) {
+            path = newPath;
+            cout<<"Nearest POI is: "<<i<<endl;
+        }
+    }
     return path;
+}
+
+template<class T>
+Path Graph<T>::nearestNeighbourSearch(const int id_src, const int id_dest, vector<int> &POIs, Path &path, function<double(pair<double, double>, pair<double, double>)> h) {
+    cout<<"POI's left: "<<POIs.size()<<endl;
+    if(path.getPath().size()==0){
+        path.addNode(id_src);
+    }
+    if(POIs.empty()){
+        Path end = aStarShortestPath(path.getLastNode(),id_dest,h);
+        path.joinPath(end);
+        return path;
+    }
+    Path next=nearest(id_src,POIs,h);
+    path.joinPath(next);
+    POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
+
+    return nearestNeighbourSearch(path.getLastNode(),id_dest,POIs,path,h);
 }
 
 #endif /* GRAPH_H_ */

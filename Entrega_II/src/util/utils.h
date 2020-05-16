@@ -15,6 +15,7 @@ using namespace std;
 int chooseMenuOption(int maxOption);
 
 int readInt(string msg);
+string readString(string msg);
 
 double euclidianDistance(pair<double, double> point1, pair<double, double> point2);
 

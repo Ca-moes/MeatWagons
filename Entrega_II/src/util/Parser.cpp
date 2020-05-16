@@ -17,8 +17,9 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
     else {
         node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
         edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
-        parseTag(graph, location);
+
     }
+    parseTag(graph, location);
     string line;
 
     ifstream node;

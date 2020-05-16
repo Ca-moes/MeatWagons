@@ -11,11 +11,12 @@ int mainMenu() {
     cout << " 1 - Add Prisoner" << endl;
     cout << " 2 - Remove Prisoner" << endl;
     cout << " 3 - See Current Prisoners" << endl;
-    cout << " 4 - Finish Transportation" << endl;
+    cout << " 4 - See Current POI's" << endl;
+    cout << " 5 - Finish Transportation" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
 
-    return chooseMenuOption(4);
+    return chooseMenuOption(5);
 }
 
 void showCurrentPrisoners(vector<Prisoner*> vec) {
@@ -30,3 +31,5 @@ void showCurrentPrisoners(vector<Prisoner*> vec) {
     cout << "__________________________________________________\n" << endl;
     system("pause");
 }
+
+

@@ -28,7 +28,7 @@ void GUI::show() {
             gv->setVertexColor(vertex->getID(),"RED");
         }
         else{
-            gv->setVertexLabel(vertex->getID(), "");
+            gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
             gv->setVertexSize(vertex->getID(), 5);
         }
 
@@ -55,6 +55,7 @@ void GUI::show() {
 
 void GUI::showPath(vector<int> path) {
     gv->defineVertexColor("GRAY");
+    gv->defineVertexSize(5);
     gv->defineEdgeCurved(false);
     gv->createWindow(gv_w, gv_h);
 
@@ -64,20 +65,33 @@ void GUI::showPath(vector<int> path) {
         Vertex<coord>* a = graph.findVertex(path.at(i));
         Vertex<coord>* b = graph.findVertex(path.at(i+1));
 
+        cout<<"A: "<<a->getID()<<" B: "<<b->getID()<<endl;
+
         yPercent = 1.0 - ((a->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
         xPercent = (a->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
+        if(a->getTag()>0){
+            gv->setVertexLabel(i, graph.findPOI(a->getID())->getName());
+            gv->setVertexColor(i,"RED");
+            gv->setVertexSize(i, 15);
+        }
         gv->addNode(i, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
+
         //gv->setVertexLabel(i, to_string(a->getID()));
 
         yPercent = 1.0 - ((b->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
         xPercent = (b->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
+        if(b->getTag()>0){
+            gv->setVertexLabel(i+1, graph.findPOI(b->getID())->getName());
+            gv->setVertexColor(i+1,"RED");
+            gv->setVertexSize(i+1, 15);
+
+        }
         gv->addNode(i + 1, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
         //gv->setVertexLabel(i+1, to_string(b->getID()));
 
         gv->addEdge(i, i, i+1, EdgeType::UNDIRECTED);
         //gv->setEdgeLabel(i, to_string(a->getCostTo(b->getID())));
 
-        gv->setVertexSize(i, 5);
     }
 
     gv->setVertexColor(0, "RED");
@@ -89,8 +103,17 @@ void GUI::showPath(vector<int> path) {
 
     cout << "Press Enter to exit graph viewer." << endl;
     int character = getchar();
-    if (character == '\n')	// enter key is pressed
-        gv->closeWindow();
+    if (character == '\n') // enter key is pressed
+        clearPath(path);
     else
         cin.ignore(1000, '\n');
+}
+
+void GUI::clearPath(vector<int> path) {
+    for(int i=0;i<path.size();i++){
+        gv->removeEdge(i);
+        gv->removeNode(i);
+    }
+    gv->rearrange();
+    gv->closeWindow();
 }

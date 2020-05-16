@@ -78,6 +78,31 @@ int readInt(string msg) {
     return num;
 }
 
+string readString(string msg) {
+    string line;
+    bool error = false;
+    size_t t;
+    do
+    {
+        cout << msg;
+        getline(cin, line);
+
+        t = line.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ -\n"); //Ver se tem algum caracter inválido
+        if(t!=line.npos) error=true;
+        if (error)
+            cout << "Invalid Input. Can not have invalid characters." << endl;
+
+        if (!error && line.empty()) {
+            error = true;
+            cout << "Empty Input. " << endl;
+        }
+
+    } while (error);
+
+    return line;
+}
+
+
 double euclidianDistance(pair<double, double> point1, pair<double, double> point2) {
     return sqrt(pow((point1.first - point2.first), 2) + pow((point1.second - point2.second), 2));
 }
