@@ -39,14 +39,26 @@ class Vertex {
     Vertex(T info);
 
 	bool visited;  // for path finding
-    Edge<T>*path; // for path finding
+
+    // A-Star
+    double dist;
+    Vertex<T> * path;
 
 public:
+    int queueIndex;
+
 	int getID() const;
 	int getTag() const;
 	T getInfo() const;
 	vector<Edge<T> *> getAdj() const;
     double getCostTo(int dest_id) const;
+    double getDist() const;
+
+    bool operator<(const Vertex &v2) const;
+    bool operator>(const Vertex &v2) const;
+    bool operator<=(const Vertex &v2) const;
+    bool operator>=(const Vertex &v2) const;
+
 	friend class Graph<T>;
 };
 
@@ -71,11 +83,15 @@ public:
 	friend class Vertex<T>;
 };
 
+
+/* ================================================================================================
+ * Class POI
+ * ================================================================================================
+ */
 template <class T>
 class POI {
     string name;
     vector<int> id;
-
 
 public:
     POI(string name,vector<int> id) ;
@@ -99,30 +115,33 @@ class Graph {
     double maxY;
     double minY;
 
+    Vertex<T> * findVertex(const T &info) const;
+
+    void dfsVisit(Vertex<T> *v, vector<int> & res) const;
 public:
-	vector<Vertex<T> *> getVertexSet() const;
+	vector<Vertex<T>*> getVertexSet() const;
 	vector<POI<T>*> getPOIs() const;
-	Vertex<T> *addVertex(const T &id);
-    Vertex<T> *addVertex(const int & id, const T &info, const int &tag);
-	Edge<T> *addEdge(const int &sourc, const int &dest, double w);
-    Vertex<T>* findVertex(const int &id) const;
-    POI<T>* addPOI(const string &name, const vector<int> &ids);
-    POI<T>* findPOI(const string &name);
-    POI<T>* findPOI(const int &id);
+
+	Vertex<T> * addVertex (const T &id);
+    Vertex<T> * addVertex (const int & id, const T &info, const int &tag);
+    Vertex<T> * findVertex (const int &id) const;
+
+	Edge<T> * addEdge (const int &source, const int &dest, double w);
+
+    POI<T> * addPOI (const string &name, const vector<int> &ids);
+    POI<T> * findPOI (const string &name);
+    POI<T> * findPOI (const int &id);
 
     double getMaxX() {return this->maxX;}
     double getMinX() {return this->minX;}
     double getMaxY() {return this->maxY;}
     double getMinY() {return this->minY;}
 
-    vector<T>  dfs() const;
-    void dfsVisit(Vertex<T> *v, vector<T> & res) const;
-    vector<T> bfs(const T & source) const;
+    vector<int> dfs() const;
+    vector<int> bfs(const T & source) const;
 
     void dijkstraShortestPath(const T &origin);
-    vector<int> astarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
-
-    Vertex<T>* findVertex(const T &info) const;
+    vector<int> aStarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
 };
 
 /* ================================================================================================
@@ -174,6 +193,30 @@ int Vertex<T>::getTag() const {
     return tag;
 }
 
+template<class T>
+double Vertex<T>::getDist() const {
+    return this->dist;
+}
+
+template<class T>
+bool Vertex<T>::operator<(const Vertex &v2) const {
+    return this->dist < v2.dist;
+}
+
+template<class T>
+bool Vertex<T>::operator>(const Vertex &v2) const {
+    return v2 < *this;
+}
+
+template<class T>
+bool Vertex<T>::operator<=(const Vertex &v2) const {
+    return !(v2 < *this);
+}
+
+template<class T>
+bool Vertex<T>::operator>=(const Vertex &v2) const {
+    return !(*this < v2);
+}
 
 /* ================================================================================================
  * Class Edge
@@ -255,8 +298,8 @@ Vertex<T> *Graph<T>::addVertex(const int &id, const T &info, const int &tag) {
 }
 
 template<class T>
-Edge<T> * Graph<T>::addEdge(const int &sourc, const int &dest, double w) {
-    auto s = findVertex(sourc);
+Edge<T> * Graph<T>::addEdge(const int &source, const int &dest, double w) {
+    auto s = findVertex(source);
     auto d = findVertex(dest);
     if (s == nullptr || d == nullptr)
         return nullptr;
@@ -332,9 +375,9 @@ POI<T>* Graph<T>::findPOI(const int &id) {
  * Follows the algorithm described in theoretical classes.
  */
 template <class T>
-vector<T> Graph<T>::dfs() const {
+vector<int> Graph<T>::dfs() const {
     // DONE (7 lines)
-    vector<T> res;
+    vector<int> res;
     for(Vertex<T> *vertex:this->vertexSet){
         vertex->visited=false;
     }
@@ -350,10 +393,10 @@ vector<T> Graph<T>::dfs() const {
  * Updates a parameter with the list of visited node contents.
  */
 template <class T>
-void Graph<T>::dfsVisit(Vertex<T> *v, vector<T> & res) const {
+void Graph<T>::dfsVisit(Vertex<T> *v, vector<int> & res) const {
     // DONE (7 lines)
     v->visited=true;
-    res.push_back(v->info); //inserts the vertex
+    res.push_back(v->id); //inserts the vertex
     for(Edge<T> * edge:v->outgoing){
         if(!edge->dest->visited){
             dfsVisit(edge->dest,res);
@@ -369,11 +412,11 @@ void Graph<T>::dfsVisit(Vertex<T> *v, vector<T> & res) const {
  * Follows the algorithm described in theoretical classes.
  */
 template <class T>
-vector<T> Graph<T>::bfs(const T & source) const {
+vector<int> Graph<T>::bfs(const T & source) const {
     // DONE (22 lines)
     // HINT: Use the flag "visited" to mark newly discovered vertices .
     // HINT: Use the "queue<>" class to temporarily store the vertices.
-    vector<T> res; queue<Vertex<T>*> aux;
+    vector<int> res; queue<Vertex<T>*> aux;
     for(Vertex<T> *vertex:vertexSet){vertex->visited=false;} //no visited
     Vertex<T> *vertex= findVertex(source);  //Find Source Vertex
     aux.push(vertex);                       //Put in queue
@@ -382,7 +425,7 @@ vector<T> Graph<T>::bfs(const T & source) const {
     while(!aux.empty()){
         vertex=aux.front();                 //Get Vertex
         aux.pop();                          //Pop from auxiliary queue
-        res.push_back(vertex->info);        //Put into info vector
+        res.push_back(vertex->id);        //Put into info vector
         for(Edge<T> * edges: vertex->outgoing){    //Search for Edges
             if(!edges->dest->visited){       //If not previously visited
                 aux.push(edges->dest);       //Put into queue for posterior processing
@@ -425,10 +468,11 @@ void Graph<T>::dijkstraShortestPath(const T &origin) {
 //A-Star
 
 template<class T>
-vector<int> Graph<T>::astarShortestPath(const int id_src, const int id_dest, function<double (pair<double, double>, pair<double, double>)> h) {
+vector<int> Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<double (pair<double, double>, pair<double, double>)> h) {
     for (Vertex<T> *vert: vertexSet) {
         vert->dist = INT_MAX;
         vert->path = NULL;
+        vert->queueIndex = 0;
     }
 
     Vertex<T> *src = findVertex(id_src), *dest = findVertex(id_dest), *v;
@@ -447,7 +491,7 @@ vector<int> Graph<T>::astarShortestPath(const int id_src, const int id_dest, fun
         }
 
         for (Edge<T> *w : v->getAdj()){
-            double f = v->dist - h(v->getInfo(), dest->getInfo()) +  w->getCost() + h(w->dest->getInfo(), dest->getInfo());
+            double f = v->dist - h(v->getInfo(), dest->getInfo()) +  w->getWeight() + h(w->dest->getInfo(), dest->getInfo());
             if (w->dest->getDist() > f){
                 double d = w->dest->getDist();
                 w->dest->dist = f;
@@ -477,7 +521,5 @@ vector<int> Graph<T>::astarShortestPath(const int id_src, const int id_dest, fun
 
     return path;
 }
-
-
 
 #endif /* GRAPH_H_ */

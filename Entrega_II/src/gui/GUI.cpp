@@ -53,7 +53,7 @@ void GUI::show() {
         cin.ignore(1000, '\n');
 }
 
-void GUI::showPath(vector<coord> path) {
+void GUI::showPath(vector<int> path) {
     gv->defineVertexColor("GRAY");
     gv->defineEdgeCurved(false);
     gv->createWindow(gv_w, gv_h);

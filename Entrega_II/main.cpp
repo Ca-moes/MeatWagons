@@ -42,6 +42,7 @@ int main() {
                 //gui.show();
                 //gui.showPath(graph.bfs(coord(0.0,0.0)));
                 //gui.showPath(graph.dfs());
+                gui.showPath(graph.aStarShortestPath(0, 288, euclidianDistance));
                 break;
             default:
                 break;
