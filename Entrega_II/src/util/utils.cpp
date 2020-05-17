@@ -19,7 +19,7 @@ int chooseMenuOption(int maxOption) {
 int readInt(string msg) {
     string line;
     int num = 0;
-    bool error = false;
+    bool error;
 
     do
     {
@@ -80,10 +80,11 @@ int readInt(string msg) {
 
 string readString(string msg) {
     string line;
-    bool error = false;
+    bool error;
     size_t t;
     do
     {
+        error = false;
         cout << msg;
         getline(cin, line);
 

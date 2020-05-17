@@ -12,11 +12,13 @@ int mainMenu() {
     cout << " 2 - Remove Prisoner" << endl;
     cout << " 3 - See Current Prisoners" << endl;
     cout << " 4 - See Current POI's" << endl;
-    cout << " 5 - Finish Transportation" << endl;
+    cout << " 5 - Show Graph" << endl;
+    cout << " 6 - Show Best Path" << endl;
+    cout << " 7 - Show Best Path in Map" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
 
-    return chooseMenuOption(5);
+    return chooseMenuOption(7);
 }
 
 void showCurrentPrisoners(vector<Prisoner*> vec) {
@@ -29,7 +31,16 @@ void showCurrentPrisoners(vector<Prisoner*> vec) {
     else
         cout << "No prisoners to transport." << endl;
     cout << "__________________________________________________\n" << endl;
-    system("pause");
+}
+
+void removePrisoner(vector<Prisoner *> &vec) {
+    showCurrentPrisoners(vec);
+    cout << "0 - Exit\n\n";
+
+    int index = chooseMenuOption(vec.size());
+
+    if (index > 0)
+        vec.erase(vec.begin() + index - 1);
 }
 
 

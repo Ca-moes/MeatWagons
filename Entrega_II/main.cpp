@@ -10,10 +10,8 @@ using namespace std;
 int main() {
     vector<Prisoner*> vec;
     int op;
-    int num = 0;
 
     Graph<coord> graph;
-    //parseMap(graph, "porto", false);
     parseMap(graph, "16x16", true);
     //parseMap(graph, "8x8", true);
     //parseMap(graph, "4x4", true);
@@ -22,7 +20,12 @@ int main() {
     //parseMap(graph, "maia", false);
     Path path;
     vector<int> pois;
-    GUI gui = GUI(graph, 1900, 1000);
+    GUI fullMap = GUI(graph, 1900, 1000);
+    GUI pathGui = GUI(graph, 1900, 1000);
+
+    // Choose Origin
+    int originID = choosePlace(graph.getPOIs(), "ORIGIN"), newOrigin;
+    if (originID == 0) return 0;
 
     while ((op = mainMenu()) != 0) {
         switch (op) {
@@ -30,26 +33,35 @@ int main() {
                 addPrisoner(vec,graph);
                 break;
             case 2:
-                if (num > 0) {
-                    num--;
-                    vec.erase(vec.begin() + num);
-                }
+                removePrisoner(vec);
                 break;
             case 3:
                 showCurrentPrisoners(vec);
+                system("pause");
                 break;
             case 4:
                 showPOIs(graph.getPOIs());
                 system("pause");
                 break;
             case 5:
-                //gui.show();
-                //gui.showPath(graph.bfs(coord(0.0,0.0)));
-                //gui.showPath(graph.dfs());
-                //gui.showPath(graph.aStarShortestPath(0, 288, euclidianDistance).getPath());
+                fullMap.show();
+                //fullMap.showPath(graph.bfs(coord(0.0,0.0)));
+                //fullMap.showPath(graph.dfs());
+                //fullMap.showPath(graph.aStarShortestPath(0, 288, euclidianDistance).getPath());
+                break;
+            case 6:
                 path=Path();
-                pois= getPrisonersDestinies(vec);
-                gui.showPath(graph.nearestNeighbourSearch(0,288,pois,path,euclidianDistance).getPath());
+                pois = getPrisonersDestinies(vec);
+                pathGui.showPath(graph.nearestNeighbourSearch(originID, originID, pois, path, euclidianDistance).getPath());
+                break;
+            case 7:
+                path=Path();
+                pois = getPrisonersDestinies(vec);
+                pathGui.showPathInMap(graph.nearestNeighbourSearch(originID, originID, pois, path, euclidianDistance).getPath());
+                break;
+            case 8:
+                newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
+                if (newOrigin != 0) originID = newOrigin;
                 break;
             default:
                 break;

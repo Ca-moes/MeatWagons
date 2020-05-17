@@ -6,7 +6,7 @@ Esquadra
 64
 GNR
 1
-57
+192
 Quartel
 1
-78
+185

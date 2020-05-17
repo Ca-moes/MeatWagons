@@ -11,6 +11,7 @@
 #include <limits>
 #include <cmath>
 #include <functional>
+#include <unordered_map>
 #include "MutablePriorityQueue.h"
 #include "Path.h"
 
@@ -111,6 +112,7 @@ public:
 template <class T>
 class Graph {
 	vector<Vertex<T> *> vertexSet;
+	unordered_map<int, int> vertexMap;
     vector<POI<T>*> pois;
 
 	double maxX;
@@ -312,6 +314,7 @@ Vertex<T> *Graph<T>::addVertex(const int &id, const T &info, const int &tag) {
         else if (v->info.second < minY) minY = v->info.second;
     }
     vertexSet.push_back(v);
+    vertexMap.insert(make_pair(id, vertexSet.size() - 1));
     return v;
 }
 
@@ -327,10 +330,9 @@ Edge<T> * Graph<T>::addEdge(const int &source, const int &dest, double w) {
 
 template<class T>
 Vertex<T>* Graph<T>::findVertex(const int & id) const {
-    for (auto v : vertexSet)
-        if (v->id == id)
-            return v;
-    return nullptr;
+    auto i = vertexMap.find(id);
+    if (i == vertexMap.end()) return nullptr;
+    return vertexSet.at(i->second);
 }
 
 template<class T>

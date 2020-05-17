@@ -20,6 +20,7 @@ public:
     void setGraph(Graph<coord> &graph);
     void show();
     void showPath(vector<int> path);
+    void showPathInMap(vector<int> path);
     void clearPath(vector<int> path);
 };
 #endif //ENTREGA_II_GUI_H
