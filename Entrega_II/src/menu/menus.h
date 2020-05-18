@@ -16,6 +16,12 @@ using namespace std;
 
 int mainMenu();
 
+int prisonerMenu();
+
+int GraphMenu();
+
+int GraphOpsMenu();
+
 void showCurrentPrisoners(vector<Prisoner*> vec);
 
 void removePrisoner(vector<Prisoner*> &vec);

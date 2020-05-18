@@ -22,7 +22,7 @@ using namespace std;
 
 int main() {
     vector<Prisoner*> vec;
-    int op;
+    int op,op2;
 
     Graph<coord> graph;
     parseMap(graph, "16x16", true);
@@ -49,54 +49,75 @@ int main() {
     while ((op = mainMenu()) != 0) {
         switch (op) {
             case 1:
-                addPrisoner(vec,graph);
+                while((op2=prisonerMenu())!=0){
+                    switch(op2) {
+                        case 1:
+                            addPrisoner(vec,graph);
+                            break;
+                        case 2:
+                            removePrisoner(vec);
+                            break;
+                        case 3:
+                            showCurrentPrisoners(vec);
+                            system("pause");
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
             case 2:
-                removePrisoner(vec);
+                while((op2=GraphMenu())!=0){
+                    switch(op2) {
+                        case 1:
+                            showPOIs(graph.getPOIs());
+                            system("pause");
+                            break;
+                        case 2:
+                            fullMap.show();
+                            break;
+                        case 3:
+                            path=Path();
+                            pois = getPrisonersDestinies(vec);
+                            pathGui.showPath(graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance).getPath());
+                            break;
+                        case 4:
+                            path=Path();
+                            pois = getPrisonersDestinies(vec);
+                            pathGui.showPathInMap(graph.nearestNeighbourSearchALT(originID, originID, pois, path).getPath());
+                            break;
+                        case 5:
+                            newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
+                            if (newOrigin != 0) originID = newOrigin;
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
+
             case 3:
-                showCurrentPrisoners(vec);
-                system("pause");
-                break;
-            case 4:
-                showPOIs(graph.getPOIs());
-                system("pause");
-                break;
-            case 5:
-                fullMap.show();
-                //fullMap.showPath(graph.bfs(coord(0.0,0.0)));
-                //fullMap.showPath(graph.dfs());
-                //fullMap.showPath(graph.aStarShortestPath(0, 288, euclidianDistance).getPath());
-                break;
-            case 6:
-                path=Path();
-                pois = getPrisonersDestinies(vec);
-                pathGui.showPath(graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance).getPath());
-                break;
-            case 7:
-                path=Path();
-                pois = getPrisonersDestinies(vec);
-                //pathGui.showPathInMap(graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance).getPath());
-                pathGui.showPathInMap(graph.nearestNeighbourSearchALT(originID, originID, pois, path).getPath());
-                break;
-            case 8:
-                newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
-                if (newOrigin != 0) originID = newOrigin;
-                break;
-            case 9:
-                path = Path();
-                pois = getPrisonersDestinies(vec);
-                compareALTandAStar(graph, originID, pois, path);
-                break;
-            case 10:
-                path = Path();
-                pois = getPrisonersDestinies(vec);
-                compareALTandDijkstra(graph, originID, pois, path);
-                break;
-            case 11:
-                path = Path();
-                pois = getPrisonersDestinies(vec);
-                compareAStarandDijkstra(graph, originID, pois, path);
+                while((op2=GraphOpsMenu())!=0){
+                    switch(op2) {
+                        case 1:
+                            path = Path();
+                            pois = getPrisonersDestinies(vec);
+                            compareALTandAStar(graph, originID, pois, path);
+                            break;
+                        case 2:
+                            path = Path();
+                            pois = getPrisonersDestinies(vec);
+                            compareALTandDijkstra(graph, originID, pois, path);
+                            break;
+                        case 3:
+                            path = Path();
+                            pois = getPrisonersDestinies(vec);
+                            compareAStarandDijkstra(graph, originID, pois, path);
+                            break;
+                        default:
+                            break;
+                    }
+                }
                 break;
             default:
                 break;
