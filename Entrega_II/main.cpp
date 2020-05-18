@@ -84,6 +84,8 @@ int main() {
                 break;
             case 6:
                 path=Path();
+                // TODO adicionar a show path a cor do caminho
+                // TODO ciclo para cada veiculo e designa pois para cada grupo de prisioneiros
                 pois = getPrisonersDestinies(vec);
                 pathGui.showPath(graph.nearestNeighbourSearch(originID, originID, pois, path, euclidianDistance).getPath());
                 break;

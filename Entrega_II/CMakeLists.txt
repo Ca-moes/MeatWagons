@@ -10,4 +10,4 @@ include_directories(Mapas)
 
 add_executable(Entrega_II main.cpp src/graph/Graph.h src/menu/menus.cpp src/util/utils.cpp src/prison/Prisoner.cpp
         src/graphviewer/connection.cpp src/graphviewer/edgetype.h src/graphviewer/graphviewer.cpp
-        src/util/Parser.cpp src/gui/GUI.cpp src/graph/Path.h src/graph/Path.cpp)
+        src/util/Parser.cpp src/gui/GUI.cpp src/graph/Path.h src/graph/Path.cpp src/prison/Vehicles.h src/prison/Vehicle.cpp)
