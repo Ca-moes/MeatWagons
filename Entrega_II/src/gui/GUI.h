@@ -22,5 +22,6 @@ public:
     void showPath(vector<int> path);
     void showPathInMap(vector<int> path);
     void clearPath(vector<int> path);
+    void clearGraph();
 };
 #endif //ENTREGA_II_GUI_H

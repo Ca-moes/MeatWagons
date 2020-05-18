@@ -165,8 +165,9 @@ void GUI::showPathInMap(vector<int> path) {
 
     cout << "Press Enter to exit graph viewer." << endl;
     int character = getchar();
-    if (character == '\n') // enter key is pressed
-        clearPath(path);
+    if (character == '\n') { // enter key is pressed
+        clearGraph();
+    }
     else
         cin.ignore(1000, '\n');
 }
@@ -176,6 +177,21 @@ void GUI::clearPath(vector<int> path) {
         gv->removeEdge(i);
         gv->removeNode(i);
     }
-    gv->rearrange();
+    gv->closeWindow();
+}
+
+void GUI::clearGraph() {
+    int id =0;
+    for(auto v: graph.getVertexSet()){
+        for (auto e : v->getAdj()) {
+            gv->removeEdge(id);
+            id++;
+        }
+    }
+    id=0;
+    for(auto v: graph.getVertexSet()){
+        gv->removeNode(id);
+        id++;
+    }
     gv->closeWindow();
 }

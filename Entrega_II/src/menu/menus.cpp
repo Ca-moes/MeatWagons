@@ -17,10 +17,12 @@ int mainMenu() {
     cout << " 7 - Show Best Path in Map" << endl;
     cout << " 8 - Change Origin" << endl;
     cout << " 9 - Compare ALT with A-Star" << endl;
+    cout << " 10 - Compare ALT with Dijkstra" << endl;
+    cout << " 11 - Compare Dijkstra with A-Star" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
 
-    return chooseMenuOption(9);
+    return chooseMenuOption(11);
 }
 
 void showCurrentPrisoners(vector<Prisoner*> vec) {

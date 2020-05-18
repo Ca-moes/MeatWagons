@@ -1,5 +1,5 @@
 #include <iostream>
-#include <chrono>
+
 
 #include "menu/menus.h"
 #include "graph/Graph.h"
@@ -7,20 +7,6 @@
 #include "src/gui/GUI.h"
 
 using namespace std;
-
-void compareALTandAStar(Graph<coord> graph, const int id_src, vector<int> &POIs, Path &path) {
-    auto t1 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearch(id_src, id_src, POIs, path);
-    auto t2 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearch(id_src, id_src, POIs, path, euclidianDistance);
-    auto t3 = chrono::high_resolution_clock::now();
-
-    auto durationALT = std::chrono::duration_cast<std::chrono::nanoseconds>( t2 - t1 ).count();
-    auto durationAStar = std::chrono::duration_cast<std::chrono::nanoseconds>( t3 - t2 ).count();
-
-    cout << "Ran ALT Search in " << durationALT << " milliseconds" << endl;
-    cout << "Ran A-Star Search in " << durationAStar << " milliseconds" << endl;
-}
 
 /* NOTAS
  *
@@ -85,13 +71,13 @@ int main() {
             case 6:
                 path=Path();
                 pois = getPrisonersDestinies(vec);
-                pathGui.showPath(graph.nearestNeighbourSearch(originID, originID, pois, path, euclidianDistance).getPath());
+                pathGui.showPath(graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance).getPath());
                 break;
             case 7:
                 path=Path();
                 pois = getPrisonersDestinies(vec);
-                //pathGui.showPathInMap(graph.nearestNeighbourSearch(originID, originID, pois, path, euclidianDistance).getPath());
-                pathGui.showPathInMap(graph.nearestNeighbourSearch(originID, originID, pois, path).getPath());
+                //pathGui.showPathInMap(graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance).getPath());
+                pathGui.showPathInMap(graph.nearestNeighbourSearchALT(originID, originID, pois, path).getPath());
                 break;
             case 8:
                 newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
@@ -99,7 +85,18 @@ int main() {
                 break;
             case 9:
                 path = Path();
+                pois = getPrisonersDestinies(vec);
                 compareALTandAStar(graph, originID, pois, path);
+                break;
+            case 10:
+                path = Path();
+                pois = getPrisonersDestinies(vec);
+                compareALTandDijkstra(graph, originID, pois, path);
+                break;
+            case 11:
+                path = Path();
+                pois = getPrisonersDestinies(vec);
+                compareAStarandDijkstra(graph, originID, pois, path);
                 break;
             default:
                 break;

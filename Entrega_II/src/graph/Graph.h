@@ -155,12 +155,15 @@ public:
     vector<int> dfs() const;
     vector<int> bfs(const T & source) const;
 
+    Path dijkstraShortestPath(const int &origin, const int &destination);
     void dijkstraShortestPath(const T &origin);
     Path aStarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearest(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearest(const int id_src, const vector<int> &POIs);
-    Path nearestNeighbourSearch(const int id_src, const int id_dest, vector<int> &POIs, Path &Path, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearestNeighbourSearch(const int id_src, const int id_dest, vector<int> &POIs, Path &path);
+    Path nearestAStar(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearestATL(const int id_src, const vector<int> &POIs);
+    Path nearestDijkstra(const int id_src, const vector<int> &POIs);
+    Path nearestNeighbourSearchAStar(const int id_src, const int id_dest, vector<int> &POIs, Path &Path, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearestNeighbourSearchALT(const int id_src, const int id_dest, vector<int> &POIs, Path &path);
+    Path nearestNeighbourDijkstra(const int id_src, const int id_dest, vector<int> &POIs, Path &path);
     Path ALTShortestPath(int id_src, int id_dest);
 
     void preComputeLandmarks(vector<int> id_landmarks);
@@ -500,7 +503,47 @@ void Graph<T>::dijkstraShortestPath(const T &origin) {
             }
         }
     }
-    // DONE
+}
+
+template<class T>
+Path Graph<T>::dijkstraShortestPath(const int &origin, const int &destination) {
+
+    for(Vertex<T>* vertex: vertexSet){
+        vertex->dist=INT_MAX;
+        vertex->path=NULL;
+    }
+    Vertex<T> * og = findVertex(origin), *dest=findVertex(destination);
+    og->dist=0;
+    MutablePriorityQueue<Vertex<T>> dijkstratqueue;
+    dijkstratqueue.insert(og);
+    Vertex<T>* temp;
+    while(!dijkstratqueue.empty()){
+        temp=dijkstratqueue.extractMin();
+        for(Edge<T>* edge: temp->outgoing){
+            if(edge->dest->getDist()>temp->getDist()+edge->weight){
+                edge->dest->dist=temp->getDist()+edge->weight;
+                edge->dest->path=temp;
+                if(!dijkstratqueue.found(edge->dest))
+                    dijkstratqueue.insert(edge->dest);
+                else
+                    dijkstratqueue.decreaseKey(edge->dest);
+            }
+        }
+    }
+    vector<int> path;
+    path.push_back(dest->id);
+    Vertex<T>* vertex = dest;
+    double length=0;
+
+    while (vertex->path != NULL) {
+        length+= vertex->path->getCostTo(vertex->getID());
+        vertex = vertex->path;
+        path.emplace(path.begin(), vertex->id);
+    }
+
+    cout << "Size: " << path.size() << " Length: "<<length<<" Begin: "<<path.front()<<" End: "<<path.back()<<endl;
+
+    return Path(length,path);
 }
 
 //A-Star
@@ -564,7 +607,7 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
 
 //Nearest Neighbour Search
 template<class T>
-Path Graph<T>::nearest(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h) {
+Path Graph<T>::nearestAStar(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h) {
     Path path = Path(INT_MAX,vector<int>());
 
     for(auto i: POIs){
@@ -579,7 +622,7 @@ Path Graph<T>::nearest(const int id_src, const vector<int> &POIs, function <doub
 }
 
 template<class T>
-Path Graph<T>::nearest(const int id_src, const vector<int> &POIs) {
+Path Graph<T>::nearestATL(const int id_src, const vector<int> &POIs) {
     Path path = Path(INT_MAX,vector<int>());
 
     for(auto i: POIs){
@@ -594,7 +637,22 @@ Path Graph<T>::nearest(const int id_src, const vector<int> &POIs) {
 }
 
 template<class T>
-Path Graph<T>::nearestNeighbourSearch(const int id_src, const int id_dest, vector<int> &POIs, Path &path, function<double(pair<double, double>, pair<double, double>)> h) {
+Path Graph<T>::nearestDijkstra(const int id_src, const vector<int> &POIs) {
+    Path path = Path(INT_MAX,vector<int>());
+
+    for(auto i: POIs){
+        cout<<"POI: "<<i<<endl;
+        Path newPath = dijkstraShortestPath(id_src,i);
+        if(newPath.getLength()<path.getLength()) {
+            path = newPath;
+            cout<<"Nearest POI is: "<<i<<endl;
+        }
+    }
+    return path;
+}
+
+template<class T>
+Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, const int id_dest, vector<int> &POIs, Path &path, function<double(pair<double, double>, pair<double, double>)> h) {
     cout<<"POI's left: "<<POIs.size()<<endl;
     if(path.getPath().size()==0){
         path.addNode(id_src);
@@ -604,15 +662,15 @@ Path Graph<T>::nearestNeighbourSearch(const int id_src, const int id_dest, vecto
         path.joinPath(end);
         return path;
     }
-    Path next=nearest(id_src,POIs,h);
+    Path next= nearestAStar(id_src, POIs, h);
     path.joinPath(next);
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
-    return nearestNeighbourSearch(path.getLastNode(),id_dest,POIs,path,h);
+    return nearestNeighbourSearchAStar(path.getLastNode(), id_dest, POIs, path, h);
 }
 
 template <class T>
-Path Graph<T>::nearestNeighbourSearch(const int id_src, const int id_dest, vector<int> &POIs, Path &path) {
+Path Graph<T>::nearestNeighbourSearchALT(const int id_src, const int id_dest, vector<int> &POIs, Path &path) {
     cout<<"POI's left: "<<POIs.size()<<endl;
     if(path.getPath().size()==0){
         path.addNode(id_src);
@@ -622,11 +680,29 @@ Path Graph<T>::nearestNeighbourSearch(const int id_src, const int id_dest, vecto
         path.joinPath(end);
         return path;
     }
-    Path next=nearest(id_src,POIs);
+    Path next= nearestATL(id_src, POIs);
     path.joinPath(next);
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
-    return nearestNeighbourSearch(path.getLastNode(),id_dest,POIs,path);
+    return nearestNeighbourSearchALT(path.getLastNode(), id_dest, POIs, path);
+}
+
+template<class T>
+Path Graph<T>::nearestNeighbourDijkstra(const int id_src, const int id_dest, vector<int> &POIs, Path &path) {
+    cout<<"POI's left: "<<POIs.size()<<endl;
+    if(path.getPath().size()==0){
+        path.addNode(id_src);
+    }
+    if(POIs.empty()){
+        Path end = dijkstraShortestPath(path.getLastNode(),id_dest);
+        path.joinPath(end);
+        return path;
+    }
+    Path next= nearestDijkstra(id_src, POIs);
+    path.joinPath(next);
+    POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
+
+    return nearestNeighbourDijkstra(path.getLastNode(), id_dest, POIs, path);
 }
 
 template<class T>
@@ -766,5 +842,8 @@ template<class T>
 void Graph<T>::setHighways(vector<int> ids) {
     highways = ids;
 }
+
+
+
 
 #endif /* GRAPH_H_ */
