@@ -79,12 +79,16 @@ int main() {
                         case 3:
                             path=Path();
                             pois = getPrisonersDestinies(vec);
-                            pathGui.showPath(graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance).getPath());
+                            path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
+                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                            pathGui.showPath(path.getPath());
                             break;
                         case 4:
                             path=Path();
                             pois = getPrisonersDestinies(vec);
-                            pathGui.showPathInMap(graph.nearestNeighbourSearchALT(originID, originID, pois, path).getPath());
+                            path = graph.nearestNeighbourSearchALT(originID, originID, pois, path);
+                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                            pathGui.showPathInMap(path.getPath());
                             break;
                         case 5:
                             newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
@@ -100,19 +104,19 @@ int main() {
                 while((op2=GraphOpsMenu())!=0){
                     switch(op2) {
                         case 1:
-                            path = Path();
                             pois = getPrisonersDestinies(vec);
-                            compareALTandAStar(graph, originID, pois, path);
+                            compareALTandAStar(graph, originID, pois);
+                            system("pause");
                             break;
                         case 2:
-                            path = Path();
                             pois = getPrisonersDestinies(vec);
-                            compareALTandDijkstra(graph, originID, pois, path);
+                            compareALTandDijkstra(graph, originID, pois);
+                            system("pause");
                             break;
                         case 3:
-                            path = Path();
                             pois = getPrisonersDestinies(vec);
-                            compareAStarandDijkstra(graph, originID, pois, path);
+                            compareAStarandDijkstra(graph, originID, pois);
+                            system("pause");
                             break;
                         default:
                             break;

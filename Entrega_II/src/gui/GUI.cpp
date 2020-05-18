@@ -38,7 +38,7 @@ void GUI::show() {
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
         for (Edge<coord>* edge : vertex->getAdj()) {
             gv->addEdge(id, vertex->getID(), edge->getDest()->getID(), EdgeType::DIRECTED);
-            //gv->setEdgeLabel(id, to_string(edge->getWeight()));
+            gv->setEdgeLabel(id, to_string(edge->getWeight()));
             if (vertex->getTag() == 2 && edge->getDest()->getTag() == 2) {
                 gv->setEdgeColor(id, "BLUE");
                 gv->setEdgeThickness(id, 5);
@@ -86,7 +86,7 @@ void GUI::showPath(vector<int> path) {
 
         yPercent = 1.0 - ((b->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
         xPercent = (b->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
-        if(b->getTag()>0){
+        if(b->getTag()==1){
             gv->setVertexLabel(i+1, graph.findPOI(b->getID())->getName());
             gv->setVertexColor(i+1,"RED");
             gv->setVertexSize(i+1, 15);
@@ -155,7 +155,11 @@ void GUI::showPathInMap(vector<int> path) {
     if (path.size() == 1) path.push_back(path[0]);
 
     for (int i = 0; i < path.size() - 1; i++) {
-        gv->addEdge(id, graph.findVertex(path[i])->getID(), graph.findVertex(path[i+1])->getID(), EdgeType::DIRECTED);
+        Vertex<coord>* a = graph.findVertex(path.at(i));
+        Vertex<coord>* b = graph.findVertex(path.at(i+1));
+
+        gv->addEdge(id, a->getID(), b->getID(), EdgeType::DIRECTED);
+        gv->setEdgeLabel(id, to_string(a->getCostTo(b->getID())));
         gv->setEdgeColor(id, "ORANGE");
         gv->setEdgeThickness(id, 10);
         id++;
