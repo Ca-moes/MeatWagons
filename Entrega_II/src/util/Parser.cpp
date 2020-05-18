@@ -20,6 +20,7 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
 
     }
     parseTag(graph, location);
+    parseHighways(graph, location);
     string line;
 
     ifstream node;
@@ -43,6 +44,10 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         y=stod(temp);
         //cout<<id<<"\t"<<x<<"\t"<<y<<"\t"<<endl;
         tag=0;
+        for (auto idH : graph.getHighways()) {
+            if (idH == id)
+                tag = 2;
+        }
         for(auto p : graph.getPOIs()){
             for(auto id_poi : p->getIDs())
                 if(id_poi==id)
@@ -66,16 +71,16 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         stringstream ss(line);
         string temp;
         int o, d;
-
         getline(ss,temp,'(');
         getline(ss,temp,',');
         o=stoi(temp);
         getline(ss,temp,',');
         d=stoi(temp);
-        //cout<<o<<"\t"<<graph.findVertex(o)->getInfo().first<<"\t"<<graph.findVertex(o)->getInfo().second<<endl;
-        //cout<<d<<"\t"<<graph.findVertex(d)->getInfo().first<<"\t"<<graph.findVertex(d)->getInfo().second<<endl;
         double weight = euclidianDistance(graph.findVertex(o)->getInfo(),graph.findVertex(d)->getInfo());
-        //cout<<weight<<endl;
+        if (graph.findVertex(o)->getTag() == 2 && graph.findVertex(d)->getTag() == 2)
+            weight /= (120.0 * 1000 / 3600);
+        else
+            weight /= (50.0 * 1000 / 3600);
         graph.addEdge(o, d, weight);
         if (grid)
             graph.addEdge(d, o, weight);
@@ -107,6 +112,29 @@ void parseTag(Graph<coord> &graph, const string &location) {
         graph.addPOI(name,ids);
 
     }
+
+    cout<<"Done Tags\n";
+    tag.close();
+
+}
+
+void parseHighways(Graph<coord> &graph, const string &location) {
+    string tag_file = "../Mapas/Tags/highways_"+location+".txt";
+    string line;
+
+    ifstream tag;
+    tag.open(tag_file);
+    if (!tag.is_open()) { cout<<"Couldn't open tag file\n"; }
+
+    getline(tag, line);
+    int num_tags = stoi(line);
+    vector<int> ids;
+    for (int i = 0; i < num_tags; i++) {
+        getline(tag, line);
+        int id=stoi(line);
+        ids.push_back(id);
+    }
+    graph.setHighways(ids);
 
     cout<<"Done Tags\n";
     tag.close();

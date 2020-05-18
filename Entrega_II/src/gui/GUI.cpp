@@ -22,7 +22,7 @@ void GUI::show() {
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
 
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        if(vertex->getTag()>0){
+        if(vertex->getTag()==1){
             gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
             gv->setVertexSize(vertex->getID(), 15);
             gv->setVertexColor(vertex->getID(),"RED");
@@ -39,6 +39,10 @@ void GUI::show() {
         for (Edge<coord>* edge : vertex->getAdj()) {
             gv->addEdge(id, vertex->getID(), edge->getDest()->getID(), EdgeType::DIRECTED);
             //gv->setEdgeLabel(id, to_string(edge->getWeight()));
+            if (vertex->getTag() == 2 && edge->getDest()->getTag() == 2) {
+                gv->setEdgeColor(id, "BLUE");
+                gv->setEdgeThickness(id, 5);
+            }
             id++;
         }
     }
@@ -71,7 +75,7 @@ void GUI::showPath(vector<int> path) {
 
         yPercent = 1.0 - ((a->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
         xPercent = (a->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
-        if(a->getTag()>0){
+        if(a->getTag()==1){
             gv->setVertexLabel(i, graph.findPOI(a->getID())->getName());
             gv->setVertexColor(i,"RED");
             gv->setVertexSize(i, 15);
@@ -122,7 +126,7 @@ void GUI::showPathInMap(vector<int> path) {
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
 
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        if (vertex->getTag()>0) {
+        if (vertex->getTag()==1) {
             gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
             gv->setVertexSize(vertex->getID(), 15);
             gv->setVertexColor(vertex->getID(),"RED");

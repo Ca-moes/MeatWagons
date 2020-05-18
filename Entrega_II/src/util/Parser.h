@@ -15,4 +15,5 @@
 using namespace std;
 void parseMap(Graph<coord> &graph, const string &location, bool grid);
 void parseTag(Graph<coord> &graph,const string &tag_file);
+void parseHighways(Graph<coord> &graph,const string &tag_file);
 #endif //ENTREGA_II_PARSER_H
