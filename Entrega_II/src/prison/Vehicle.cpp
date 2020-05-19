@@ -54,11 +54,17 @@ void Vehicle::setPrisoners(const vector<Prisoner*> &prisoners) {
 Car::Car(int capacity) : Vehicle(capacity, 120, 90) {
 }
 
+Car::~Car() {}
+
 Bus::Bus(int capacity) : Vehicle(capacity, 100, 80) {
 }
+
+Bus::~Bus() {}
 
 ostream& operator<<(ostream& os, const Vehicle& dt)
 {
     os << dt.prisoners.size() << '/' << dt.capacity << " - " << dt.maxVelRoad << '/' << dt.maxVelHighWay;
     return os;
 }
+
+Vehicle::~Vehicle() {}

@@ -21,7 +21,7 @@ using namespace std;
  * */
 
 int main() {
-    vector<Prisoner*> vec;
+    vector<Prisoner*> prisonerVec;
     vector<Vehicle*> vehiclesVec;
 
     int op,op2;
@@ -54,13 +54,23 @@ int main() {
                 while((op2=prisonerMenu())!=0){
                     switch(op2) {
                         case 1:
-                            addPrisoner(vec,graph, vehiclesVec);
+                            addPrisoner(prisonerVec, graph, vehiclesVec);
                             break;
                         case 2:
-                            removePrisoner(vec);
+                            removePrisoner(prisonerVec);
                             break;
                         case 3:
-                            showCurrentPrisoners(vec);
+                            showCurrentPrisoners(prisonerVec);
+                            system("pause");
+                            break;
+                        case 4:
+                            addVehicle(vehiclesVec);
+                            break;
+                        case 5:
+                            removeVehicle(vehiclesVec);
+                            break;
+                        case 6:
+                            showCurrentVehicles(vehiclesVec);
                             system("pause");
                             break;
                         default:
@@ -80,14 +90,15 @@ int main() {
                             break;
                         case 3:
                             path=Path();
-                            pois = getPrisonersDestinies(vec);
+                            // TODO - em vez de getPrisonersDestinies(prisonerVec) -> pois tem de ficar com pois de 1 veiculo
+                            pois = getPrisonersDestinies(prisonerVec);
                             path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             pathGui.showPath(path.getPath());
                             break;
                         case 4:
                             path=Path();
-                            pois = getPrisonersDestinies(vec);
+                            pois = getPrisonersDestinies(prisonerVec);
                             path = graph.nearestNeighbourSearchALT(originID, originID, pois, path);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             pathGui.showPathInMap(path.getPath());
@@ -106,17 +117,17 @@ int main() {
                 while((op2=GraphOpsMenu())!=0){
                     switch(op2) {
                         case 1:
-                            pois = getPrisonersDestinies(vec);
+                            pois = getPrisonersDestinies(prisonerVec);
                             compareALTandAStar(graph, originID, pois);
                             system("pause");
                             break;
                         case 2:
-                            pois = getPrisonersDestinies(vec);
+                            pois = getPrisonersDestinies(prisonerVec);
                             compareALTandDijkstra(graph, originID, pois);
                             system("pause");
                             break;
                         case 3:
-                            pois = getPrisonersDestinies(vec);
+                            pois = getPrisonersDestinies(prisonerVec);
                             compareAStarandDijkstra(graph, originID, pois);
                             system("pause");
                             break;
@@ -132,4 +143,5 @@ int main() {
 
     return 0;
 }
+
 

@@ -31,6 +31,8 @@ void removePrisoner(vector<Prisoner*> &vec);
 
 Vehicle *addVehicle(vector<Vehicle *> &vector);
 
+void removeVehicle(vector<Vehicle *> vector);
+
 template <class T>
 void showPOIs(vector<POI<T>*> vec){
     cout<<"Point Of Interest (choose by ID)"<<endl;
@@ -73,6 +75,7 @@ void addPrisoner(vector<Prisoner*> &vec, Graph<T> graph, vector<Vehicle*>& vehic
             if (menuop2 != 0) {
                 Vehicle *vehicle = vehicles[menuop2 - 1];
                 vehicle->addPrisoner(prisoner);
+                cout << "Added Prisoner to existing Vehicle!" << endl;
             }
         }
 

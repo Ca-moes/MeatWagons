@@ -110,6 +110,10 @@ string readString(const string& msg) {
 
 bool allVehiclesFull(vector<Vehicle*>& vehicles){
     //TODO
+    for (int i = 0; i < vehicles.size(); ++i) {
+        if (!vehicles[i]->isAtMaxCapacity())
+            return false;
+    }
     return true;
 }
 

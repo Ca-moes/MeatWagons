@@ -20,6 +20,7 @@ private:
     vector<Prisoner*> prisoners;
 public:
     Vehicle(int capacity, int maxVelHighWay, int maxVelRoad);
+    virtual ~Vehicle();
 
     int getCapacity();
     void setCapacity(int capacity);
@@ -39,12 +40,14 @@ class Car : public Vehicle
 {
 public:
     Car(int capacity);
+    virtual ~Car();
 };
 
 class Bus : public Vehicle
 {
 public:
     Bus(int capacity);
+    virtual ~Bus();
 };
 
 #endif //ENTREGA_II_VEHICLES_H

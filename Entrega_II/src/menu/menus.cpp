@@ -8,7 +8,7 @@ int mainMenu() {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "MAIN MENU" << endl;
     cout << "__________________________________________________\n" << endl;
-    cout << " 1 - Prisoner Menu" << endl;
+    cout << " 1 - Prisoner/Vehicle Menu" << endl;
     cout << " 2 - Graph Visualization" << endl;
     cout << " 3 - Algorithm Comparison" << endl;
     cout << endl << " 0 - Exit" << endl;
@@ -24,9 +24,12 @@ int prisonerMenu() {
     cout << " 1 - Add Prisoner" << endl;
     cout << " 2 - Remove Prisoner" << endl;
     cout << " 3 - See Current Prisoners" << endl;
+    cout << " 4 - Add Vehicle" << endl;
+    cout << " 5 - Remove Vehicle" << endl;
+    cout << " 6 - Display Vehicles" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
-    return chooseMenuOption(3);
+    return chooseMenuOption(6);
 }
 
 int GraphMenu() {
@@ -80,6 +83,7 @@ void removePrisoner(vector<Prisoner *> &vec) {
 Vehicle *addVehicle(vector<Vehicle *> &vector) {
     cout << "Choose type of Vehicle:\n1 - Car\n2 - Bus" << endl;
     int menuop = chooseMenuOption(2);
+    while (menuop == 0) menuop = chooseMenuOption(2);
     if(menuop == 1) {
         cout << "Choose capacity (1 or 2)\n";
         int cap = chooseMenuOption(2);
@@ -105,9 +109,25 @@ Vehicle *addVehicle(vector<Vehicle *> &vector) {
     return nullptr;
 }
 
+void removeVehicle(vector<Vehicle *> vector) {
+    cout << "TODO" << endl;
+}
 void showCurrentVehicles(vector<Vehicle *> vector) {
-    cout << "------------------\nOption - used places/capacity - Speed on Roads/Speed on Highways" << endl;
-    for (int i = 0; i < vector.size(); ++i) {
-        cout << i + 1 << " - " << *vector[i] << endl;
+    cout << "__________________________________________________\n" << endl;
+    cout << setw(23) << right << "Vehicles" << endl;
+    cout << "__________________________________________________\n" << endl;
+    if (vector.empty())
+        cout << "No available Vehicles" << endl;
+    else {
+        cout << "ID - Type of Vehicle - used places/capacity - Speed on Roads/Speed on Highways" << endl;
+        for (int i = 0; i < vector.size(); ++i) {
+            string type = "";
+            if (dynamic_cast<Car*>(vector[i]) != nullptr)
+                type = "Car";
+            else
+                type = "Bus";
+            cout << " " << i + 1 << " - " << type << " - " << *vector[i] << endl;
+        }
     }
+    cout << "__________________________________________________\n" << endl;
 }
