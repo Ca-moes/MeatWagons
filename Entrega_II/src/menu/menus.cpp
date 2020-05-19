@@ -71,14 +71,27 @@ void showCurrentPrisoners(vector<Prisoner*> vec) {
     cout << "__________________________________________________\n" << endl;
 }
 
-void removePrisoner(vector<Prisoner *> &vec) {
+void removePrisoner(vector<Prisoner *> &vec, vector<Vehicle *> &vehiclesVec) {
     showCurrentPrisoners(vec);
     cout << "0 - Exit\n\n";
 
     int index = chooseMenuOption(vec.size());
 
-    if (index > 0)
+    if (index > 0){
+        Prisoner* prisoner = vec.at(index-1);
         vec.erase(vec.begin() + index - 1);
+        int indexx = 0;
+        for (int i = 0; i < vehiclesVec.size(); i++) {
+            auto it = std::find_if(vehiclesVec[i]->getPrisoners().begin(),
+                                   vehiclesVec[i]->getPrisoners().end(),
+                                   [&](auto p) { return p->getID() == prisoner->getID(); });
+            if (it != vehiclesVec[i]->getPrisoners().end()){
+                indexx = i;
+                break;
+            }
+        }
+        vehiclesVec.at(indexx)->removePrisoner(prisoner);
+    }
 }
 
 Vehicle *addVehicle(vector<Vehicle *> &vector) {
@@ -141,7 +154,7 @@ void showCurrentVehicles(vector<Vehicle *> vector) {
     cout << "__________________________________________________\n" << endl;
 }
 
-void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec){
+void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec) {
     if (vehiclesVec.size() > 1) {
         showCurrentPrisoners(prisonersVec);
         if (!prisonersVec.empty()) {
@@ -162,17 +175,18 @@ void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> 
                         cout << " " << i + 1 << " - " << type << " - " << *vehiclesVec[i] << endl;
                     else indexToReject = i + 1;
 
-                do {
-                    index2 = chooseMenuOption(vehiclesVec.size());
-                } while (index2 == indexToReject);
+                    do {
+                        index2 = chooseMenuOption(vehiclesVec.size());
+                    } while (index2 == indexToReject);
 
-                if (!vehiclesVec.at(indexToReject-1)->removePrisoner(prisoner))
-                    cout << "Erro a remover Prisioneiro" << endl;
-                vehiclesVec.at(index2-1)->addPrisoner(prisoner);
+                    if (!vehiclesVec.at(indexToReject - 1)->removePrisoner(prisoner))
+                        cout << "Erro a remover Prisioneiro" << endl;
+                    vehiclesVec.at(index2 - 1)->addPrisoner(prisoner);
 
-                cout << "Change made!" << endl;
-            }
-            cout << "0 - Exit\n\n";
-        } else cout << "No prisoners available" << endl;
-    } else cout << "No available Vehicles to switch to" << endl;
+                    cout << "Change made!" << endl;
+                }
+                cout << "0 - Exit\n\n";
+            } else cout << "No prisoners available" << endl;
+        } else cout << "No available Vehicles to switch to" << endl;
+    }
 }

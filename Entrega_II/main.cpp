@@ -57,7 +57,7 @@ int main() {
                             addPrisoner(prisonerVec, graph, vehiclesVec);
                             break;
                         case 2:
-                            removePrisoner(prisonerVec);
+                            removePrisoner(prisonerVec, vehiclesVec);
                             break;
                         case 3:
                             showCurrentPrisoners(prisonerVec);
@@ -95,12 +95,13 @@ int main() {
                             fullMap.show();
                             break;
                         case 3:
-                            path=Path();
-                            // TODO - em vez de getPrisonersDestinies(prisonerVec) -> pois tem de ficar com pois de 1 veiculo
-                            pois = getPrisonersDestinies(prisonerVec);
-                            path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
-                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            pathGui.showPath(path.getPath());
+                            for (auto & i : vehiclesVec) {
+                                path=Path();
+                                pois = getPrisonersDestinies(i->getPrisoners());
+                                path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
+                                cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                                pathGui.showPath(path.getPath());
+                            }
                             break;
                         case 4:
                             path=Path();

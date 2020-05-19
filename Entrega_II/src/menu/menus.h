@@ -27,7 +27,7 @@ void showCurrentPrisoners(vector<Prisoner*> vec);
 
 void showCurrentVehicles(vector<Vehicle *> vector);
 
-void removePrisoner(vector<Prisoner*> &vec);
+void removePrisoner(vector<Prisoner*> &vec, vector<Vehicle *> &vehiclesVec);
 
 Vehicle *addVehicle(vector<Vehicle *> &vector);
 
