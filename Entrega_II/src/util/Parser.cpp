@@ -20,7 +20,7 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
 
     }
     parseTag(graph, location);
-    parseHighways(graph, location);
+    //parseHighways(graph, location);
     string line;
 
     ifstream node;

@@ -24,18 +24,24 @@ int main() {
     vector<Prisoner*> vec;
     int op,op2;
 
-    Graph<coord> graph;
-    parseMap(graph, "16x16", true);
+    Graph<coord> graph_original;
+    //parseMap(graph, "16x16", true);
     //parseMap(graph, "8x8", true);
     //parseMap(graph, "4x4", true);
+    parseMap(graph_original, "porto", false);
     //parseMap(graph, "braga", false);
     //parseMap(graph, "fafe", false);
     //parseMap(graph, "maia", false);
 
     // Testar Conectividade e eliminar nodes nao necessarios
+    Graph<coord> graphconnected;
+    constructGraphByPath(graph_original,graphconnected,graph_original.dfs().getPath());
 
-    vector<int> landmarks = {0, 16, 272, 288};
-    graph.preComputeLandmarks(landmarks);
+    /*vector<int> landmarks = {0, 16, 272, 288};
+    graph.preComputeLandmarks(landmarks);*/
+    vector<Graph<coord>> graphVec = {graph_original,graphconnected};
+    //Choose Graph
+    Graph<coord> graph=chooseGraph(graphVec);
 
     Path path;
     vector<int> pois;
@@ -70,29 +76,45 @@ int main() {
                 while((op2=GraphMenu())!=0){
                     switch(op2) {
                         case 1:
-                            showPOIs(graph.getPOIs());
+                            graph=chooseGraph(graphVec);
                             system("pause");
                             break;
                         case 2:
-                            fullMap.show();
+                            showPOIs(graph.getPOIs());
+                            system("pause");
                             break;
                         case 3:
+                            fullMap.show();
+                            break;
+                        case 4:
                             path=Path();
                             pois = getPrisonersDestinies(vec);
                             path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             pathGui.showPath(path.getPath());
                             break;
-                        case 4:
+                        case 5:
                             path=Path();
                             pois = getPrisonersDestinies(vec);
                             path = graph.nearestNeighbourSearchALT(originID, originID, pois, path);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             pathGui.showPathInMap(path.getPath());
                             break;
-                        case 5:
+                        case 6:
                             newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
                             if (newOrigin != 0) originID = newOrigin;
+                            break;
+                        case 7:
+                            path=Path();
+                            path=graph.dfs();
+                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                            pathGui.showPath(path.getPath());
+                            break;
+                        case 8:
+                            path=Path();
+                            path=graph.bfs(originID);
+                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                            pathGui.showPath(path.getPath());
                             break;
                         default:
                             break;
@@ -116,6 +138,10 @@ int main() {
                         case 3:
                             pois = getPrisonersDestinies(vec);
                             compareAStarandDijkstra(graph, originID, pois);
+                            system("pause");
+                            break;
+                        case 4:
+                            compareDFSandBFS(graph, originID);
                             system("pause");
                             break;
                         default:

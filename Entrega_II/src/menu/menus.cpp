@@ -33,14 +33,17 @@ int GraphMenu() {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "GRAPH MENU" << endl;
     cout << "__________________________________________________\n" << endl;
-    cout << " 1 - Show Current POI'S" << endl;
-    cout << " 2 - Show Graph" << endl;
-    cout << " 3 - Show Best Path" << endl;
-    cout << " 4 - Show Best Path in Map" << endl;
-    cout << " 5 - Change Origin Point" << endl;
+    cout << " 1 - Change Type of Graph" << endl;
+    cout << " 2 - Show Current POI'S" << endl;
+    cout << " 3 - Show Graph" << endl;
+    cout << " 4 - Show Best Path" << endl;
+    cout << " 5 - Show Best Path in Map" << endl;
+    cout << " 6 - Change Origin Point" << endl;
+    cout << " 7 - Show Connectivity" << endl;
+    cout << " 8 - Show Connectivity from Origin" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
-    return chooseMenuOption(5);
+    return chooseMenuOption(8);
 }
 
 int GraphOpsMenu() {
@@ -50,9 +53,10 @@ int GraphOpsMenu() {
     cout << " 1 - Compare ALT with A-Star" << endl;
     cout << " 2 - Compare ALT with Dijkstra" << endl;
     cout << " 3 - Compare Dijkstra with A-Star" << endl;
+    cout << " 4 - Compare DFS and BFS" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
-    return chooseMenuOption(3);
+    return chooseMenuOption(4);
 }
 
 void showCurrentPrisoners(vector<Prisoner*> vec) {
@@ -75,6 +79,23 @@ void removePrisoner(vector<Prisoner *> &vec) {
 
     if (index > 0)
         vec.erase(vec.begin() + index - 1);
+}
+
+Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
+    cout << "__________________________________________________\n" << endl;
+    cout << setw(23) << right << "CHOOSE A GRAPH TO WORK ON" << endl;
+    cout << "__________________________________________________\n" << endl;
+    cout << " 1 - Original Graph" << endl;
+    cout << " 2 - Connected Graph" << endl;
+    cout << "\n0 - Exit" << endl;
+    cout << "__________________________________________________\n" << endl;
+
+    int graphnum = chooseMenuOption(2);
+
+    if(graphnum>0)
+        return graphVec.at(graphnum-1);
+
+    return graphVec.at(0);
 }
 
 

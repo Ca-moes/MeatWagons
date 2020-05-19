@@ -73,4 +73,6 @@ int choosePlace(vector<POI<T>*> POIs, string str) {
     return placeID;
 }
 
+Graph<coord> chooseGraph(vector<Graph<coord>> graphVec);
+
 #endif //ENTREGA_II_MENUS_H
