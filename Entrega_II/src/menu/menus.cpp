@@ -77,6 +77,37 @@ void removePrisoner(vector<Prisoner *> &vec) {
         vec.erase(vec.begin() + index - 1);
 }
 
+Vehicle *addVehicle(vector<Vehicle *> &vector) {
+    cout << "Choose type of Vehicle:\n1 - Car\n2 - Bus" << endl;
+    int menuop = chooseMenuOption(2);
+    if(menuop == 1) {
+        cout << "Choose capacity (1 or 2)\n";
+        int cap = chooseMenuOption(2);
+        if (cap != 0) {
+            Car *car = new Car(cap);
+            vector.push_back(car);
+            cout << "Vehicle created!\n";
+            return car;
+        }
 
+    }
+    else if (menuop == 2){
+        cout << "Choose capacity (1 to 10)\n";
+        int cap = chooseMenuOption(10);
+        if (cap != 0) {
+            Bus *bus = new Bus(cap);
+            vector.push_back(bus);
+            cout << "Vehicle created!\n";
+            return bus;
+        };
+    }
 
+    return nullptr;
+}
 
+void showCurrentVehicles(vector<Vehicle *> vector) {
+    cout << "------------------\nOption - used places/capacity - Speed on Roads/Speed on Highways" << endl;
+    for (int i = 0; i < vector.size(); ++i) {
+        cout << i + 1 << " - " << *vector[i] << endl;
+    }
+}

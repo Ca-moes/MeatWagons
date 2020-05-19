@@ -1,8 +1,8 @@
 #include <iostream>
+#include <prison/Vehicle.h>
 
 
 #include "menu/menus.h"
-#include "graph/Graph.h"
 #include "src/util/Parser.h"
 #include "src/gui/GUI.h"
 
@@ -22,6 +22,8 @@ using namespace std;
 
 int main() {
     vector<Prisoner*> vec;
+    vector<Vehicle*> vehiclesVec;
+
     int op,op2;
 
     Graph<coord> graph;
@@ -52,7 +54,7 @@ int main() {
                 while((op2=prisonerMenu())!=0){
                     switch(op2) {
                         case 1:
-                            addPrisoner(vec,graph);
+                            addPrisoner(vec,graph, vehiclesVec);
                             break;
                         case 2:
                             removePrisoner(vec);

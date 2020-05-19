@@ -11,6 +11,7 @@
 #include <cmath>
 #include <chrono>
 #include <vector>
+#include <prison/Vehicle.h>
 #include "graph/Graph.h"
 
 using namespace std;
@@ -20,6 +21,7 @@ int chooseMenuOption(int maxOption);
 int readInt(const string& msg);
 string readString(const string& msg);
 
+bool allVehiclesFull(vector<Vehicle*>& vehicles);
 double euclidianDistance(pair<double, double> point1, pair<double, double> point2);
 void compareALTandAStar(Graph<coord> graph, int id_src, const vector<int>& POIs);
 void compareALTandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs);
