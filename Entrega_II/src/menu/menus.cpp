@@ -27,9 +27,10 @@ int prisonerMenu() {
     cout << " 4 - Add Vehicle" << endl;
     cout << " 5 - Remove Vehicle" << endl;
     cout << " 6 - Display Vehicles" << endl;
+    cout << " 7 - Change Prisoner's Vehicle" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
-    return chooseMenuOption(6);
+    return chooseMenuOption(7);
 }
 
 int GraphMenu() {
@@ -109,25 +110,69 @@ Vehicle *addVehicle(vector<Vehicle *> &vector) {
     return nullptr;
 }
 
-void removeVehicle(vector<Vehicle *> vector) {
-    cout << "TODO" << endl;
+void removeVehicle(vector<Vehicle *> &vector) {
+    cout << "__________________________________________________\n" << endl;
+    cout << setw(23) << right << "Remove Vehicles" << endl;
+    cout << "__________________________________________________\n" << endl;
+    cout << "Only Vehicles with no Prisoners can be removed.\n" << endl;
+    showCurrentVehicles(vector);
+    int menuop2 = chooseMenuOption(vector.size());
+    if (menuop2 != 0) {
+        if (vector.at(menuop2-1)->getPrisoners().empty()){
+            vector.erase(vector.begin() + menuop2 - 1);
+            cout << "Removed successfully!" << endl;
+        } else {
+            cout << "Vehicle is not empty!" << endl;
+        }
+        system("pause");
+    }
+
 }
 void showCurrentVehicles(vector<Vehicle *> vector) {
-    cout << "__________________________________________________\n" << endl;
-    cout << setw(23) << right << "Vehicles" << endl;
-    cout << "__________________________________________________\n" << endl;
     if (vector.empty())
         cout << "No available Vehicles" << endl;
     else {
         cout << "ID - Type of Vehicle - used places/capacity - Speed on Roads/Speed on Highways" << endl;
         for (int i = 0; i < vector.size(); ++i) {
-            string type = "";
-            if (dynamic_cast<Car*>(vector[i]) != nullptr)
-                type = "Car";
-            else
-                type = "Bus";
+            string type = dynamic_cast<Car*>(vector[i]) != nullptr ? "Car" : "Bus";
             cout << " " << i + 1 << " - " << type << " - " << *vector[i] << endl;
         }
     }
     cout << "__________________________________________________\n" << endl;
+}
+
+void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec){
+    if (vehiclesVec.size() > 1) {
+        showCurrentPrisoners(prisonersVec);
+        if (!prisonersVec.empty()) {
+            int index = chooseMenuOption(prisonersVec.size()), indexToReject, index2;
+
+            if (index > 0) {
+                Prisoner *prisoner = prisonersVec.at(index - 1);
+                cout << "Change to which Vehicle?" << endl;
+                cout << "ID - Type of Vehicle - used places/capacity - Speed on Roads/Speed on Highways" << endl;
+                for (int i = 0; i < vehiclesVec.size(); i++) {
+                    string type = dynamic_cast<Car *>(vehiclesVec[i]) != nullptr ? "Car" : "Bus";
+
+                    auto it = std::find_if(vehiclesVec[i]->getPrisoners().begin(),
+                                           vehiclesVec[i]->getPrisoners().end(),
+                                           [&](auto p) { return p->getID() == prisoner->getID(); });
+
+                    if (it == vehiclesVec[i]->getPrisoners().end())
+                        cout << " " << i + 1 << " - " << type << " - " << *vehiclesVec[i] << endl;
+                    else indexToReject = i + 1;
+
+                do {
+                    index2 = chooseMenuOption(vehiclesVec.size());
+                } while (index2 == indexToReject);
+
+                if (!vehiclesVec.at(indexToReject-1)->removePrisoner(prisoner))
+                    cout << "Erro a remover Prisioneiro" << endl;
+                vehiclesVec.at(index2-1)->addPrisoner(prisoner);
+
+                cout << "Change made!" << endl;
+            }
+            cout << "0 - Exit\n\n";
+        } else cout << "No prisoners available" << endl;
+    } else cout << "No available Vehicles to switch to" << endl;
 }

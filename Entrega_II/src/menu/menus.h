@@ -31,7 +31,9 @@ void removePrisoner(vector<Prisoner*> &vec);
 
 Vehicle *addVehicle(vector<Vehicle *> &vector);
 
-void removeVehicle(vector<Vehicle *> vector);
+void removeVehicle(vector<Vehicle *> &vector);
+
+void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec);
 
 template <class T>
 void showPOIs(vector<POI<T>*> vec){

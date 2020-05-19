@@ -70,8 +70,14 @@ int main() {
                             removeVehicle(vehiclesVec);
                             break;
                         case 6:
+                            cout << "__________________________________________________\n" << endl;
+                            cout << setw(23) << right << "List of Vehicles" << endl;
+                            cout << "__________________________________________________\n" << endl;
                             showCurrentVehicles(vehiclesVec);
                             system("pause");
+                            break;
+                        case 7:
+                            changePrisonersVehicle(prisonerVec, vehiclesVec);
                             break;
                         default:
                             break;

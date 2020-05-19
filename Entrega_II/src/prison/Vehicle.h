@@ -32,6 +32,7 @@ public:
     void setPrisoners(const vector<Prisoner*> & prisoners);
 
     void addPrisoner(Prisoner *prisoner);
+    bool removePrisoner(Prisoner *prisoner);
     bool isAtMaxCapacity();
     friend ostream& operator<<(ostream& os, const Vehicle& dt);
 };

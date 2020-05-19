@@ -68,3 +68,16 @@ ostream& operator<<(ostream& os, const Vehicle& dt)
 }
 
 Vehicle::~Vehicle() {}
+
+bool Vehicle::removePrisoner(Prisoner *prisoner) {
+    int indexToErase = -1;
+    for (int i = 0; i < prisoners.size(); ++i) {
+     if (prisoners.at(i) == prisoner){
+         indexToErase = i;
+         break;
+     }
+    }
+    if (indexToErase == -1) return false;
+    prisoners.erase(prisoners.begin() + indexToErase);
+    return true;
+}
