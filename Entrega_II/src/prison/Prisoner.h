@@ -5,8 +5,10 @@
 #ifndef ENTREGA_II_PRISONER_H
 #define ENTREGA_II_PRISONER_H
 
+#include <iostream>
+#include <algorithm>
 #include <string>
-
+#include <vector>
 using namespace std;
 
 class Prisoner {
@@ -25,5 +27,6 @@ public:
     int getDest();
 };
 
+vector<int> getPrisonersDestinies(vector<Prisoner*> vec);
 
 #endif //ENTREGA_II_PRISONER_H

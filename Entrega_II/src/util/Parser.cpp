@@ -5,8 +5,22 @@
 
 #include "Parser.h"
 
-Graph<coord> parseMap(const string &node_file, const string &edge_file) {
-    Graph<coord> graph;
+void parseMap(Graph<coord> &graph, const string &location, bool grid) {
+
+    string node_file;
+    string edge_file;
+
+    if (grid) {
+        node_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/nodes.txt";
+        edge_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/edges.txt";
+    }
+    else {
+        node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
+        edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
+
+    }
+    parseTag(graph, location);
+    parseHighways(graph, location);
     string line;
 
     ifstream node;
@@ -20,7 +34,7 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         getline(node, line);
         stringstream ss(line);
         string temp;
-        int id; double x, y;
+        int id, tag; double x, y;
         getline(ss,temp,'(');
         getline(ss,temp,',');
         id=stoi(temp);
@@ -29,7 +43,17 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         getline(ss,temp,',');
         y=stod(temp);
         //cout<<id<<"\t"<<x<<"\t"<<y<<"\t"<<endl;
-        graph.addVertex(id,make_pair(x, y));
+        tag=0;
+        for (auto idH : graph.getHighways()) {
+            if (idH == id)
+                tag = 2;
+        }
+        for(auto p : graph.getPOIs()){
+            for(auto id_poi : p->getIDs())
+                if(id_poi==id)
+                    tag=1;
+        }
+        graph.addVertex(id,make_pair(x, y),tag);
 
     }
     cout<<"Done Nodes\n";
@@ -47,21 +71,72 @@ Graph<coord> parseMap(const string &node_file, const string &edge_file) {
         stringstream ss(line);
         string temp;
         int o, d;
-
         getline(ss,temp,'(');
         getline(ss,temp,',');
         o=stoi(temp);
         getline(ss,temp,',');
         d=stoi(temp);
-        //cout<<o<<"\t"<<graph.findVertex(o)->getInfo().first<<"\t"<<graph.findVertex(o)->getInfo().second<<endl;
-        //cout<<d<<"\t"<<graph.findVertex(d)->getInfo().first<<"\t"<<graph.findVertex(d)->getInfo().second<<endl;
         double weight = euclidianDistance(graph.findVertex(o)->getInfo(),graph.findVertex(d)->getInfo());
-        //cout<<weight<<endl;
+        if (graph.findVertex(o)->getTag() == 2 && graph.findVertex(d)->getTag() == 2)
+            weight /= (120.0 * 1000 / 3600);
+        else
+            weight /= (50.0 * 1000 / 3600);
         graph.addEdge(o, d, weight);
-        graph.addEdge(d, o, weight);
+        if (grid)
+            graph.addEdge(d, o, weight);
     }
     cout<<"Done Edges\n";
     edge.close();
+}
 
-    return graph;
+void parseTag(Graph<coord> &graph, const string &location) {
+    string tag_file = "../Mapas/Tags/tags_"+location+".txt";
+    string line;
+
+    ifstream tag;
+    tag.open(tag_file);
+    if (!tag.is_open()) { cout<<"Couldn't open tag file\n"; }
+
+    while(!tag.eof()){
+        getline(tag, line);
+        string name = line;
+        getline(tag, line);
+        int num_tags = stoi(line);
+        vector<int> ids;
+        for (int i = 0; i < num_tags; i++) {
+            getline(tag, line);
+            int id=stoi(line);
+            ids.push_back(id);
+
+        }
+        graph.addPOI(name,ids);
+
+    }
+
+    cout<<"Done Tags\n";
+    tag.close();
+
+}
+
+void parseHighways(Graph<coord> &graph, const string &location) {
+    string tag_file = "../Mapas/Tags/highways_"+location+".txt";
+    string line;
+
+    ifstream tag;
+    tag.open(tag_file);
+    if (!tag.is_open()) { cout<<"Couldn't open tag file\n"; }
+
+    getline(tag, line);
+    int num_tags = stoi(line);
+    vector<int> ids;
+    for (int i = 0; i < num_tags; i++) {
+        getline(tag, line);
+        int id=stoi(line);
+        ids.push_back(id);
+    }
+    graph.setHighways(ids);
+
+    cout<<"Done Tags\n";
+    tag.close();
+
 }
