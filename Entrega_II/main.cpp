@@ -34,23 +34,26 @@ int main() {
     //parseMap(graph, "maia", false);
 
     // Testar Conectividade e eliminar nodes nao necessarios
-    Graph<coord> graphconnected;
-    constructGraphByPath(graph_original,graphconnected,graph_original.dfs().getPath());
+    Graph<coord> graphconnecteddfs;
+    constructGraphByPath(graph_original,graphconnecteddfs,graph_original.dfs());
 
     /*vector<int> landmarks = {0, 16, 272, 288};
     graph.preComputeLandmarks(landmarks);*/
-    vector<Graph<coord>> graphVec = {graph_original,graphconnected};
+    vector<Graph<coord>> graphVec = {graph_original,graphconnecteddfs};
     //Choose Graph
     Graph<coord> graph=chooseGraph(graphVec);
 
     Path path;
     vector<int> pois;
+    vector<int> conect;
     GUI fullMap = GUI(graph, 1900, 1000);
     GUI pathGui = GUI(graph, 1900, 1000);
+    GUI dfsMap = GUI(graphconnecteddfs,1900,1000);
 
     // Choose Origin
     int originID = choosePlace(graph.getPOIs(), "ORIGIN"), newOrigin;
     if (originID == 0) return 0;
+
 
     while ((op = mainMenu()) != 0) {
         switch (op) {
@@ -105,16 +108,11 @@ int main() {
                             if (newOrigin != 0) originID = newOrigin;
                             break;
                         case 7:
-                            path=Path();
-                            path=graph.dfs();
-                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            pathGui.showPath(path.getPath());
+                            dfsMap.show();
                             break;
                         case 8:
-                            path=Path();
-                            path=graph.bfs(originID);
-                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            pathGui.showPath(path.getPath());
+                            conect=graph.bfs(originID);
+                            pathGui.showPath(conect);
                             break;
                         default:
                             break;

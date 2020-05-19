@@ -171,22 +171,16 @@ void compareDFSandBFS(Graph<coord> graph, const int id_src) {
     cout << "Ran BFS in " << durationBFS << " microseconds" << endl;
 }
 
-void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path){
-    Vertex<coord> *v,*dest;
-    for(int  i=0;i<path.size()-1;i++){
+void constructGraphByPath(const Graph<coord> graph, Graph<coord>& newgraph, vector<int> path){
+    Vertex<coord> *v;
+    for(int i=0;i< path.size();i++){
         v=graph.findVertex(path[i]);
-        dest=graph.findVertex(path[i+1]);
         newgraph.addVertex(v->getID(),v->getInfo(),v->getTag());
-        newgraph.addVertex(dest->getID(),dest->getInfo(),dest->getTag());
         for(auto edge: v->getAdj()){
-            if(edge->getDest()==dest){
-                newgraph.addEdge(v->getID(),dest->getID(),edge->getWeight());
-                break;
-            }
+            newgraph.addEdge(v->getID(),edge->getDest()->getID(),edge->getWeight());
         }
     }
     for(auto poi: graph.getPOIs()){
         newgraph.addPOI(poi);
     }
-
 }

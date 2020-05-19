@@ -124,7 +124,7 @@ class Graph {
 
     Vertex<T> * findVertex(const T &info) const;
 
-    void dfsVisit(Vertex<T> *v, vector<int> & res, double &length) const;
+    void dfsVisit(Vertex<T> *v, vector<int> & res) const;
 
     // ALT Algorithm
     unordered_map< Vertex<T>* , unordered_map< Vertex<T>* , double>> fromLandmark;
@@ -155,8 +155,8 @@ public:
 
     void reverseEdges();
 
-    Path dfs() const;
-    Path bfs(const int & source) const;
+    vector<int> dfs() const;
+    vector<int> bfs(const int & source) const;
 
     Path dijkstraShortestPath(const int &origin, const int &destination);
     void dijkstraShortestPath(const T &origin);
@@ -422,25 +422,18 @@ POI<T>* Graph<T>::findPOI(const int &id) {
  * Follows the algorithm described in theoretical classes.
  */
 template <class T>
-Path Graph<T>::dfs() const {
+vector<int> Graph<T>::dfs() const {
     // DONE (7 lines)
     vector<int> res;
-    Path path = Path();
-    double length=0;
 
     for(Vertex<T> *vertex:this->vertexSet){
         vertex->visited=false;
     }
     for(Vertex<T> *vertex1:this->vertexSet){
-        if(!vertex1->visited){
-            dfsVisit(vertex1,res,length);
-            path.joinPath(Path(length, res));
-        }
-        res.clear();
-        length=0;
-
+        if(!vertex1->visited)
+            dfsVisit(vertex1,res);
     }
-    return path;
+    return res;
 }
 
 /*
@@ -448,14 +441,13 @@ Path Graph<T>::dfs() const {
  * Updates a parameter with the list of visited node contents.
  */
 template <class T>
-void Graph<T>::dfsVisit(Vertex<T> *v, vector<int> & res, double &length) const {
+void Graph<T>::dfsVisit(Vertex<T> *v, vector<int> & res) const {
     // DONE (7 lines)
     v->visited=true;
     res.push_back(v->id); //inserts the vertex
     for(Edge<T> * edge:v->outgoing){
         if(!edge->dest->visited){
-            length+=v->getCostTo(edge->getDest()->getID());
-            dfsVisit(edge->dest,res,length);
+            dfsVisit(edge->dest,res);
         }
     }
 }
@@ -468,7 +460,7 @@ void Graph<T>::dfsVisit(Vertex<T> *v, vector<int> & res, double &length) const {
  * Follows the algorithm described in theoretical classes.
  */
 template <class T>
-Path Graph<T>::bfs(const int & source) const {
+vector<int> Graph<T>::bfs(const int & source) const {
     // DONE (22 lines)
     // HINT: Use the flag "visited" to mark newly discovered vertices .
     // HINT: Use the "queue<>" class to temporarily store the vertices.
@@ -477,7 +469,6 @@ Path Graph<T>::bfs(const int & source) const {
     Vertex<T> *vertex= findVertex(source);  //Find Source Vertex
     aux.push(vertex);                       //Put in queue
     vertex->visited=true;                   //Mark as visited
-    double length=0;
 
     while(!aux.empty()){
         vertex=aux.front();                 //Get Vertex
@@ -485,13 +476,12 @@ Path Graph<T>::bfs(const int & source) const {
         res.push_back(vertex->id);        //Put into info vector
         for(Edge<T> * edges: vertex->outgoing){    //Search for Edges
             if(!edges->dest->visited){       //If not previously visited
-                length+=vertex->getCostTo(edges->getDest()->getID());
                 aux.push(edges->dest);       //Put into queue for posterior processing
                 edges->dest->visited=true;   //Mark as visited
             }
         }
     }
-    return Path(length,res);
+    return res;
 }
 
 //Dijkstra
