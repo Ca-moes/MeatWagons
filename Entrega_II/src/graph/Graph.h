@@ -155,7 +155,7 @@ public:
 
     void reverseEdges();
 
-    vector<int> dfs() const;
+    vector<int> dfs(const int & source) const;
     vector<int> bfs(const int & source) const;
 
     Path dijkstraShortestPath(const int &origin, const int &destination);
@@ -432,17 +432,16 @@ POI<T>* Graph<T>::findPOI(const int &id) {
  * Follows the algorithm described in theoretical classes.
  */
 template <class T>
-vector<int> Graph<T>::dfs() const {
+vector<int> Graph<T>::dfs(const int & source) const {
     // DONE (7 lines)
     vector<int> res;
 
     for(Vertex<T> *vertex:this->vertexSet){
         vertex->visited=false;
     }
-    for(Vertex<T> *vertex1:this->vertexSet){
-        if(!vertex1->visited)
-            dfsVisit(vertex1,res);
-    }
+    Vertex<T>*vertex1 = findVertex(source);
+    dfsVisit(vertex1,res);
+
     return res;
 }
 
@@ -453,8 +452,11 @@ vector<int> Graph<T>::dfs() const {
 template <class T>
 void Graph<T>::dfsVisit(Vertex<T> *v, vector<int> & res) const {
     // DONE (7 lines)
-    v->visited=true;
-    res.push_back(v->id); //inserts the vertex
+    if(!v->visited){
+        v->visited=true;
+        res.push_back(v->id); //inserts the vertex
+    }
+
     for(Edge<T> * edge:v->outgoing){
         if(!edge->dest->visited){
             dfsVisit(edge->dest,res);

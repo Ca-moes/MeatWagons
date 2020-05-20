@@ -159,7 +159,7 @@ void compareAStarandDijkstra(Graph<coord> graph, const int id_src, const vector<
 void compareDFSandBFS(Graph<coord> graph, const int id_src) {
     Path path1, path2;
     auto t1 = chrono::high_resolution_clock::now();
-    graph.dfs();
+    graph.dfs(id_src);
     auto t2 = chrono::high_resolution_clock::now();
     graph.bfs(id_src);
     auto t3 = chrono::high_resolution_clock::now();
@@ -171,7 +171,7 @@ void compareDFSandBFS(Graph<coord> graph, const int id_src) {
     cout << "Ran BFS in " << durationBFS << " microseconds" << endl;
 }
 
-void constructGraphByPath(const Graph<coord> graph, Graph<coord>& newgraph, vector<int> path){
+void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path){
 
     Vertex<coord> * v1, *v2;
     for (int i = 0; i < path.size() - 1; i++) {

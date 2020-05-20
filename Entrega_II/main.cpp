@@ -24,24 +24,30 @@ int main() {
     vector<Prisoner*> vec;
     int op,op2;
 
-    Graph<coord> graph_original;
+    Graph<coord> full,strong;
+    parseMap(full, "porto_full", false);
+    parseMap(strong, "porto_strong", false);
+    vector<Graph<coord>> graphVec = {full, strong};
+    Graph<coord> graphSelect=chooseGraph(graphVec);;
     //parseMap(graph, "16x16", true);
-    //parseMap(graph_original, "8x8", true);
+    //parseMap(graphSelect, "8x8", true);
     //parseMap(graph, "4x4", true);
-    parseMap(graph_original, "porto", false);
+
     //parseMap(graph, "braga", false);
     //parseMap(graph, "fafe", false);
     //parseMap(graph, "maia", false);
 
     // Testar Conectividade e eliminar nodes nao necessarios
     Graph<coord> graphconnecteddfs;
-    constructGraphByPath(graph_original,graphconnecteddfs,graph_original.dfs());
+    constructGraphByPath(graphSelect, graphconnecteddfs, graphSelect.dfs(1));
+    Graph<coord> graphconnectedbfs;
+    constructGraphByPath(graphSelect, graphconnectedbfs, graphSelect.bfs(1));
 
     //vector<int> landmarks = {37213, 27053, 41814, 29229};
-    //graph_original.preComputeLandmarks(landmarks);
-    vector<Graph<coord>> graphVec = {graph_original,graphconnecteddfs};
+    //graphSelect.preComputeLandmarks(landmarks);
+
     //Choose Graph
-    Graph<coord> graph=chooseGraph(graphVec);
+    Graph<coord> graph=graphSelect;
 
     Path path;
     vector<int> pois;
@@ -49,9 +55,11 @@ int main() {
     cout << "Waiting";
     GUI fullMap = GUI(graph, 1900, 1000);
     cout << ".";
-    GUI pathGui = GUI(graph, 1900, 1000);
-    cout << ".";
+    //GUI pathGui = GUI(graph, 1900, 1000);
+    //cout << ".";
     GUI dfsMap = GUI(graphconnecteddfs,1900,1000);
+    cout << ".\n";
+    GUI bfsMap = GUI(graphconnectedbfs,1900,1000);
     cout << ".\n";
 
     // Choose Origin
@@ -98,14 +106,14 @@ int main() {
                             pois = getPrisonersDestinies(vec);
                             path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            pathGui.showPath(path.getPath());
+                            fullMap.showPath(path.getPath());
                             break;
                         case 5:
                             path=Path();
                             pois = getPrisonersDestinies(vec);
                             path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            pathGui.showPathInMap(path.getPath());
+                            fullMap.showPathInMap(path.getPath());
                             break;
                         case 6:
                             newOrigin = choosePlace(graph.getPOIs(), "ORIGIN", graph);
@@ -115,8 +123,7 @@ int main() {
                             dfsMap.show();
                             break;
                         case 8:
-                            conect=graph.bfs(originID);
-                            pathGui.showNodes(conect);
+                            bfsMap.show();
                             break;
                         default:
                             break;

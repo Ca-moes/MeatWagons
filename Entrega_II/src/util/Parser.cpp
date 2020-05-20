@@ -16,9 +16,9 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
     }
     else {
         //node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
-        node_file = "../Mapas/portomaps/porto_strong_nodes_xy.txt";
+        node_file = "../Mapas/portomaps/"+location+"_nodes_xy.txt";
         //edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
-        edge_file = "../Mapas/portomaps/porto_strong_edges.txt";
+        edge_file = "../Mapas/portomaps/"+location+"_edges.txt";
     }
 
     if (location == "16x16")

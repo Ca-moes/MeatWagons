@@ -6,17 +6,13 @@
 
 
 GUI::GUI(Graph<coord> &graph, int w, int h) : graph(graph), gv_w(w), gv_h(h) {
-    this->gv = new GraphViewer(w, h, false);
 }
 
 void GUI::setGraph(Graph<coord> &graph) { this->graph = graph; }
 
 void GUI::show() {
-    gv->createWindow(gv_w, gv_h);
-    gv->defineVertexColor("GRAY");
-    gv->defineEdgeCurved(false);
+    createGV();
     double yPercent, xPercent;
-
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
         yPercent = (vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
@@ -27,7 +23,7 @@ void GUI::show() {
             gv->setVertexColor(vertex->getID(),"RED");
         }
         else{
-            gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
+            gv->setVertexLabel(vertex->getID(),""/*to_string(vertex->getID())*/);
             gv->setVertexSize(vertex->getID(), 5);
         }
 
@@ -47,22 +43,12 @@ void GUI::show() {
     }
 
     gv->rearrange();
-
-    cout << "Press Enter to exit graph viewer." << endl;
-    int character = getchar();
-    if (character == '\n')	// enter key is pressed
-        gv->closeWindow();
-    else
-        cin.ignore(1000, '\n');
+    closeGV();
 }
 
 
 void GUI::showNodes(vector<int> ids) {
-    gv->defineVertexColor("GRAY");
-    gv->defineVertexSize(5);
-    gv->defineEdgeCurved(false);
-    gv->createWindow(gv_w, gv_h);
-
+    createGV();
     double yPercent, xPercent;
 
     for (int id : ids) {
@@ -76,7 +62,7 @@ void GUI::showNodes(vector<int> ids) {
             gv->setVertexColor(vertex->getID(),"RED");
         }
         else{
-            gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
+            gv->setVertexLabel(vertex->getID(),""/*to_string(vertex->getID())*/);
             gv->setVertexSize(vertex->getID(), 5);
         }
 
@@ -100,21 +86,12 @@ void GUI::showNodes(vector<int> ids) {
 
     gv->rearrange();
 
-    cout << "Press Enter to exit graph viewer." << endl;
-    int character = getchar();
-    if (character == '\n') // enter key is pressed
-        gv->closeWindow();
-    else
-        cin.ignore(1000, '\n');
+    closeGV();
 }
 
 void GUI::showPath(vector<int> path) {
     if (path.size() == 1) path.push_back(path[0]);
-
-    gv->defineVertexColor("GRAY");
-    gv->defineVertexSize(5);
-    gv->defineEdgeCurved(false);
-    gv->createWindow(gv_w, gv_h);
+    createGV();
 
     double yPercent, xPercent;
 
@@ -158,19 +135,11 @@ void GUI::showPath(vector<int> path) {
 
     gv->rearrange();
 
-    cout << "Press Enter to exit graph viewer." << endl;
-    int character = getchar();
-    if (character == '\n') // enter key is pressed
-        //clearPath(path);
-        gv->closeWindow();
-    else
-        cin.ignore(1000, '\n');
+    closeGV();
 }
 
 void GUI::showPathInMap(vector<int> path) {
-    gv->createWindow(gv_w, gv_h);
-    gv->defineVertexColor("GRAY");
-    gv->defineEdgeCurved(false);
+    createGV();
     double yPercent, xPercent;
 
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
@@ -217,19 +186,9 @@ void GUI::showPathInMap(vector<int> path) {
     }
 
     gv->rearrange();
+    closeGV();
 
-    cout << "Press Enter to exit graph viewer." << endl;
-    int character = getchar();
-    if (character == '\n') { // enter key is pressed
-        clearAllGraphNodes();
-        clearEdges(id);
-        gv->closeWindow();
-    }
-    else
-        cin.ignore(1000, '\n');
 }
-
-
 
 void GUI::clearPath(vector<int> path) {
     for(int i=0;i<path.size();i++){
@@ -264,3 +223,29 @@ void GUI::clearAllGraphNodes() {
     for(auto v: graph.getVertexSet())
         gv->removeNode(v->getID());
 }
+
+void GUI::deleteGV() {
+    if(gv!= nullptr){
+        gv->closeWindow();
+        delete(gv);
+    }
+}
+
+void GUI::createGV() {
+    this->gv = new GraphViewer(gv_w, gv_h, false);
+    gv->createWindow(gv_w, gv_h);
+    gv->defineVertexColor("GRAY");
+    gv->defineVertexSize(5);
+    gv->defineEdgeCurved(false);
+}
+
+void GUI::closeGV() {
+    cout << "Press Enter to exit graph viewer." << endl;
+    int character = getchar();
+    if (character == '\n') { // enter key is pressed
+        deleteGV();
+    }
+    else
+        cin.ignore(1000, '\n');
+}
+

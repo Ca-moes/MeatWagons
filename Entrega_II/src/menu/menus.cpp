@@ -86,8 +86,8 @@ Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
     cout << setw(23) << right << "CHOOSE A GRAPH TO WORK ON" << endl;
     cout << "__________________________________________________\n" << endl;
     cout << " 1 - Original Graph" << endl;
-    cout << " 2 - Connected Graph" << endl;
-    cout << "\n0 - Exit" << endl;
+    cout << " 2 - Strongly Connected Graph " << endl;
+    cout << "\n0 - Continue (Default Original)" << endl;
     cout << "__________________________________________________\n" << endl;
 
     int graphnum = chooseMenuOption(2);
