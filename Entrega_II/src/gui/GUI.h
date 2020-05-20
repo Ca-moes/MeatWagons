@@ -19,9 +19,17 @@ public:
     GUI(Graph<coord> &graph,int w,int h);
     void setGraph(Graph<coord> &graph);
     void show();
+    void showNodes(vector<int> ids);
     void showPath(vector<int> path);
     void showPathInMap(vector<int> path);
     void clearPath(vector<int> path);
     void clearGraph();
+    void createGV();
+    void closeGV();
+    void deleteGV();
+    void clearEdges(int numEdges);
+    void clearAllGraphNodes();
 };
+
+
 #endif //ENTREGA_II_GUI_H

@@ -24,27 +24,48 @@ int main() {
     vector<Prisoner*> vec;
     int op,op2;
 
-    Graph<coord> graph;
-    parseMap(graph, "16x16", true);
-    //parseMap(graph, "8x8", true);
+    Graph<coord> full,strong;
+    parseMap(full, "porto_full", false);
+    parseMap(strong, "porto_strong", false);
+    vector<Graph<coord>> graphVec = {full, strong};
+    Graph<coord> graphSelect=chooseGraph(graphVec);;
+    //parseMap(graph, "16x16", true);
+    //parseMap(graphSelect, "8x8", true);
     //parseMap(graph, "4x4", true);
+
     //parseMap(graph, "braga", false);
     //parseMap(graph, "fafe", false);
     //parseMap(graph, "maia", false);
 
     // Testar Conectividade e eliminar nodes nao necessarios
+    Graph<coord> graphconnecteddfs;
+    constructGraphByPath(graphSelect, graphconnecteddfs, graphSelect.dfs(1));
+    Graph<coord> graphconnectedbfs;
+    constructGraphByPath(graphSelect, graphconnectedbfs, graphSelect.bfs(1));
 
-    vector<int> landmarks = {0, 16, 272, 288};
-    graph.preComputeLandmarks(landmarks);
+    //vector<int> landmarks = {37213, 27053, 41814, 29229};
+    //graphSelect.preComputeLandmarks(landmarks);
+
+    //Choose Graph
+    Graph<coord> graph=graphSelect;
 
     Path path;
     vector<int> pois;
+    vector<int> conect;
+    cout << "Waiting";
     GUI fullMap = GUI(graph, 1900, 1000);
-    GUI pathGui = GUI(graph, 1900, 1000);
+    cout << ".";
+    //GUI pathGui = GUI(graph, 1900, 1000);
+    //cout << ".";
+    GUI dfsMap = GUI(graphconnecteddfs,1900,1000);
+    cout << ".\n";
+    GUI bfsMap = GUI(graphconnectedbfs,1900,1000);
+    cout << ".\n";
 
     // Choose Origin
-    int originID = choosePlace(graph.getPOIs(), "ORIGIN"), newOrigin;
+    int originID = choosePlace(graph.getPOIs(), "ORIGIN", graph), newOrigin;
     if (originID == 0) return 0;
+
 
     while ((op = mainMenu()) != 0) {
         switch (op) {
@@ -70,29 +91,39 @@ int main() {
                 while((op2=GraphMenu())!=0){
                     switch(op2) {
                         case 1:
-                            showPOIs(graph.getPOIs());
+                            graph=chooseGraph(graphVec);
                             system("pause");
                             break;
                         case 2:
-                            fullMap.show();
+                            showPOIs(graph.getPOIs());
+                            system("pause");
                             break;
                         case 3:
-                            path=Path();
-                            pois = getPrisonersDestinies(vec);
-                            path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
-                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            pathGui.showPath(path.getPath());
+                            fullMap.show();
                             break;
                         case 4:
                             path=Path();
                             pois = getPrisonersDestinies(vec);
-                            path = graph.nearestNeighbourSearchALT(originID, originID, pois, path);
+                            path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            pathGui.showPathInMap(path.getPath());
+                            fullMap.showPath(path.getPath());
                             break;
                         case 5:
-                            newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
+                            path=Path();
+                            pois = getPrisonersDestinies(vec);
+                            path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
+                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                            fullMap.showPathInMap(path.getPath());
+                            break;
+                        case 6:
+                            newOrigin = choosePlace(graph.getPOIs(), "ORIGIN", graph);
                             if (newOrigin != 0) originID = newOrigin;
+                            break;
+                        case 7:
+                            dfsMap.show();
+                            break;
+                        case 8:
+                            bfsMap.show();
                             break;
                         default:
                             break;
@@ -116,6 +147,10 @@ int main() {
                         case 3:
                             pois = getPrisonersDestinies(vec);
                             compareAStarandDijkstra(graph, originID, pois);
+                            system("pause");
+                            break;
+                        case 4:
+                            compareDFSandBFS(graph, originID);
                             system("pause");
                             break;
                         default:

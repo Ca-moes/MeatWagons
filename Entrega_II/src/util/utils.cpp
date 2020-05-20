@@ -155,3 +155,39 @@ void compareAStarandDijkstra(Graph<coord> graph, const int id_src, const vector<
     cout << "Ran AStar Search in " << durationAStar << " microseconds" << endl;
     cout << "Ran Dijkstra Search in " << durationDijkstra << " microseconds" << endl;
 }
+
+void compareDFSandBFS(Graph<coord> graph, const int id_src) {
+    Path path1, path2;
+    auto t1 = chrono::high_resolution_clock::now();
+    graph.dfs(id_src);
+    auto t2 = chrono::high_resolution_clock::now();
+    graph.bfs(id_src);
+    auto t3 = chrono::high_resolution_clock::now();
+
+    auto durationDFS = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+    auto durationBFS = std::chrono::duration_cast<std::chrono::microseconds>( t3 - t2 ).count();
+
+    cout << "Ran DFS in " << durationDFS << " microseconds" << endl;
+    cout << "Ran BFS in " << durationBFS << " microseconds" << endl;
+}
+
+void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path){
+
+    Vertex<coord> * v1, *v2;
+    for (int i = 0; i < path.size() - 1; i++) {
+        v1 = graph.findVertex(path[i]);
+        v2 = graph.findVertex(path[i+1]);
+        newgraph.addVertex(v1->getID(),v1->getInfo(),v1->getTag());
+        for(Edge<coord> * e : v1->getAdj()) {
+            if (e->getDest() == v2) {
+                newgraph.addVertex(v2->getID(),v2->getInfo(),v2->getTag());
+                newgraph.addEdge(v1->getID(), v2->getID(), e->getWeight());
+                break;
+            }
+        }
+    }
+
+    for(auto poi: graph.getPOIs()){
+        newgraph.addPOI(poi);
+    }
+}

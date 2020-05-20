@@ -15,12 +15,15 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         edge_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/edges.txt";
     }
     else {
-        node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
-        edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
-
+        //node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
+        node_file = "../Mapas/portomaps/"+location+"_nodes_xy.txt";
+        //edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
+        edge_file = "../Mapas/portomaps/"+location+"_edges.txt";
     }
-    parseTag(graph, location);
-    parseHighways(graph, location);
+
+    if (location == "16x16")
+        parseHighways(graph, location);
+
     string line;
 
     ifstream node;
@@ -87,6 +90,9 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
     }
     cout<<"Done Edges\n";
     edge.close();
+
+    if (!edge)
+        parseTag(graph, location);
 }
 
 void parseTag(Graph<coord> &graph, const string &location) {
