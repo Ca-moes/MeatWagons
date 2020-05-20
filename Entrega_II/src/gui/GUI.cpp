@@ -18,7 +18,7 @@ void GUI::show() {
     double yPercent, xPercent;
 
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
-        yPercent = 1.0 - ((vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
+        yPercent = (vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
         if(vertex->getTag()==1){
@@ -27,7 +27,7 @@ void GUI::show() {
             gv->setVertexColor(vertex->getID(),"RED");
         }
         else{
-            gv->setVertexLabel(vertex->getID(),""/*to_string(vertex->getID())*/);
+            gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
             gv->setVertexSize(vertex->getID(), 5);
         }
 
@@ -56,6 +56,58 @@ void GUI::show() {
         cin.ignore(1000, '\n');
 }
 
+
+void GUI::showNodes(vector<int> ids) {
+    gv->defineVertexColor("GRAY");
+    gv->defineVertexSize(5);
+    gv->defineEdgeCurved(false);
+    gv->createWindow(gv_w, gv_h);
+
+    double yPercent, xPercent;
+
+    for (int id : ids) {
+        Vertex<coord>* vertex = graph.findVertex(id);
+        yPercent = (vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;
+        xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
+        gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
+        if(vertex->getTag()==1){
+            gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
+            gv->setVertexSize(vertex->getID(), 15);
+            gv->setVertexColor(vertex->getID(),"RED");
+        }
+        else{
+            gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
+            gv->setVertexSize(vertex->getID(), 5);
+        }
+
+    }
+
+    int edgeId = 0;
+    for (int id : ids) {
+        Vertex<coord>* vertex = graph.findVertex(id);
+        for (Edge<coord>* edge : vertex->getAdj()) {
+            if (find(ids.begin(), ids.end(), edge->getDest()->getID()) != ids.end()) {
+                gv->addEdge(edgeId, vertex->getID(), edge->getDest()->getID(), EdgeType::DIRECTED);
+                gv->setEdgeLabel(edgeId, ""/*to_string(edge->getWeight())*/);
+                if (vertex->getTag() == 2 && edge->getDest()->getTag() == 2) {
+                    gv->setEdgeColor(edgeId, "BLUE");
+                    gv->setEdgeThickness(edgeId, 5);
+                }
+                edgeId++;
+            }
+        }
+    }
+
+    gv->rearrange();
+
+    cout << "Press Enter to exit graph viewer." << endl;
+    int character = getchar();
+    if (character == '\n') // enter key is pressed
+        gv->closeWindow();
+    else
+        cin.ignore(1000, '\n');
+}
+
 void GUI::showPath(vector<int> path) {
     if (path.size() == 1) path.push_back(path[0]);
 
@@ -72,7 +124,7 @@ void GUI::showPath(vector<int> path) {
 
         //cout<<"A: "<<a->getID()<<" B: "<<b->getID()<<endl;
 
-        yPercent = 1.0 - ((a->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
+        yPercent = (a->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;
         xPercent = (a->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
         if(a->getTag()==1){
             gv->setVertexLabel(i, graph.findPOI(a->getID())->getName());
@@ -81,9 +133,9 @@ void GUI::showPath(vector<int> path) {
         }
         gv->addNode(i, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
 
-        //gv->setVertexLabel(i, to_string(a->getID()));
+        gv->setVertexLabel(i, to_string(a->getID()));
 
-        yPercent = 1.0 - ((b->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
+        yPercent = (b->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;
         xPercent = (b->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
         if(b->getTag()==1){
             gv->setVertexLabel(i+1, graph.findPOI(b->getID())->getName());
@@ -92,7 +144,7 @@ void GUI::showPath(vector<int> path) {
 
         }
         gv->addNode(i + 1, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        //gv->setVertexLabel(i+1, to_string(b->getID()));
+        gv->setVertexLabel(i+1, to_string(b->getID()));
 
         gv->addEdge(i, i, i+1, EdgeType::DIRECTED);
         //gv->setEdgeLabel(i, to_string(a->getCostTo(b->getID())));
@@ -109,7 +161,8 @@ void GUI::showPath(vector<int> path) {
     cout << "Press Enter to exit graph viewer." << endl;
     int character = getchar();
     if (character == '\n') // enter key is pressed
-        clearPath(path);
+        //clearPath(path);
+        gv->closeWindow();
     else
         cin.ignore(1000, '\n');
 }
@@ -121,12 +174,12 @@ void GUI::showPathInMap(vector<int> path) {
     double yPercent, xPercent;
 
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
-        yPercent = 1.0 - ((vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
+        yPercent = (vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
 
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        if (vertex->getTag()==1) {
-            gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
+        if (vertex->getTag()==5) {
+            //gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
             gv->setVertexSize(vertex->getID(), 15);
             gv->setVertexColor(vertex->getID(),"RED");
             for (int id : path)
@@ -137,7 +190,7 @@ void GUI::showPathInMap(vector<int> path) {
                 gv->setVertexColor(vertex->getID(),"GREEN");
         }
         else{
-            gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
+            //gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
             gv->setVertexSize(vertex->getID(), 5);
         }
     }
@@ -152,13 +205,12 @@ void GUI::showPathInMap(vector<int> path) {
     }
 
     if (path.size() == 1) path.push_back(path[0]);
+    gv->setVertexColor(path[0], "GREEN");
+    gv->setVertexSize(path[0], 15);
 
     for (int i = 0; i < path.size() - 1; i++) {
-        Vertex<coord>* a = graph.findVertex(path.at(i));
-        Vertex<coord>* b = graph.findVertex(path.at(i+1));
-
-        gv->addEdge(id, a->getID(), b->getID(), EdgeType::DIRECTED);
-        gv->setEdgeLabel(id, to_string(a->getCostTo(b->getID())));
+        gv->addEdge(id, path[i], path[i+1], EdgeType::DIRECTED);
+        //gv->setEdgeLabel(id, to_string(a->getCostTo(b->getID())));
         gv->setEdgeColor(id, "ORANGE");
         gv->setEdgeThickness(id, 10);
         id++;
@@ -169,11 +221,15 @@ void GUI::showPathInMap(vector<int> path) {
     cout << "Press Enter to exit graph viewer." << endl;
     int character = getchar();
     if (character == '\n') { // enter key is pressed
-        clearGraph();
+        clearAllGraphNodes();
+        clearEdges(id);
+        gv->closeWindow();
     }
     else
         cin.ignore(1000, '\n');
 }
+
+
 
 void GUI::clearPath(vector<int> path) {
     for(int i=0;i<path.size();i++){
@@ -197,4 +253,14 @@ void GUI::clearGraph() {
         id++;
     }
     gv->closeWindow();
+}
+
+void GUI::clearEdges(int numEdges) {
+    for (int i = 0; i < numEdges; i++)
+        gv->removeEdge(i);
+}
+
+void GUI::clearAllGraphNodes() {
+    for(auto v: graph.getVertexSet())
+        gv->removeNode(v->getID());
 }

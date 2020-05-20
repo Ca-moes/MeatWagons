@@ -26,7 +26,7 @@ int main() {
 
     Graph<coord> graph_original;
     //parseMap(graph, "16x16", true);
-    //parseMap(graph, "8x8", true);
+    //parseMap(graph_original, "8x8", true);
     //parseMap(graph, "4x4", true);
     parseMap(graph_original, "porto", false);
     //parseMap(graph, "braga", false);
@@ -37,8 +37,8 @@ int main() {
     Graph<coord> graphconnecteddfs;
     constructGraphByPath(graph_original,graphconnecteddfs,graph_original.dfs());
 
-    /*vector<int> landmarks = {0, 16, 272, 288};
-    graph.preComputeLandmarks(landmarks);*/
+    //vector<int> landmarks = {37213, 27053, 41814, 29229};
+    //graph_original.preComputeLandmarks(landmarks);
     vector<Graph<coord>> graphVec = {graph_original,graphconnecteddfs};
     //Choose Graph
     Graph<coord> graph=chooseGraph(graphVec);
@@ -46,12 +46,16 @@ int main() {
     Path path;
     vector<int> pois;
     vector<int> conect;
+    cout << "Waiting";
     GUI fullMap = GUI(graph, 1900, 1000);
+    cout << ".";
     GUI pathGui = GUI(graph, 1900, 1000);
+    cout << ".";
     GUI dfsMap = GUI(graphconnecteddfs,1900,1000);
+    cout << ".\n";
 
     // Choose Origin
-    int originID = choosePlace(graph.getPOIs(), "ORIGIN"), newOrigin;
+    int originID = choosePlace(graph.getPOIs(), "ORIGIN", graph), newOrigin;
     if (originID == 0) return 0;
 
 
@@ -99,12 +103,12 @@ int main() {
                         case 5:
                             path=Path();
                             pois = getPrisonersDestinies(vec);
-                            path = graph.nearestNeighbourSearchALT(originID, originID, pois, path);
+                            path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
                             cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             pathGui.showPathInMap(path.getPath());
                             break;
                         case 6:
-                            newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
+                            newOrigin = choosePlace(graph.getPOIs(), "ORIGIN", graph);
                             if (newOrigin != 0) originID = newOrigin;
                             break;
                         case 7:
@@ -112,7 +116,7 @@ int main() {
                             break;
                         case 8:
                             conect=graph.bfs(originID);
-                            pathGui.showPath(conect);
+                            pathGui.showNodes(conect);
                             break;
                         default:
                             break;

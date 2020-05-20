@@ -56,6 +56,7 @@ public:
     vector<Edge<T> *> getIncoming() const;
     double getCostTo(int dest_id) const;
     double getDist() const;
+    void setTag(int tag);
 
     bool operator<(const Vertex &v2) const;
     bool operator>(const Vertex &v2) const;
@@ -139,7 +140,6 @@ public:
     void addVertex(Vertex<T> *vertex);
     Vertex<T> * addVertex (const int & id, const T &info, const int &tag);
     Vertex<T> * findVertex (const int &id) const;
-
 
 	Edge<T> * addEdge (const int &source, const int &dest, double w);
 
@@ -251,6 +251,11 @@ bool Vertex<T>::operator<=(const Vertex &v2) const {
 template<class T>
 bool Vertex<T>::operator>=(const Vertex &v2) const {
     return !(*this < v2);
+}
+
+template<class T>
+void Vertex<T>::setTag(int tag) {
+    this->tag = tag;
 }
 
 /* ================================================================================================
@@ -370,6 +375,7 @@ Vertex<T> *Graph<T>::findVertex(const T &info) const {
     return nullptr;
 }
 
+
 template<class T>
 vector<POI<T>*> Graph<T>::getPOIs() const{
     return pois;
@@ -383,12 +389,16 @@ POI<T>* Graph<T>::addPOI(const string &name, const vector<int> &ids) {
         return p;
     p = new POI<T>(name,ids);
     pois.push_back(p);
+    for (int id : ids)
+        findVertex(id)->setTag(5);
     return p;
 }
 
 template<class T>
 void Graph<T>::addPOI(POI<T>* poi) {
     pois.push_back(poi);
+    for (int id : poi->getIDs())
+        findVertex(id)->setTag(5);
 }
 
 template<class T>
@@ -598,6 +608,8 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
     }
 
     //cout << iter << endl;
+
+    cout << "iter: " << iter << endl;
 
     vector<int> path;
     path.push_back(dest->id);

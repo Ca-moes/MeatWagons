@@ -172,14 +172,21 @@ void compareDFSandBFS(Graph<coord> graph, const int id_src) {
 }
 
 void constructGraphByPath(const Graph<coord> graph, Graph<coord>& newgraph, vector<int> path){
-    Vertex<coord> *v;
-    for(int i=0;i< path.size();i++){
-        v=graph.findVertex(path[i]);
-        newgraph.addVertex(v->getID(),v->getInfo(),v->getTag());
-        for(auto edge: v->getAdj()){
-            newgraph.addEdge(v->getID(),edge->getDest()->getID(),edge->getWeight());
+
+    Vertex<coord> * v1, *v2;
+    for (int i = 0; i < path.size() - 1; i++) {
+        v1 = graph.findVertex(path[i]);
+        v2 = graph.findVertex(path[i+1]);
+        newgraph.addVertex(v1->getID(),v1->getInfo(),v1->getTag());
+        for(Edge<coord> * e : v1->getAdj()) {
+            if (e->getDest() == v2) {
+                newgraph.addVertex(v2->getID(),v2->getInfo(),v2->getTag());
+                newgraph.addEdge(v1->getID(), v2->getID(), e->getWeight());
+                break;
+            }
         }
     }
+
     for(auto poi: graph.getPOIs()){
         newgraph.addPOI(poi);
     }
