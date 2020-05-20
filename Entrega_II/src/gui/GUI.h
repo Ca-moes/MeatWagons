@@ -20,8 +20,11 @@ public:
     void setGraph(Graph<coord> &graph);
     void show();
     void showPath(vector<int> path);
+    void showPath2(vector<vector<int>> paths);
     void showPathInMap(vector<int> path);
     void clearPath(vector<int> path);
     void clearGraph();
+
+    void clearPaths(vector<vector<int>> vector);
 };
 #endif //ENTREGA_II_GUI_H

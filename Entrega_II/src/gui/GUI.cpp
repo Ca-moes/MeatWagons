@@ -59,7 +59,6 @@ void GUI::show() {
 
 void GUI::showPath(vector<int> path) {
     if (path.size() == 1) path.push_back(path[0]);
-
     gv->defineVertexColor("GRAY");
     gv->defineVertexSize(5);
     gv->defineEdgeCurved(false);
@@ -82,8 +81,6 @@ void GUI::showPath(vector<int> path) {
         }
         gv->addNode(i, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
 
-        //gv->setVertexLabel(i, to_string(a->getID()));
-
         yPercent = 1.0 - ((b->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
         xPercent = (b->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
         if(b->getTag()==1){
@@ -93,11 +90,8 @@ void GUI::showPath(vector<int> path) {
 
         }
         gv->addNode(i + 1, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        //gv->setVertexLabel(i+1, to_string(b->getID()));
 
         gv->addEdge(i, i, i+1, EdgeType::DIRECTED);
-        //gv->setEdgeLabel(i, to_string(a->getCostTo(b->getID())));
-
     }
 
     gv->setVertexColor(0, "RED");
@@ -114,6 +108,71 @@ void GUI::showPath(vector<int> path) {
     else
         cin.ignore(1000, '\n');
 }
+
+/*void GUI::showPath2(vector<vector<int>> paths) {
+    double yPercent, xPercent;
+    string color;
+
+    for (int j = 0; j < paths.size(); ++j) {
+        // Caso nó de destino e fim seja o mesmo
+        if (paths.size() == 1) paths.push_back(paths[0]);
+
+        int idverj = j + 1;
+        gv->createWindow(gv_w, gv_h);
+
+        // Para cada nó do path
+        for (int i = 0; i < paths[j].size() - 1; i++) {
+            gv->defineVertexColor("GRAY");
+            gv->defineVertexSize(5);
+            gv->defineEdgeCurved(false);
+
+            Vertex<coord>* a = graph.findVertex(paths[j].at(i));
+            Vertex<coord>* b = graph.findVertex(paths[j].at(i+1));
+
+            int idveri = i + 1; // para nodes ficarem com id's diferentes entre paths e não serem todos 0 na primeira iteração
+            cout<<"A: "<<a->getID()<<" B: "<<b->getID()<<endl;
+
+            yPercent = 1.0 - ((a->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
+            xPercent = (a->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
+            if(a->getTag()==1){
+                gv->setVertexLabel(idveri*idverj, graph.findPOI(a->getID())->getName());
+                gv->setVertexColor(idveri*idverj,"RED");
+                gv->setVertexSize(idveri*idverj, 15);
+            }
+            gv->addNode(idveri*idverj, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
+
+            yPercent = 1.0 - ((b->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05);
+            xPercent = (b->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
+            if(b->getTag()==1){
+                gv->setVertexLabel(idveri*idverj+1, graph.findPOI(b->getID())->getName());
+                gv->setVertexColor(idveri*idverj+1,"RED");
+                gv->setVertexSize(idveri*idverj+1, 15);
+
+            }
+            gv->addNode(idveri*idverj + 1, (int)(xPercent*gv_w), (int)(yPercent*gv_h));
+
+            gv->addEdge(idveri*idverj, idveri*idverj, idveri*idverj+1, EdgeType::DIRECTED);
+            if (idverj == 1) gv->setEdgeColor(i, "BLUE");
+            else if (idverj == 2) gv->setEdgeColor(i, "RED");
+            else if (idverj == 3) gv->setEdgeColor(i, "PINK");
+
+        }
+
+        gv->setVertexColor(idverj, "GREEN");
+        gv->setVertexSize(idverj, 15);
+        gv->setVertexColor(paths[j].size() * idverj, "RED");
+        gv->setVertexSize(paths[j].size() * idverj, 15);
+    }
+
+    gv->rearrange();
+
+    cout << "Press Enter to exit graph viewer." << endl;
+    int character = getchar();
+    if (character == '\n') // enter key is pressed
+        clearPaths(paths);
+    else
+        cin.ignore(1000, '\n');
+}*/
 
 void GUI::showPathInMap(vector<int> path) {
     gv->createWindow(gv_w, gv_h);
@@ -197,5 +256,19 @@ void GUI::clearGraph() {
         gv->removeNode(id);
         id++;
     }
+    gv->closeWindow();
+}
+
+void GUI::clearPaths(vector<vector<int>> paths) {
+    for (int j = 0; j < paths.size(); ++j) {
+        int idverj = j + 1;
+        for(int i=0;i<paths.at(j).size();i++){
+            int idveri = i + 1;
+
+            gv->removeEdge(idverj * idveri);
+            gv->removeNode(idverj * idveri);
+        }
+    }
+
     gv->closeWindow();
 }

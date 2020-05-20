@@ -41,6 +41,7 @@ int main() {
 
     Path path;
     vector<int> pois;
+    vector<vector<int>> pathsToDisplay;
     GUI fullMap = GUI(graph, 1900, 1000);
     GUI pathGui = GUI(graph, 1900, 1000);
 
@@ -95,13 +96,25 @@ int main() {
                             fullMap.show();
                             break;
                         case 3:
-                            for (auto & i : vehiclesVec) {
-                                path=Path();
+                            for (auto & i : vehiclesVec){
+                                path = Path();
                                 pois = getPrisonersDestinies(i->getPrisoners());
                                 path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
                                 cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                                pathsToDisplay.push_back(path.getPath());
                                 pathGui.showPath(path.getPath());
                             }
+
+                            /*else{
+                                for (auto & i : vehiclesVec) {
+                                    path=Path();
+                                    pois = getPrisonersDestinies(i->getPrisoners());
+                                    path = graph.nearestNeighbourSearchAStar(originID, originID, pois, path, euclidianDistance);
+                                    cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                                    pathsToDisplay.push_back(path.getPath());
+                                }
+                                pathGui.showPath2(pathsToDisplay);
+                            }*/
                             break;
                         case 4:
                             path=Path();
