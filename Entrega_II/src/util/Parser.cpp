@@ -24,6 +24,12 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
     if (location == "16x16")
         parseHighways(graph, location);
 
+    if (!grid) {
+        parseTag(graph, "Policia");
+        parseTag(graph, "Prisoes");
+        parseTag(graph, "Tribunais");
+    }
+
     string line;
 
     ifstream node;
@@ -52,9 +58,8 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
                 tag = 2;
         }
         for(auto p : graph.getPOIs()){
-            for(auto id_poi : p->getIDs())
-                if(id_poi==id)
-                    tag=1;
+            if(p->getID() == id)
+                tag=1;
         }
         graph.addVertex(id,make_pair(x, y),tag);
 
@@ -90,13 +95,10 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
     }
     cout<<"Done Edges\n";
     edge.close();
-
-    if (!edge)
-        parseTag(graph, location);
 }
 
 void parseTag(Graph<coord> &graph, const string &location) {
-    string tag_file = "../Mapas/Tags/tags_"+location+".txt";
+    string tag_file = "../Mapas/Tags/tags"+location+".txt";
     string line;
 
     ifstream tag;
@@ -107,16 +109,8 @@ void parseTag(Graph<coord> &graph, const string &location) {
         getline(tag, line);
         string name = line;
         getline(tag, line);
-        int num_tags = stoi(line);
-        vector<int> ids;
-        for (int i = 0; i < num_tags; i++) {
-            getline(tag, line);
-            int id=stoi(line);
-            ids.push_back(id);
-
-        }
-        graph.addPOI(name,ids);
-
+        int id = stoi(line);
+        graph.addPOI(name,id);
     }
 
     cout<<"Done Tags\n";

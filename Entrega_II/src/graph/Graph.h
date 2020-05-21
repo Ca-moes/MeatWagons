@@ -95,12 +95,12 @@ public:
 template <class T>
 class POI {
     string name;
-    vector<int> id;
+    int id;
 
 public:
-    POI(string name,vector<int> id) ;
+    POI(string name, int id) ;
     string getName() const;
-    vector<int> getIDs() const;
+    int getID() const;
 
     string toString() const;
 };
@@ -144,7 +144,7 @@ public:
 	Edge<T> * addEdge (const int &source, const int &dest, double w);
 
     void addPOI(POI<T>* poi);
-    POI<T> * addPOI (const string &name, const vector<int> &ids);
+    POI<T> * addPOI (const string &name, const int &id);
     POI<T> * findPOI (const string &name);
     POI<T> * findPOI (const int &id);
 
@@ -164,15 +164,13 @@ public:
     Path nearestAStar(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
     Path nearestATL(const int id_src, const vector<int> &POIs);
     Path nearestDijkstra(const int id_src, const vector<int> &POIs);
-    Path nearestNeighbourSearchAStar(const int id_src, const int id_dest, vector<int> &POIs, Path &Path, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearestNeighbourSearchALT(const int id_src, const int id_dest, vector<int> &POIs, Path &path);
-    Path nearestNeighbourDijkstra(const int id_src, const int id_dest, vector<int> &POIs, Path &path);
+    Path nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, Path &Path, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearestNeighbourSearchALT(const int id_src, vector<int> &POIs, Path &path);
+    Path nearestNeighbourDijkstra(const int id_src, vector<int> &POIs, Path &path);
     Path ALTShortestPath(int id_src, int id_dest);
 
     void preComputeLandmarks(vector<int> id_landmarks);
 };
-
-void setHighways(vector<int> ids);
 
 /* ================================================================================================
  * Class Vertex
@@ -282,7 +280,7 @@ Vertex<T>* Edge<T>::getDest() const {
  */
 
 template<class T>
-POI<T>::POI(string name, vector<int> id) {
+POI<T>::POI(string name, int id) {
     this->name=name;
     this->id=id;
 }
@@ -293,20 +291,13 @@ string POI<T>::getName() const {
 }
 
 template<class T>
-vector<int> POI<T>::getIDs() const {
+int POI<T>::getID() const {
     return this->id;
 }
 
 template<class T>
 string POI<T>::toString() const {
-    string line;
-
-    line=name+" ID's:";
-
-    for(auto i: id){
-        line+=" "+to_string(i)+";";
-    }
-    return line;
+    return name + " (" + to_string(id) + ")";
 }
 
 
@@ -383,22 +374,18 @@ vector<POI<T>*> Graph<T>::getPOIs() const{
 
 
 template<class T>
-POI<T>* Graph<T>::addPOI(const string &name, const vector<int> &ids) {
+POI<T>* Graph<T>::addPOI(const string &name, const int &id) {
     POI<T>* p = findPOI(name);
     if (p != nullptr)
         return p;
-    p = new POI<T>(name,ids);
+    p = new POI<T>(name,id);
     pois.push_back(p);
-    for (int id : ids)
-        findVertex(id)->setTag(5);
     return p;
 }
 
 template<class T>
 void Graph<T>::addPOI(POI<T>* poi) {
     pois.push_back(poi);
-    for (int id : poi->getIDs())
-        findVertex(id)->setTag(5);
 }
 
 template<class T>
@@ -413,9 +400,8 @@ POI<T>* Graph<T>::findPOI(const string &name) {
 template<class T>
 POI<T>* Graph<T>::findPOI(const int &id) {
     for(auto p: pois){
-        for(auto id_poi : p->getIDs())
-            if(id_poi==id)
-                return p;
+        if (p->getID() == id)
+            return p;
     }
     return nullptr;
 }
@@ -676,57 +662,51 @@ Path Graph<T>::nearestDijkstra(const int id_src, const vector<int> &POIs) {
 }
 
 template<class T>
-Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, const int id_dest, vector<int> &POIs, Path &path, function<double(pair<double, double>, pair<double, double>)> h) {
+Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, Path &path, function<double(pair<double, double>, pair<double, double>)> h) {
     //cout<<"POI's left: "<<POIs.size()<<endl;
     if(path.getPath().empty()){
         path.addNode(id_src);
     }
     if(POIs.empty()){
-        Path end = aStarShortestPath(path.getLastNode(),id_dest,h);
-        path.joinPath(end);
         return path;
     }
     Path next= nearestAStar(id_src, POIs, h);
     path.joinPath(next);
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
-    return nearestNeighbourSearchAStar(path.getLastNode(), id_dest, POIs, path, h);
+    return nearestNeighbourSearchAStar(path.getLastNode(), POIs, path, h);
 }
 
 template <class T>
-Path Graph<T>::nearestNeighbourSearchALT(const int id_src, const int id_dest, vector<int> &POIs, Path &path) {
+Path Graph<T>::nearestNeighbourSearchALT(const int id_src, vector<int> &POIs, Path &path) {
     //cout<<"POI's left: "<<POIs.size()<<endl;
     if(path.getPath().empty()){
         path.addNode(id_src);
     }
     if(POIs.empty()){
-        Path end = ALTShortestPath(path.getLastNode(),id_dest);
-        path.joinPath(end);
         return path;
     }
     Path next= nearestATL(id_src, POIs);
     path.joinPath(next);
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
-    return nearestNeighbourSearchALT(path.getLastNode(), id_dest, POIs, path);
+    return nearestNeighbourSearchALT(path.getLastNode(), POIs, path);
 }
 
 template<class T>
-Path Graph<T>::nearestNeighbourDijkstra(const int id_src, const int id_dest, vector<int> &POIs, Path &path) {
+Path Graph<T>::nearestNeighbourDijkstra(const int id_src, vector<int> &POIs, Path &path) {
     //cout<<"POI's left: "<<POIs.size()<<endl;
     if(path.getPath().empty()){
         path.addNode(id_src);
     }
     if(POIs.empty()){
-        Path end = dijkstraShortestPath(path.getLastNode(),id_dest);
-        path.joinPath(end);
         return path;
     }
     Path next= nearestDijkstra(id_src, POIs);
     path.joinPath(next);
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
-    return nearestNeighbourDijkstra(path.getLastNode(), id_dest, POIs, path);
+    return nearestNeighbourDijkstra(path.getLastNode(), POIs, path);
 }
 
 template<class T>

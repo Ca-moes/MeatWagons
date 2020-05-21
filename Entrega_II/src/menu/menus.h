@@ -107,7 +107,7 @@ int choosePlace(vector<POI<T>*> POIs, string str, const Graph<coord>& graph) {
         } while (graph.findVertex(placeID) == nullptr);
     }
     else if (placeID > 0)
-        placeID = POIs[placeID - 1]->getIDs()[0];
+        placeID = POIs[placeID - 1]->getID();
 
     return placeID;
 }

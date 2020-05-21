@@ -212,7 +212,7 @@ void GUI::showPathInMap(vector<int> path) {
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
 
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        if (vertex->getTag()==5) {
+        if (vertex->getTag()==1) {
             //gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
             gv->setVertexSize(vertex->getID(), 15);
             gv->setVertexColor(vertex->getID(),"RED");

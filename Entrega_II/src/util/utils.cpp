@@ -125,9 +125,9 @@ void compareALTandAStar(Graph<coord> graph, const int id_src, const vector<int>&
     Path path1, path2;
     vector<int> p1 = POIs, p2 = POIs;
     auto t1 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchALT(id_src, id_src, p1, path1);
+    graph.nearestNeighbourSearchALT(id_src, p1, path1);
     auto t2 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchAStar(id_src, id_src, p2, path2, euclidianDistance);
+    graph.nearestNeighbourSearchAStar(id_src, p2, path2, euclidianDistance);
     auto t3 = chrono::high_resolution_clock::now();
 
     auto durationALT = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
@@ -141,9 +141,9 @@ void compareALTandDijkstra(Graph<coord> graph, const int id_src, const vector<in
     Path path1, path2;
     vector<int> p1 = POIs, p2 = POIs;
     auto t1 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchALT(id_src, id_src, p1, path1);
+    graph.nearestNeighbourSearchALT(id_src, p1, path1);
     auto t2 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourDijkstra(id_src, id_src, p2, path2);
+    graph.nearestNeighbourDijkstra(id_src, p2, path2);
     auto t3 = chrono::high_resolution_clock::now();
 
     auto durationALT = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
@@ -157,9 +157,9 @@ void compareAStarandDijkstra(Graph<coord> graph, const int id_src, const vector<
     Path path1, path2;
     vector<int> p1 = POIs, p2 = POIs;
     auto t1 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchAStar(id_src, id_src, p1, path1, euclidianDistance);
+    graph.nearestNeighbourSearchAStar(id_src, p1, path1, euclidianDistance);
     auto t2 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourDijkstra(id_src, id_src, p2, path2);
+    graph.nearestNeighbourDijkstra(id_src, p2, path2);
     auto t3 = chrono::high_resolution_clock::now();
 
     auto durationAStar = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
