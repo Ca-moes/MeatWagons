@@ -6,12 +6,16 @@
 #define ENTREGA_II_PATH_H
 
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
-class Path{
+class Path {
     vector<int> path;
     double path_length;
+
+    // Map with POIs and the corresponding time to get to that node
+    unordered_map<int, double> POIs;
 
 public:
     Path();

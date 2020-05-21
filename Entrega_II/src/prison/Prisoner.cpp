@@ -29,7 +29,7 @@ int Prisoner::getDest() {
     return this->dest;
 }
 
-Time Prisoner::getDeliveryTime() {
+Time Prisoner::getDeliveryTime() const {
     return this->deliveryTime;
 }
 

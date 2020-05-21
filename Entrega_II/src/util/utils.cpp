@@ -204,3 +204,25 @@ void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vec
         newgraph.addPOI(poi);
     }
 }
+
+
+void sortPrisonersByDeliveryTime(vector<Prisoner*> &prisoners) {
+    sort(prisoners.begin(), prisoners.end(), [](const Prisoner* left, const Prisoner* right) {
+        return left->getDeliveryTime() < right->getDeliveryTime();
+    });
+}
+
+Time getDepartureTime(const unordered_map<int, double> &POIsTimes, const vector<Prisoner*> &prisoners) {
+    Time departureTime(prisoners[0]->getDeliveryTime() - POIsTimes.at(prisoners[0]->getDest()));
+    Time temp;
+
+    for (int i = 1; i < prisoners.size(); i++) {
+        temp = departureTime + POIsTimes.at(prisoners[i]->getDest());
+        if (temp < prisoners[i]->getDeliveryTime())
+            continue;
+        else
+            departureTime = departureTime - (temp - prisoners[i]->getDeliveryTime());
+    }
+
+    return departureTime;
+}

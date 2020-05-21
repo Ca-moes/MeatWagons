@@ -28,7 +28,7 @@ public:
     string getName();
     int getAge();
     int getDest();
-    Time getDeliveryTime();
+    Time getDeliveryTime() const;
 };
 
 vector<int> getPrisonersDestinies(vector<Prisoner*> vec);

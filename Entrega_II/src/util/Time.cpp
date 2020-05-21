@@ -50,9 +50,41 @@ Time Time::operator+(const Time &t) {
     return time;
 }
 
+Time Time::operator-(const Time &t) {
+    Time time;
+    if (this->second - t.second < 0) {
+        time.second = this->second + 60 - t.second;
+        time.minute = -1;
+    }
+    else time.second = this->second - t.second;
+
+    if (this->minute - t.minute < 0) {
+        time.minute += this->minute + 60 - t.minute;
+        time.hour = -1;
+    }
+    else time.minute += this->minute - t.minute;
+
+    if (this->hour - t.hour < 0) {
+        time.hour += this->hour + 24 - t.hour;
+    }
+    else time.hour += this->hour - t.hour;
+
+    return time;
+}
+
 string Time::toString() {
     stringstream ss;
     ss << setw(2) << setfill('0') << this->hour << ":" << setw(2) << setfill('0') << this->minute;
     return ss.str();
+}
+
+bool Time::operator<(const Time &t) {
+    if (hour < t.hour) return true;
+    else if (hour == t.hour) {
+        if (minute < t.minute) return true;
+        else if (minute == t.minute) return second < t.second;
+        else return false;
+    }
+    else return false;
 }
 

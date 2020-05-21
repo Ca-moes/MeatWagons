@@ -11,6 +11,7 @@
 #include <cmath>
 #include <chrono>
 #include <vector>
+#include <unordered_map>
 #include <prison/Vehicle.h>
 #include "graph/Graph.h"
 

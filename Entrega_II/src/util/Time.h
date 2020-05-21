@@ -25,6 +25,8 @@ public:
     void setTime(int hour, int minute, int second);
 
     Time operator+(const Time& t);
+    Time operator-(const Time& t);
+    bool operator<(const Time& t);
 
     string toString();
 };
