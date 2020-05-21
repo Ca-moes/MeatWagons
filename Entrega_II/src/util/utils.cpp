@@ -4,6 +4,11 @@
 
 #include "utils.h"
 
+/**
+ * Retorna um numero i : 0 <= i <= maxOption
+ * @param maxOption
+ * @return Número que leu em forma de _int_
+ */
 int chooseMenuOption(int maxOption) {
     int op;
 
@@ -103,6 +108,14 @@ string readString(const string& msg) {
     return line;
 }
 
+bool allVehiclesFull(vector<Vehicle*>& vehicles){
+    //TODO
+    for (int i = 0; i < vehicles.size(); ++i) {
+        if (!vehicles[i]->isAtMaxCapacity())
+            return false;
+    }
+    return true;
+}
 
 double euclidianDistance(pair<double, double> point1, pair<double, double> point2) {
     return sqrt(pow((point1.first - point2.first), 2) + pow((point1.second - point2.second), 2));
