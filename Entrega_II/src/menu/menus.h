@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <vector>
 #include <prison/Vehicle.h>
+#include <util/Time.h>
 #include "util/utils.h"
 #include "prison/Prisoner.h"
 #include "graph/Graph.h"
@@ -51,9 +52,24 @@ void addPrisoner(vector<Prisoner*> &vec, Graph<T> graph, vector<Vehicle*>& vehic
     cout << setw(23) << right << "PRISONER" << endl;
     cout << "__________________________________________________\n" << endl;
     name = readString("Name: ");
+    cout << "__________________________________________________\n" << endl;
     age = readInt("Age: ");
+    cout << "__________________________________________________\n" << endl;
+    cout << "Delivery Time" << endl;
+    int hour, minute;
+    Time deliveryTime;
+    do {
+        try {
+            hour = readInt("Hours:");
+            deliveryTime.setHour(hour);
+            minute = readInt("Minutes:");
+            deliveryTime.setMinute(minute);
+            break;
+        } catch (InvalidTime &e) { cout << e.what() << endl; }
+    } while (true);
+    cout << "__________________________________________________\n" << endl;
     destiny = choosePlace(graph.getPOIs(), "DESTINY", graph);
-    Prisoner *prisoner = new Prisoner(vec.size() + 1, name, age, destiny);
+    Prisoner *prisoner = new Prisoner(vec.size() + 1, name, age, destiny, deliveryTime);
     vec.push_back(prisoner);
     graph.addPOI("Node " + to_string(destiny), {destiny});
     cout << "__________________________________________________\n" << endl;

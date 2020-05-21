@@ -5,11 +5,12 @@
 
 #include "Prisoner.h"
 
-Prisoner::Prisoner(int id, string name, int age, int dest) {
+Prisoner::Prisoner(int id, string name, int age, int dest, Time deliveryTime) {
     this->id = id;
     this->name = name;
     this->age = age;
     this->dest = dest;
+    this->deliveryTime = deliveryTime;
 }
 
 int Prisoner::getID() {
@@ -26,6 +27,10 @@ int Prisoner::getAge() {
 
 int Prisoner::getDest() {
     return this->dest;
+}
+
+Time Prisoner::getDeliveryTime() {
+    return this->deliveryTime;
 }
 
 vector<int> getPrisonersDestinies(vector<Prisoner*> vec){

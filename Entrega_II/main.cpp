@@ -124,14 +124,14 @@ int main() {
                             path=Path();
                             pois = getPrisonersDestinies(prisonerVec);
                             path = graph.nearestNeighbourSearchAStar(originID, pois, path, euclidianDistance);
-                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                            cout << "Minimum Time: " << path.getLength() / 60 << "min" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             fullMap.showPath(path.getPath());
                             break;
                         case 5:
                             path=Path();
                             pois = getPrisonersDestinies(prisonerVec);
                             path = graph.nearestNeighbourSearchAStar(originID, pois, path, euclidianDistance);
-                            cout << "Minimum Time: " << path.getLength() << "s" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                            cout << "Minimum Time: " << path.getLength() / 60 << "min" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             fullMap.showPathInMap(path.getPath());
                             break;
                         case 6:

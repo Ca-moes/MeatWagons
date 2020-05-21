@@ -9,6 +9,8 @@
 #include <algorithm>
 #include <string>
 #include <vector>
+#include <util/Time.h>
+
 using namespace std;
 
 class Prisoner {
@@ -17,14 +19,16 @@ private:
     string name;
     int age;
     int dest;
+    Time deliveryTime;
 
 public:
-    Prisoner(int id, string name, int age, int dest);
+    Prisoner(int id, string name, int age, int dest, Time deliveryTime);
 
     int getID();
     string getName();
     int getAge();
     int getDest();
+    Time getDeliveryTime();
 };
 
 vector<int> getPrisonersDestinies(vector<Prisoner*> vec);
