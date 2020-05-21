@@ -52,7 +52,7 @@ void addPrisoner(vector<Prisoner*> &vec, Graph<T> graph, vector<Vehicle*>& vehic
     cout << "__________________________________________________\n" << endl;
     name = readString("Name: ");
     age = readInt("Age: ");
-    destiny = choosePlace(graph.getPOIs(), "DESTINY");
+    destiny = choosePlace(graph.getPOIs(), "DESTINY", graph);
     Prisoner *prisoner = new Prisoner(vec.size() + 1, name, age, destiny);
     vec.push_back(prisoner);
     graph.addPOI("Node " + to_string(destiny), {destiny});
