@@ -55,6 +55,7 @@ void addPrisoner(vector<Prisoner*> &vec, Graph<T> graph, vector<Vehicle*>& vehic
     destiny = choosePlace(graph.getPOIs(), "DESTINY");
     Prisoner *prisoner = new Prisoner(vec.size() + 1, name, age, destiny);
     vec.push_back(prisoner);
+    graph.addPOI("Node " + to_string(destiny), {destiny});
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "PRISONER CREATED" << endl;
     cout << "__________________________________________________\n" << endl;
@@ -85,9 +86,8 @@ void addPrisoner(vector<Prisoner*> &vec, Graph<T> graph, vector<Vehicle*>& vehic
     system("pause");
 }
 
-
 template <class T>
-int choosePlace(vector<POI<T>*> POIs, string str) {
+int choosePlace(vector<POI<T>*> POIs, string str, const Graph<coord>& graph) {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << str << endl;
     cout << "__________________________________________________\n" << endl;
@@ -95,15 +95,23 @@ int choosePlace(vector<POI<T>*> POIs, string str) {
     for (int i = 0; i < POIs.size(); i++) {
         cout << i + 1 << " - " << POIs[i]->getName() << endl;
     }
+    cout << "\n" << POIs.size() + 1 << " - Choose Node ID" << endl;
     cout << "\n0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
 
-    int placeID = chooseMenuOption(POIs.size());
+    int placeID = chooseMenuOption(POIs.size() + 1);
 
-    if (placeID > 0)
+    if (placeID == POIs.size() + 1) {
+        do {
+            placeID = readInt("ID number: ");
+        } while (graph.findVertex(placeID) == nullptr);
+    }
+    else if (placeID > 0)
         placeID = POIs[placeID - 1]->getIDs()[0];
 
     return placeID;
 }
+
+Graph<coord> chooseGraph(vector<Graph<coord>> graphVec);
 
 #endif //ENTREGA_II_MENUS_H

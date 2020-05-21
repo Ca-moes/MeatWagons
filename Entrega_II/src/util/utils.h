@@ -26,5 +26,8 @@ double euclidianDistance(pair<double, double> point1, pair<double, double> point
 void compareALTandAStar(Graph<coord> graph, int id_src, const vector<int>& POIs);
 void compareALTandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs);
 void compareAStarandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs);
+void compareDFSandBFS(Graph<coord> graph, const int id_src);
+
+void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path);
 
 #endif //ENTREGA_II_UTILS_H
