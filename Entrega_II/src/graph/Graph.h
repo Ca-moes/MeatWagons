@@ -670,8 +670,9 @@ Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, 
     if(POIs.empty()){
         return path;
     }
-    Path next= nearestAStar(id_src, POIs, h);
+    Path next = nearestAStar(id_src, POIs, h);
     path.joinPath(next);
+    path.addPOI(path.getLastNode(), Time(path.getLength()));
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
     return nearestNeighbourSearchAStar(path.getLastNode(), POIs, path, h);

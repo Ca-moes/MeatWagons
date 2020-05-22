@@ -18,6 +18,12 @@ Time::Time(int hour, int minute, int second) : Time(hour, minute) {
     setSecond(second);
 }
 
+Time::Time(double seconds) {
+    setSecond((int)seconds % 60);
+    setMinute((int)(seconds / 60) % 60);
+    setHour((this->minute / 60) % 24);
+}
+
 void Time::setHour(int hour) {
     if (hour < 0 || hour > 23)
         throw(InvalidTime("Invalid Hours! Hour must be between 0 and 23."));
@@ -72,9 +78,10 @@ Time Time::operator-(const Time &t) {
     return time;
 }
 
-string Time::toString() {
+string Time::toString(bool withSeconds) {
     stringstream ss;
     ss << setw(2) << setfill('0') << this->hour << ":" << setw(2) << setfill('0') << this->minute;
+    if (withSeconds) ss << ":" << setw(2) << setfill('0') << this->second;
     return ss.str();
 }
 

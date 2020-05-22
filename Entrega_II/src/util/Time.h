@@ -18,6 +18,7 @@ public:
     Time(int hour);
     Time(int hour, int minute);
     Time(int hour, int minute, int second);
+    Time(double seconds);
 
     void setHour(int hour);
     void setMinute(int minute);
@@ -28,7 +29,7 @@ public:
     Time operator-(const Time& t);
     bool operator<(const Time& t);
 
-    string toString();
+    string toString(bool withSeconds);
 };
 
 class InvalidTime : public exception {

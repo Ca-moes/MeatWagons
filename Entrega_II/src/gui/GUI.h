@@ -22,7 +22,7 @@ public:
     void showNodes(vector<int> ids);
     void showPath(vector<int> path);
     void showPath2(vector<vector<int>> paths);
-    void showPathInMap(vector<int> path);
+    void showPathInMap(Path shortestPath);
     void clearPath(vector<int> path);
     void clearGraph();
 

@@ -67,9 +67,10 @@ void showCurrentPrisoners(vector<Prisoner*> vec) {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "PRISONERS" << endl;
     cout << "__________________________________________________\n" << endl;
+    int i = 1;
     if (!vec.empty())
         for (Prisoner * p : vec)
-            cout << p->getID() << " - " << p->getName() << " | Delivery Time: " << p->getDeliveryTime().toString() << " | Destination Node Id: " << p->getDest() << endl;
+            cout << i++ << " - " << p->getName() << " (ID: " << p->getID() << ") | Delivery Time: " << p->getDeliveryTime().toString(false) << " | Destination Node Id: " << p->getDest() << endl;
     else
         cout << "No prisoners to transport." << endl;
     cout << "__________________________________________________\n" << endl;

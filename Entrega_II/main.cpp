@@ -8,18 +8,6 @@
 
 using namespace std;
 
-/* NOTAS
- *
- * A função de comparar não funciona decentemente porque o grafo é muito pequeno
- *
- * As landmarks que estão em baixo são uma coisa temporária. Aquela funcao preComputeLandmraks demora demasiado tempo
- * para a executarmos sempre que iniciamos o programa (com os grids nao, mas com mapas de portugal vai demorar), ou seja,
- * quando tivermos os mapas, corremos esta função uma vez e guardamos num ficheiro ou assim a informação.
- * As landmarks devem ser pontos escolhidos por exemplo nas extremidades do grafo, ou seja, quando tivermos os mapas a serio vamos
- * ter que encontrar pontos que possam funcionar como landmarks, executar a funcao com esses pontos, e guardar a informação para esse mapa
- *
- * */
-
 int main() {
     vector<Prisoner*> prisonerVec;
     vector<Vehicle*> vehiclesVec;
@@ -34,10 +22,6 @@ int main() {
     //parseMap(graph, "16x16", true);
     //parseMap(graphSelect, "8x8", true);
     //parseMap(graph, "4x4", true);
-
-    //parseMap(graph, "braga", false);
-    //parseMap(graph, "fafe", false);
-    //parseMap(graph, "maia", false);
 
     // Testar Conectividade e eliminar nodes nao necessarios
     Graph<coord> graphconnecteddfs;
@@ -82,6 +66,7 @@ int main() {
                             removePrisoner(prisonerVec, vehiclesVec);
                             break;
                         case 3:
+                            sortPrisonersByDeliveryTime(prisonerVec);
                             showCurrentPrisoners(prisonerVec);
                             system("pause");
                             break;
@@ -131,8 +116,10 @@ int main() {
                             path=Path();
                             pois = getPrisonersDestinies(prisonerVec);
                             path = graph.nearestNeighbourSearchAStar(originID, pois, path, euclidianDistance);
-                            cout << "Minimum Time: " << path.getLength() / 60 << "min" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            fullMap.showPathInMap(path.getPath());
+                            printPOIsTimeMap(path.getPOIsTimes());
+                            cout << "Departure Time: " << getDepartureTime(path.getPOIsTimes(), prisonerVec).toString(false) << endl;
+                            cout << "Nodes in Path: " << path.getPath().size() << endl;
+                            fullMap.showPathInMap(path);
                             break;
                         case 6:
                             newOrigin = choosePlace(graph.getPOIs(), "ORIGIN", graph);

@@ -212,7 +212,13 @@ void sortPrisonersByDeliveryTime(vector<Prisoner*> &prisoners) {
     });
 }
 
-Time getDepartureTime(const unordered_map<int, double> &POIsTimes, const vector<Prisoner*> &prisoners) {
+void printPOIsTimeMap(const unordered_map<int, Time> &pois) {
+    for (auto p : pois) {
+        cout << "ID: " << p.first << " | Time to get there: " << p.second.toString(true) << endl;
+    }
+}
+
+Time getDepartureTime(const unordered_map<int, Time> &POIsTimes, const vector<Prisoner*> &prisoners) {
     Time departureTime(prisoners[0]->getDeliveryTime() - POIsTimes.at(prisoners[0]->getDest()));
     Time temp;
 

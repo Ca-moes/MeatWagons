@@ -203,30 +203,19 @@ void GUI::showPath(vector<int> path) {
         cin.ignore(1000, '\n');
 }*/
 
-void GUI::showPathInMap(vector<int> path) {
+void GUI::showPathInMap(Path shortestPath) {
     createGV();
     double yPercent, xPercent;
+    vector<int> path = shortestPath.getPath();
 
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
         yPercent = (vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
 
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-        if (vertex->getTag()==1) {
-            //gv->setVertexLabel(vertex->getID(), graph.findPOI(vertex->getID())->getName());
-            gv->setVertexSize(vertex->getID(), 15);
-            gv->setVertexColor(vertex->getID(),"RED");
-            for (int id : path)
-                if (vertex->getID() == graph.findVertex(id)->getID())
-                    gv->setVertexColor(vertex->getID(),"YELLOW");
 
-            if (vertex->getID() == graph.findVertex(path[0])->getID())
-                gv->setVertexColor(vertex->getID(),"GREEN");
-        }
-        else{
-            //gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
-            gv->setVertexSize(vertex->getID(), 5);
-        }
+        //gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
+        gv->setVertexSize(vertex->getID(), 5);
     }
 
     int id = 0;
@@ -239,16 +228,28 @@ void GUI::showPathInMap(vector<int> path) {
     }
 
     if (path.size() == 1) path.push_back(path[0]);
+    gv->setVertexLabel(path[0], graph.findPOI(path[0])->getName());
     gv->setVertexColor(path[0], "GREEN");
     gv->setVertexSize(path[0], 15);
 
+    unordered_map<int, Time> POIs = shortestPath.getPOIsTimes();
+
     for (int i = 0; i < path.size() - 1; i++) {
+        if (POIs.find(path[i]) != POIs.end()) {
+            gv->setVertexLabel(path[i], graph.findPOI(path[i])->getName());
+            gv->setVertexSize(path[i], 15);
+            gv->setVertexColor(path[i],"YELLOW");
+        }
         gv->addEdge(id, path[i], path[i+1], EdgeType::DIRECTED);
         //gv->setEdgeLabel(id, to_string(a->getCostTo(b->getID())));
         gv->setEdgeColor(id, "ORANGE");
         gv->setEdgeThickness(id, 10);
         id++;
     }
+
+    gv->setVertexLabel(path[path.size() - 1], graph.findPOI(path[path.size() - 1])->getName());
+    gv->setVertexSize(path[path.size() - 1], 15);
+    gv->setVertexColor(path[path.size() - 1],"YELLOW");
 
     gv->rearrange();
     closeGV();

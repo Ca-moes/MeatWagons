@@ -31,4 +31,10 @@ void compareDFSandBFS(Graph<coord> graph, const int id_src);
 
 void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path);
 
+void sortPrisonersByDeliveryTime(vector<Prisoner*> &prisoners);
+
+void printPOIsTimeMap(const unordered_map<int, Time> &pois);
+
+Time getDepartureTime(const unordered_map<int, Time> &POIsTimes, const vector<Prisoner*> &prisoners);
+
 #endif //ENTREGA_II_UTILS_H
