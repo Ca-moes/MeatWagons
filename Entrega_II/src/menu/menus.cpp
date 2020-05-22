@@ -40,8 +40,8 @@ int GraphMenu() {
     cout << " 1 - Change Type of Graph" << endl;
     cout << " 2 - Show Current POI'S" << endl;
     cout << " 3 - Show Graph" << endl;
-    cout << " 4 - Show Best Path" << endl;
-    cout << " 5 - Show Best Path in Map" << endl;
+    cout << " 4 - Show Best Path (By Length Only)" << endl;
+    cout << " 5 - Show Best Path in Map (By Time, optimised with Length)" << endl;
     cout << " 6 - Change Origin Point" << endl;
     cout << " 7 - Show Connectivity" << endl;
     cout << " 8 - Show Connectivity from Origin" << endl;

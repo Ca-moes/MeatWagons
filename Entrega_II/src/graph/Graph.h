@@ -14,6 +14,7 @@
 #include <unordered_map>
 #include "MutablePriorityQueue.h"
 #include "Path.h"
+#include "prison/Prisoner.h"
 
 using namespace std;
 
@@ -161,10 +162,11 @@ public:
     Path dijkstraShortestPath(const int &origin, const int &destination);
     void dijkstraShortestPath(const T &origin);
     Path aStarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearestAStar(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearestAStarLength(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearestAStarTime(const int id_src, const vector<Prisoner*> &Prisoners, function <double (pair<double, double>, pair<double, double>)> h);
     Path nearestATL(const int id_src, const vector<int> &POIs);
     Path nearestDijkstra(const int id_src, const vector<int> &POIs);
-    Path nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, Path &Path, function <double (pair<double, double>, pair<double, double>)> h);
+    Path nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, vector<Prisoner*> &Prisoners, Path &Path, function <double (pair<double, double>, pair<double, double>)> h, bool time);
     Path nearestNeighbourSearchALT(const int id_src, vector<int> &POIs, Path &path);
     Path nearestNeighbourDijkstra(const int id_src, vector<int> &POIs, Path &path);
     Path ALTShortestPath(int id_src, int id_dest);
@@ -597,7 +599,7 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
 
     //cout << iter << endl;
 
-    cout << "iter: " << iter << endl;
+    //cout << "iter: " << iter << endl;
 
     vector<int> path;
     path.push_back(dest->id);
@@ -617,7 +619,7 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
 
 //Nearest Neighbour Search
 template<class T>
-Path Graph<T>::nearestAStar(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h) {
+Path Graph<T>::nearestAStarLength(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h) {
     Path path = Path(INT_MAX,vector<int>());
 
     for(auto i: POIs){
@@ -630,6 +632,16 @@ Path Graph<T>::nearestAStar(const int id_src, const vector<int> &POIs, function 
     }
     return path;
 }
+
+template<class T>
+Path Graph<T>::nearestAStarTime(const int id_src, const vector<Prisoner*> &Prisoners, function<double(pair<double, double>, pair<double, double>)> h) {
+    Path path;
+    //cout<<"Destiny: "<<Prisoners.at(0)->getDest()<<endl;
+    path = aStarShortestPath(id_src,Prisoners.at(0)->getDest(),h);
+
+    return path;
+}
+
 
 template<class T>
 Path Graph<T>::nearestATL(const int id_src, const vector<int> &POIs) {
@@ -662,20 +674,27 @@ Path Graph<T>::nearestDijkstra(const int id_src, const vector<int> &POIs) {
 }
 
 template<class T>
-Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, Path &path, function<double(pair<double, double>, pair<double, double>)> h) {
+Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, vector<Prisoner*> &Prisoners, Path &path, function<double(pair<double, double>, pair<double, double>)> h, bool time) {
     //cout<<"POI's left: "<<POIs.size()<<endl;
+    //cout<<"Prisoners' left: "<<Prisoners.size()<<endl;
     if(path.getPath().empty()){
         path.addNode(id_src);
     }
-    if(POIs.empty()){
+    if(POIs.empty()||Prisoners.empty()){
         return path;
     }
-    Path next = nearestAStar(id_src, POIs, h);
+    Path next;
+    if(!time)
+        next = nearestAStarLength(id_src, POIs, h);
+    else
+        next = nearestAStarTime(id_src, Prisoners, h);
+
     path.joinPath(next);
     path.addPOI(path.getLastNode(), Time(path.getLength()));
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
+    Prisoners.erase(Prisoners.begin());
 
-    return nearestNeighbourSearchAStar(path.getLastNode(), POIs, path, h);
+    return nearestNeighbourSearchAStar(path.getLastNode(), POIs, Prisoners, path, h,time);
 }
 
 template <class T>
@@ -847,6 +866,7 @@ template<class T>
 void Graph<T>::setHighways(vector<int> ids) {
     highways = ids;
 }
+
 
 
 

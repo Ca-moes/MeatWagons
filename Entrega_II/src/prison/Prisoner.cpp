@@ -41,3 +41,12 @@ vector<int> getPrisonersDestinies(vector<Prisoner*> vec){
     }
     return des;
 }
+
+bool TimeCompare(Prisoner* p1, Prisoner* p2){
+    return (p1->getDeliveryTime()<p2->getDeliveryTime());
+}
+
+void orderByTime(vector<Prisoner*> &vec){
+   sort(vec.begin(),vec.end(),TimeCompare);
+
+}

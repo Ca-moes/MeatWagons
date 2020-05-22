@@ -37,6 +37,7 @@ int main() {
 
     Path path;
     vector<int> pois;
+    vector<Prisoner*> prisoners;
     vector<vector<int>> pathsToDisplay;
     vector<int> conect;
     cout << "Waiting";
@@ -61,6 +62,7 @@ int main() {
                     switch(op2) {
                         case 1:
                             addPrisoner(prisonerVec, graph, vehiclesVec);
+                            orderByTime(prisonerVec);
                             break;
                         case 2:
                             removePrisoner(prisonerVec, vehiclesVec);
@@ -107,15 +109,17 @@ int main() {
                             break;
                         case 4:
                             path=Path();
+                            prisoners=prisonerVec;
                             pois = getPrisonersDestinies(prisonerVec);
-                            path = graph.nearestNeighbourSearchAStar(originID, pois, path, euclidianDistance);
+                            path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,false);
                             cout << "Minimum Time: " << path.getLength() / 60 << "min" << endl << "Nodes in Path: " << path.getPath().size() << endl;
                             fullMap.showPath(path.getPath());
                             break;
                         case 5:
                             path=Path();
+                            prisoners=prisonerVec;
                             pois = getPrisonersDestinies(prisonerVec);
-                            path = graph.nearestNeighbourSearchAStar(originID, pois, path, euclidianDistance);
+                            path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,true);
                             printPOIsTimeMap(path.getPOIsTimes());
                             cout << "Departure Time: " << getDepartureTime(path.getPOIsTimes(), prisonerVec).toString(false) << endl;
                             cout << "Nodes in Path: " << path.getPath().size() << endl;
@@ -142,7 +146,7 @@ int main() {
                     switch(op2) {
                         case 1:
                             pois = getPrisonersDestinies(prisonerVec);
-                            compareALTandAStar(graph, originID, pois);
+                            compareALTandAStar(graph, originID, pois,prisonerVec);
                             system("pause");
                             break;
                         case 2:
@@ -152,7 +156,7 @@ int main() {
                             break;
                         case 3:
                             pois = getPrisonersDestinies(prisonerVec);
-                            compareAStarandDijkstra(graph, originID, pois);
+                            compareAStarandDijkstra(graph, originID, pois,prisonerVec);
                             system("pause");
                             break;
                         case 4:

@@ -121,13 +121,14 @@ double euclidianDistance(pair<double, double> point1, pair<double, double> point
     return sqrt(pow((point1.first - point2.first), 2) + pow((point1.second - point2.second), 2));
 }
 
-void compareALTandAStar(Graph<coord> graph, const int id_src, const vector<int>& POIs) {
+void compareALTandAStar(Graph<coord> graph, const int id_src, const vector<int>& POIs,const vector<Prisoner*>& Prisoners) {
     Path path1, path2;
     vector<int> p1 = POIs, p2 = POIs;
+    vector<Prisoner*>pr=Prisoners;
     auto t1 = chrono::high_resolution_clock::now();
     graph.nearestNeighbourSearchALT(id_src, p1, path1);
     auto t2 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchAStar(id_src, p2, path2, euclidianDistance);
+    graph.nearestNeighbourSearchAStar(id_src, p2,pr, path2, euclidianDistance,false);
     auto t3 = chrono::high_resolution_clock::now();
 
     auto durationALT = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
@@ -153,11 +154,12 @@ void compareALTandDijkstra(Graph<coord> graph, const int id_src, const vector<in
     cout << "Ran Dijkstra Search in " << durationDijkstra << " microseconds" << endl;
 }
 
-void compareAStarandDijkstra(Graph<coord> graph, const int id_src, const vector<int>& POIs) {
+void compareAStarandDijkstra(Graph<coord> graph, const int id_src, const vector<int>& POIs,const vector<Prisoner*>& Prisoners) {
     Path path1, path2;
     vector<int> p1 = POIs, p2 = POIs;
+    vector<Prisoner*>pr=Prisoners;
     auto t1 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchAStar(id_src, p1, path1, euclidianDistance);
+    graph.nearestNeighbourSearchAStar(id_src, p1, pr,path1, euclidianDistance,false);
     auto t2 = chrono::high_resolution_clock::now();
     graph.nearestNeighbourDijkstra(id_src, p2, path2);
     auto t3 = chrono::high_resolution_clock::now();

@@ -32,5 +32,7 @@ public:
 };
 
 vector<int> getPrisonersDestinies(vector<Prisoner*> vec);
+bool TimeCompare(Prisoner* p1, Prisoner* p2);
+void orderByTime(vector<Prisoner*> &vec);
 
 #endif //ENTREGA_II_PRISONER_H

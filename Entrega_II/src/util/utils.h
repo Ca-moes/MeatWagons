@@ -24,9 +24,9 @@ string readString(const string& msg);
 
 bool allVehiclesFull(vector<Vehicle*>& vehicles);
 double euclidianDistance(pair<double, double> point1, pair<double, double> point2);
-void compareALTandAStar(Graph<coord> graph, int id_src, const vector<int>& POIs);
+void compareALTandAStar(Graph<coord> graph, int id_src, const vector<int>& POIs,const vector<Prisoner*>& Prisoners);
 void compareALTandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs);
-void compareAStarandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs);
+void compareAStarandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs, const vector<Prisoner*>& Prisoners);
 void compareDFSandBFS(Graph<coord> graph, const int id_src);
 
 void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path);
