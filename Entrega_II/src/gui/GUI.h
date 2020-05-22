@@ -23,6 +23,7 @@ public:
     void showPath(vector<int> path);
     void showPath2(vector<vector<int>> paths);
     void showPathInMap(Path shortestPath);
+    void showMultiplePathsInMap(vector<Path> shortestPath);
     void clearPath(vector<int> path);
     void clearGraph();
 

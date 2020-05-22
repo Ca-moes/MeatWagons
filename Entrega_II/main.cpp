@@ -38,6 +38,7 @@ int main() {
     Path path;
     vector<int> pois;
     vector<Prisoner*> prisoners;
+    vector<Path> paths;
     vector<vector<int>> pathsToDisplay;
     vector<int> conect;
     cout << "Waiting";
@@ -108,21 +109,29 @@ int main() {
                             fullMap.show();
                             break;
                         case 4:
-                            path=Path();
-                            prisoners=prisonerVec;
-                            pois = getPrisonersDestinies(prisonerVec);
-                            path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,false);
-                            cout << "Minimum Time: " << path.getLength() / 60 << "min" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                            fullMap.showPath(path.getPath());
+                            for(auto v:vehiclesVec){
+                                path=Path();
+                                prisoners=v->getPrisoners();
+                                pois = getPrisonersDestinies(prisoners);
+                                path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,false);
+                                cout << "Minimum Time: " << path.getLength() / 60 << "min" << endl << "Nodes in Path: " << path.getPath().size() << endl;
+                                paths.push_back(path);
+                            }
+                            fullMap.showMultiplePathsInMap(paths);
+                            //fullMap.showPathInMap(path);
                             break;
                         case 5:
-                            path=Path();
-                            prisoners=prisonerVec;
-                            pois = getPrisonersDestinies(prisonerVec);
-                            path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,true);
-                            printPOIsTimeMap(path.getPOIsTimes());
-                            cout << "Departure Time: " << getDepartureTime(path.getPOIsTimes(), prisonerVec).toString(false) << endl;
-                            cout << "Nodes in Path: " << path.getPath().size() << endl;
+                            for(auto v:vehiclesVec){
+                                path=Path();
+                                prisoners=v->getPrisoners();
+                                pois = getPrisonersDestinies(prisoners);
+                                path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,true);
+                                printPOIsTimeMap(path.getPOIsTimes());
+                                cout << "Departure Time: " << getDepartureTime(path.getPOIsTimes(), prisonerVec).toString(false) << endl;
+                                cout << "Nodes in Path: " << path.getPath().size() << endl;
+                                paths.push_back(path);
+                            }
+                            fullMap.showMultiplePathsInMap(paths);
                             fullMap.showPathInMap(path);
                             break;
                         case 6:

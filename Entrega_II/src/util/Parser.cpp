@@ -64,7 +64,7 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         graph.addVertex(id,make_pair(x, y),tag);
 
     }
-    cout<<"Done Nodes\n";
+    //cout<<"Done Nodes\n";
     node.close();
 
     ifstream edge;
@@ -93,7 +93,7 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         if (grid)
             graph.addEdge(d, o, weight);
     }
-    cout<<"Done Edges\n";
+    //cout<<"Done Edges\n";
     edge.close();
 }
 
@@ -113,7 +113,7 @@ void parseTag(Graph<coord> &graph, const string &location) {
         graph.addPOI(name,id);
     }
 
-    cout<<"Done Tags\n";
+    //cout<<"Done Tags\n";
     tag.close();
 
 }
@@ -136,7 +136,7 @@ void parseHighways(Graph<coord> &graph, const string &location) {
     }
     graph.setHighways(ids);
 
-    cout<<"Done Tags\n";
+    //cout<<"Done Tags\n";
     tag.close();
 
 }
