@@ -29,7 +29,7 @@ public:
     Time operator-(const Time& t);
     bool operator<(const Time& t);
 
-    string toString(bool withSeconds);
+    string toString(bool withSeconds) const;
 };
 
 class InvalidTime : public exception {

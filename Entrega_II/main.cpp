@@ -67,6 +67,7 @@ int main() {
                             break;
                         case 2:
                             removePrisoner(prisonerVec, vehiclesVec);
+                            system("pause");
                             break;
                         case 3:
                             sortPrisonersByDeliveryTime(prisonerVec);
@@ -75,6 +76,7 @@ int main() {
                             break;
                         case 4:
                             addVehicle(vehiclesVec);
+                            system("pause");
                             break;
                         case 5:
                             removeVehicle(vehiclesVec);
@@ -88,6 +90,7 @@ int main() {
                             break;
                         case 7:
                             changePrisonersVehicle(prisonerVec, vehiclesVec);
+                            system("pause");
                             break;
                         default:
                             break;
@@ -99,6 +102,7 @@ int main() {
                     switch(op2) {
                         case 1:
                             graph=chooseGraph(graphVec);
+                            fullMap.setGraph(graph);
                             system("pause");
                             break;
                         case 2:
@@ -109,30 +113,10 @@ int main() {
                             fullMap.show();
                             break;
                         case 4:
-                            for(auto v:vehiclesVec){
-                                path=Path();
-                                prisoners=v->getPrisoners();
-                                pois = getPrisonersDestinies(prisoners);
-                                path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,false);
-                                cout << "Minimum Time: " << path.getLength() / 60 << "min" << endl << "Nodes in Path: " << path.getPath().size() << endl;
-                                paths.push_back(path);
-                            }
-                            fullMap.showMultiplePathsInMap(paths);
-                            //fullMap.showPathInMap(path);
+                            showBestPath(fullMap, originID, vehiclesVec, false);
                             break;
                         case 5:
-                            for(auto v:vehiclesVec){
-                                path=Path();
-                                prisoners=v->getPrisoners();
-                                pois = getPrisonersDestinies(prisoners);
-                                path = graph.nearestNeighbourSearchAStar(originID, pois,prisoners, path, euclidianDistance,true);
-                                printPOIsTimeMap(path.getPOIsTimes());
-                                cout << "Departure Time: " << getDepartureTime(path.getPOIsTimes(), prisonerVec).toString(false) << endl;
-                                cout << "Nodes in Path: " << path.getPath().size() << endl;
-                                paths.push_back(path);
-                            }
-                            fullMap.showMultiplePathsInMap(paths);
-                            fullMap.showPathInMap(path);
+                            showBestPath(fullMap, originID, vehiclesVec, true);
                             break;
                         case 6:
                             newOrigin = choosePlace(graph.getPOIs(), "ORIGIN", graph);

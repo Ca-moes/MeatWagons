@@ -10,6 +10,10 @@ GUI::GUI(Graph<coord> &graph, int w, int h) : graph(graph), gv_w(w), gv_h(h) {
 
 void GUI::setGraph(Graph<coord> &graph) { this->graph = graph; }
 
+Graph<coord> GUI::getGraph() {
+    return this->graph;
+}
+
 void GUI::show() {
     createGV();
     double yPercent, xPercent;
@@ -259,7 +263,7 @@ void GUI::showPathInMap(Path shortestPath) {
 void GUI::showMultiplePathsInMap(vector<Path> shortestPaths) {
     createGV();
     double yPercent, xPercent;
-    vector<string> colours = {"BLUE","RED","PINK","BLACK","WHITE","ORANGE","YELLOW","GREEN","CYAN","GRAY","DARK_GRAY","LIGHT_GRAY","MAGENTA"};
+    vector<string> colours = {"ORANGE","MAGENTA","CYAN","GREEN","YELLOW","BLUE","RED","GRAY","PINK","BLACK","LIGHT_GRAY"};
 
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
         yPercent = (vertex->getInfo().second - graph.getMinY())/(graph.getMaxY() - graph.getMinY())*0.9 + 0.05;

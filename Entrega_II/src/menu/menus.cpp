@@ -191,9 +191,9 @@ void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> 
                     cout << "Change made!" << endl;
                 }
                 cout << "0 - Exit\n\n";
-            } else cout << "No prisoners available" << endl;
-        } else cout << "No available Vehicles to switch to" << endl;
-    }
+            }
+        } else cout << "No prisoners available" << endl;
+    } else cout << "No available Vehicles to switch to" << endl;
 }
 
 Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
@@ -211,4 +211,26 @@ Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
         return graphVec.at(graphnum-1);
 
     return graphVec.at(0);
+}
+
+void showBestPath(GUI gui, int originID, vector<Vehicle *> vehiclesVec, bool time) {
+    vector<Path> paths;
+    for (int i = 0; i < vehiclesVec.size(); i++){
+        cout << "__________________________________________________" << endl;
+        cout << setw(23) << right << "Vehicle " << i + 1 << endl;
+
+        Path path;
+        vector<Prisoner*> prisoners = vehiclesVec[i]->getPrisoners(); orderByTime(prisoners);
+        vector<Prisoner*> temp = vehiclesVec[i]->getPrisoners(); orderByTime(temp);
+
+        vector<int> POIs = getPrisonersDestinies(prisoners);
+        path = gui.getGraph().nearestNeighbourSearchAStar(originID, POIs, prisoners, path, euclidianDistance, time);
+
+        Time departureTime = getDepartureTime(path.getPOIsTimes(), temp);
+        cout << "Departure Time: " << departureTime.toString(false) << endl;
+        cout << "Nodes in Path: " << path.getPath().size() << endl;
+
+        paths.push_back(path);
+    }
+    gui.showMultiplePathsInMap(paths);
 }

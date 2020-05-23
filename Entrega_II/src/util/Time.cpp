@@ -1,3 +1,4 @@
+#include <iostream>
 #include "Time.h"
 
 Time::Time() {
@@ -21,7 +22,7 @@ Time::Time(int hour, int minute, int second) : Time(hour, minute) {
 Time::Time(double seconds) {
     setSecond((int)seconds % 60);
     setMinute((int)(seconds / 60) % 60);
-    setHour((this->minute / 60) % 24);
+    setHour((int)(seconds / 3600) % 24);
 }
 
 void Time::setHour(int hour) {
@@ -57,28 +58,18 @@ Time Time::operator+(const Time &t) {
 }
 
 Time Time::operator-(const Time &t) {
-    Time time;
-    if (this->second - t.second < 0) {
-        time.second = this->second + 60 - t.second;
-        time.minute = -1;
-    }
-    else time.second = this->second - t.second;
+    int s1 = this->hour * 3600 + this->minute * 60 + this->second;
+    int s2 = t.hour * 3600 + t.minute * 60 + t.second;
 
-    if (this->minute - t.minute < 0) {
-        time.minute += this->minute + 60 - t.minute;
-        time.hour = -1;
-    }
-    else time.minute += this->minute - t.minute;
+    double diff = s1 - s2;
+    if (diff < 0) diff += 24 * 3600; // Seconds in a day
 
-    if (this->hour - t.hour < 0) {
-        time.hour += this->hour + 24 - t.hour;
-    }
-    else time.hour += this->hour - t.hour;
+    Time time(diff);
 
     return time;
 }
 
-string Time::toString(bool withSeconds) {
+string Time::toString(bool withSeconds) const {
     stringstream ss;
     ss << setw(2) << setfill('0') << this->hour << ":" << setw(2) << setfill('0') << this->minute;
     if (withSeconds) ss << ":" << setw(2) << setfill('0') << this->second;

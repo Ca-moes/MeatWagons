@@ -221,10 +221,12 @@ void printPOIsTimeMap(const unordered_map<int, Time> &pois) {
 }
 
 Time getDepartureTime(const unordered_map<int, Time> &POIsTimes, const vector<Prisoner*> &prisoners) {
+    cout << "Prisoner: " << prisoners[0]->getName() << " -> Node " << prisoners[0]->getDest() << " ( Time to get there: " <<  POIsTimes.at(prisoners[0]->getDest()).toString(true) << ")" << endl;
     Time departureTime(prisoners[0]->getDeliveryTime() - POIsTimes.at(prisoners[0]->getDest()));
     Time temp;
 
     for (int i = 1; i < prisoners.size(); i++) {
+        cout << "Prisoner: " << prisoners[i]->getName() << " -> Node " << prisoners[i]->getDest() << " ( Time to get there: " <<  POIsTimes.at(prisoners[i]->getDest()).toString(true) << ")" << endl;
         temp = departureTime + POIsTimes.at(prisoners[i]->getDest());
         if (temp < prisoners[i]->getDeliveryTime())
             continue;

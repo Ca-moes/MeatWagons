@@ -18,6 +18,8 @@ private:
 public:
     GUI(Graph<coord> &graph,int w,int h);
     void setGraph(Graph<coord> &graph);
+    Graph<coord> getGraph()
+    ;
     void show();
     void showNodes(vector<int> ids);
     void showPath(vector<int> path);
@@ -29,7 +31,7 @@ public:
 
     void clearPaths(vector<vector<int>> vector);
 
-  void createGV();
+    void createGV();
     void closeGV();
     void deleteGV();
     void clearEdges(int numEdges);

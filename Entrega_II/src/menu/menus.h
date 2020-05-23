@@ -13,6 +13,7 @@
 #include "util/utils.h"
 #include "prison/Prisoner.h"
 #include "graph/Graph.h"
+#include "gui/GUI.h"
 
 using namespace std;
 
@@ -129,5 +130,7 @@ int choosePlace(vector<POI<T>*> POIs, string str, const Graph<coord>& graph) {
 }
 
 Graph<coord> chooseGraph(vector<Graph<coord>> graphVec);
+
+void showBestPath(GUI gui, int originID, vector<Vehicle *> vehiclesVec, bool time);
 
 #endif //ENTREGA_II_MENUS_H
