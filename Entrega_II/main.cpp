@@ -14,14 +14,18 @@ int main() {
 
     int op,op2;
 
-    Graph<coord> full,strong;
+    Graph<coord> full,strong, penafiel_full, espinho_full, sixteen_grid,eight_grid,four_grid;
     parseMap(full, "porto_full", false);
     parseMap(strong, "porto_strong", false);
+    parseMap(penafiel_full,"penafiel_full",false);
+    parseMap(espinho_full,"espinho_full",false);
+    parseMap(sixteen_grid, "16x16", true);
+    parseMap(eight_grid, "8x8", true);
+    parseMap(four_grid, "4x4", true);
     vector<Graph<coord>> graphVec = {full, strong};
-    Graph<coord> graphSelect=chooseGraph(graphVec);;
-    //parseMap(graph, "16x16", true);
-    //parseMap(graphSelect, "8x8", true);
-    //parseMap(graph, "4x4", true);
+    Graph<coord> graphSelect=chooseGraph(graphVec);
+
+    vector<Graph<coord>> maps ={four_grid,eight_grid,sixteen_grid,penafiel_full,espinho_full,full};
 
     // Testar Conectividade e eliminar nodes nao necessarios
     Graph<coord> graphconnecteddfs;
@@ -153,7 +157,7 @@ int main() {
                             system("pause");
                             break;
                         case 4:
-                            compareDFSandBFS(graph, originID);
+                            compareDFSandBFS(maps);
                             system("pause");
                             break;
                         default:

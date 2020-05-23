@@ -171,19 +171,33 @@ void compareAStarandDijkstra(Graph<coord> graph, const int id_src, const vector<
     cout << "Ran Dijkstra Search in " << durationDijkstra << " microseconds" << endl;
 }
 
-void compareDFSandBFS(Graph<coord> graph, const int id_src) {
-    Path path1, path2;
-    auto t1 = chrono::high_resolution_clock::now();
-    graph.dfs(id_src);
-    auto t2 = chrono::high_resolution_clock::now();
-    graph.bfs(id_src);
-    auto t3 = chrono::high_resolution_clock::now();
+void compareDFSandBFS(vector<Graph<coord>> graphs) {
+    /*ofstream outputFile;
+    string fileName = "DFSandBFSComparison.csv";
+    outputFile.open(fileName);
+    if(!outputFile.is_open()){
+        cout<<"Couldn't open csv file!\n";
+    }
+    cout<<graphs.size()<<endl;
+    outputFile<<"Graph Size;DurationDFS;DurationBFS\n";*/
+    for(auto & graph : graphs){
+        //cout<<"New Graph"<<endl;
+        auto t1 = chrono::steady_clock::now();
+        graph.dfs(graph.getVertexSet()[0]->getID());
+        //cout<<"Calculated DFS"<<endl;
+        auto t2 = chrono::steady_clock::now();
+        graph.bfs(graph.getVertexSet()[0]->getID());
+        //cout<<"Calculated BFS"<<endl;
+        auto t3 = chrono::steady_clock::now();
 
-    auto durationDFS = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    auto durationBFS = std::chrono::duration_cast<std::chrono::microseconds>( t3 - t2 ).count();
+        auto durationDFS = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
+        auto durationBFS = std::chrono::duration_cast<std::chrono::microseconds>( t3 - t2 ).count();
 
-    cout << "Ran DFS in " << durationDFS << " microseconds" << endl;
-    cout << "Ran BFS in " << durationBFS << " microseconds" << endl;
+        cout<<graph.getVertexSet().size()<<" , "<<durationDFS<<" , "<<durationBFS<<"\n";
+        //outputFile<< graph.getVertexSet().size()<<";"<<durationDFS<<";"<<durationBFS<<"\n";
+    }
+    //outputFile.close(); UNCOMMENT FOR FILE OUTPUT
+
 }
 
 void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path){

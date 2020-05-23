@@ -12,8 +12,9 @@
 #include <chrono>
 #include <vector>
 #include <unordered_map>
-#include <prison/Vehicle.h>
+#include "prison/Vehicle.h"
 #include "graph/Graph.h"
+#include <fstream>
 
 using namespace std;
 
@@ -27,7 +28,7 @@ double euclidianDistance(pair<double, double> point1, pair<double, double> point
 void compareALTandAStar(Graph<coord> graph, int id_src, const vector<int>& POIs,const vector<Prisoner*>& Prisoners);
 void compareALTandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs);
 void compareAStarandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs, const vector<Prisoner*>& Prisoners);
-void compareDFSandBFS(Graph<coord> graph, const int id_src);
+void compareDFSandBFS(vector<Graph<coord>> graphs);
 
 void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path);
 

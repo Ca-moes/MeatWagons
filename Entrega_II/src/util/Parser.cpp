@@ -9,6 +9,7 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
 
     string node_file;
     string edge_file;
+    string loc = location.substr(0,location.find("_"));
 
     if (grid) {
         node_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/nodes.txt";
@@ -16,15 +17,15 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
     }
     else {
         //node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
-        node_file = "../Mapas/portomaps/"+location+"_nodes_xy.txt";
+        node_file = "../Mapas/"+loc+"maps/"+location+"_nodes_xy.txt";
         //edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
-        edge_file = "../Mapas/portomaps/"+location+"_edges.txt";
+        edge_file = "../Mapas/"+loc+"maps/"+location+"_edges.txt";
     }
 
     if (location == "16x16")
         parseHighways(graph, location);
 
-    if (!grid) {
+    if (!grid && loc=="porto") {
         parseTag(graph, "Policia");
         parseTag(graph, "Prisoes");
         parseTag(graph, "Tribunais");

@@ -112,19 +112,20 @@ int choosePlace(vector<POI<T>*> POIs, string str, const Graph<coord>& graph) {
     for (int i = 0; i < POIs.size(); i++) {
         cout << i + 1 << " - " << POIs[i]->getName() << endl;
     }
-    cout << "\n" << POIs.size() + 1 << " - Choose Node ID" << endl;
-    cout << "\n0 - Exit" << endl;
+    cout << "\n0 - Exit (First Node by default)" << endl;
     cout << "__________________________________________________\n" << endl;
 
     int placeID = chooseMenuOption(POIs.size() + 1);
 
-    if (placeID == POIs.size() + 1) {
-        do {
-            placeID = readInt("ID number: ");
-        } while (graph.findVertex(placeID) == nullptr);
+    while(placeID>POIs.size()){
+        cout<<"Invalid option! Please try again"<<endl;
+        placeID = readInt("ID number: ");
     }
-    else if (placeID > 0)
+    if(placeID==0)
+        placeID = POIs[0]->getID();
+    else
         placeID = POIs[placeID - 1]->getID();
+
 
     return placeID;
 }
