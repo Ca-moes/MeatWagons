@@ -180,6 +180,7 @@ void compareDFSandBFS(vector<Graph<coord>> graphs) {
     }
     cout<<graphs.size()<<endl;
     outputFile<<"Graph Size;DurationDFS;DurationBFS\n";*/
+
     for(auto & graph : graphs){
         //cout<<"New Graph"<<endl;
         auto t1 = chrono::steady_clock::now();
@@ -193,7 +194,9 @@ void compareDFSandBFS(vector<Graph<coord>> graphs) {
         auto durationDFS = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
         auto durationBFS = std::chrono::duration_cast<std::chrono::microseconds>( t3 - t2 ).count();
 
-        cout<<graph.getVertexSet().size()<<" , "<<durationDFS<<" , "<<durationBFS<<"\n";
+        cout << "Number of Vertices: " << graph.getVertexSet().size() << endl;
+        cout << "DFS: " << durationDFS << "us \tBFS: " << durationBFS << "us" << endl << endl;
+        //cout<<graph.getVertexSet().size()<<" , "<<durationDFS<<" , "<<durationBFS<<"\n";
         //outputFile<< graph.getVertexSet().size()<<";"<<durationDFS<<";"<<durationBFS<<"\n";
     }
     //outputFile.close(); UNCOMMENT FOR FILE OUTPUT

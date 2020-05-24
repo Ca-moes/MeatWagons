@@ -33,9 +33,6 @@ int main() {
     Graph<coord> graphconnectedbfs;
     constructGraphByPath(graphSelect, graphconnectedbfs, graphSelect.bfs(1));
 
-    //vector<int> landmarks = {37213, 27053, 41814, 29229};
-    //graphSelect.preComputeLandmarks(landmarks);
-
     //Choose Graph
     Graph<coord> graph=graphSelect;
 
@@ -96,6 +93,9 @@ int main() {
                             changePrisonersVehicle(prisonerVec, vehiclesVec);
                             system("pause");
                             break;
+                        case 8:
+                            setupExample(prisonerVec, vehiclesVec);
+                            break;
                         default:
                             break;
                     }
@@ -110,26 +110,29 @@ int main() {
                             system("pause");
                             break;
                         case 2:
-                            showPOIs(graph.getPOIs());
-                            system("pause");
-                            break;
-                        case 3:
-                            fullMap.show();
-                            break;
-                        case 4:
-                            showBestPath(fullMap, originID, vehiclesVec, false);
-                            break;
-                        case 5:
-                            showBestPath(fullMap, originID, vehiclesVec, true);
-                            break;
-                        case 6:
                             newOrigin = choosePlace(graph.getPOIs(), "ORIGIN", graph);
                             if (newOrigin != 0) originID = newOrigin;
                             break;
+                        case 3:
+                            showPOIs(graph.getPOIs());
+                            system("pause");
+                            break;
+                        case 4:
+                            fullMap.show();
+                            break;
+                        case 5:
+                            showBestPaths(fullMap, getBestPaths(fullMap.getGraph(), originID, vehiclesVec, false));
+                            break;
+                        case 6:
+                            showBestPaths(fullMap, getBestPaths(fullMap.getGraph(), originID, vehiclesVec, true));
+                            break;
                         case 7:
-                            dfsMap.show();
+                            showBestPaths(fullMap, getLatestDeparturePaths(fullMap.getGraph(), originID, vehiclesVec));
                             break;
                         case 8:
+                            dfsMap.show();
+                            break;
+                        case 9:
                             bfsMap.show();
                             break;
                         default:

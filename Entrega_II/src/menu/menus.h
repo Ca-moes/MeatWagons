@@ -37,6 +37,8 @@ void removeVehicle(vector<Vehicle *> &vector);
 
 void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec);
 
+void setupExample(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec);
+
 template <class T>
 void showPOIs(vector<POI<T>*> vec){
     cout<<"Point Of Interest (choose by ID)"<<endl;
@@ -132,6 +134,10 @@ int choosePlace(vector<POI<T>*> POIs, string str, const Graph<coord>& graph) {
 
 Graph<coord> chooseGraph(vector<Graph<coord>> graphVec);
 
-void showBestPath(GUI gui, int originID, vector<Vehicle *> vehiclesVec, bool time);
+vector<pair<Path, Time>> getBestPaths(Graph<coord> graph, int originID, vector<Vehicle *> vehiclesVec, bool time);
+
+vector<pair<Path,Time>> getLatestDeparturePaths(Graph<coord> graph, int originID, vector<Vehicle *> vehiclesVec);
+
+void showBestPaths(GUI gui, vector<pair<Path,Time>> paths);
 
 #endif //ENTREGA_II_MENUS_H

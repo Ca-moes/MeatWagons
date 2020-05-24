@@ -28,9 +28,10 @@ int prisonerMenu() {
     cout << " 5 - Remove Vehicle" << endl;
     cout << " 6 - Display Vehicles" << endl;
     cout << " 7 - Change Prisoner's Vehicle" << endl;
+    cout << endl << " 8 - Example Setup" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
-    return chooseMenuOption(7);
+    return chooseMenuOption(8);
 }
 
 int GraphMenu() {
@@ -38,16 +39,17 @@ int GraphMenu() {
     cout << setw(23) << right << "GRAPH MENU" << endl;
     cout << "__________________________________________________\n" << endl;
     cout << " 1 - Change Type of Graph" << endl;
-    cout << " 2 - Show Current POI'S" << endl;
-    cout << " 3 - Show Graph" << endl;
-    cout << " 4 - Show Best Path (By Length Only)" << endl;
-    cout << " 5 - Show Best Path in Map (By Time, optimised with Length)" << endl;
-    cout << " 6 - Change Origin Point" << endl;
-    cout << " 7 - Show Connectivity" << endl;
-    cout << " 8 - Show Connectivity from Origin" << endl;
+    cout << " 2 - Change Origin Point" << endl;
+    cout << " 3 - Show Current POI'S" << endl;
+    cout << " 4 - Show Full Graph" << endl;
+    cout << " 5 - Show Shortest Path (Nearest Neighbour)" << endl;
+    cout << " 6 - Show Shortest Path (Next Prisoner)" << endl;
+    cout << " 7 - Show Path with Latest Departure Time" << endl;
+    cout << " 8 - Show Connectivity" << endl;
+    cout << " 9 - Show Connectivity from Origin" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
-    return chooseMenuOption(8);
+    return chooseMenuOption(9);
 }
 
 int GraphOpsMenu() {
@@ -213,24 +215,74 @@ Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
     return graphVec.at(0);
 }
 
-void showBestPath(GUI gui, int originID, vector<Vehicle *> vehiclesVec, bool time) {
-    vector<Path> paths;
+vector<pair<Path, Time>> getBestPaths(Graph<coord> graph, int originID, vector<Vehicle *> vehiclesVec, bool time) {
+    vector<pair<Path,Time>> paths;
     for (int i = 0; i < vehiclesVec.size(); i++){
-        cout << "__________________________________________________" << endl;
-        cout << setw(23) << right << "Vehicle " << i + 1 << endl;
-
         Path path;
         vector<Prisoner*> prisoners = vehiclesVec[i]->getPrisoners(); orderByTime(prisoners);
         vector<Prisoner*> temp = vehiclesVec[i]->getPrisoners(); orderByTime(temp);
 
         vector<int> POIs = getPrisonersDestinies(prisoners);
-        path = gui.getGraph().nearestNeighbourSearchAStar(originID, POIs, prisoners, path, euclidianDistance, time);
+        path = graph.nearestNeighbourSearchAStar(originID, POIs, prisoners, path, euclidianDistance, time);
 
         Time departureTime = getDepartureTime(path.getPOIsTimes(), temp);
-        cout << "Departure Time: " << departureTime.toString(false) << endl;
-        cout << "Nodes in Path: " << path.getPath().size() << endl;
 
-        paths.push_back(path);
+        paths.push_back(make_pair(path, departureTime));
     }
-    gui.showMultiplePathsInMap(paths);
+    return paths;
+}
+
+vector<pair<Path,Time>> getLatestDeparturePaths(Graph<coord> graph, int originID, vector<Vehicle *> vehiclesVec) {
+    vector<pair<Path,Time>> paths;
+    cout << "Shortest Path" << endl;
+    vector<pair<Path,Time>> nearestNeighbourPaths = getBestPaths(graph, originID, vehiclesVec, false);
+    cout << "Best Path by Prisoner Order" << endl;
+    vector<pair<Path,Time>> nextPrisonerPaths = getBestPaths(graph, originID, vehiclesVec, true);
+    for (int i = 0; i < vehiclesVec.size(); i++){
+        pair<Path,Time> nearest = nearestNeighbourPaths.at(i);
+        pair<Path,Time> next = nextPrisonerPaths.at(i);
+        if (nearest.second < next.second) // The greater departure time the best
+            paths.push_back(next);
+        else
+            paths.push_back(nearest);
+    }
+    return paths;
+}
+
+void showBestPaths(GUI gui, vector<pair<Path,Time>> paths) {
+    vector<Path> showPaths;
+    for (int i = 0; i < paths.size(); i++) {
+        cout << "__________________________________________________" << endl;
+        cout << setw(23) << right << "Vehicle " << i + 1 << endl;
+        cout << "Departure Time: " << paths.at(i).second.toString(false) << endl;
+        cout << "Nodes in Path: " << paths.at(i).first.getPath().size() << endl;
+        showPaths.push_back(paths.at(i).first);
+    }
+    gui.showMultiplePathsInMap(showPaths);
+}
+
+void setupExample(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec) {
+    prisonersVec.clear();
+    vehiclesVec.clear();
+
+    Prisoner * p1 = new Prisoner(prisonersVec.size() + 1, "Pedro Seixas", 19, 21947, Time(19));
+    Prisoner * p2 = new Prisoner(prisonersVec.size() + 1, "Goncalo Alves", 19, 52539, Time(19,5));
+    Prisoner * p3 = new Prisoner(prisonersVec.size() + 1, "Andre Gomes", 19, 40775, Time(19));
+
+    Vehicle * v1 = new Vehicle(2, 50, 50);
+    Vehicle * v2 = new Vehicle(1, 50, 50);
+
+    v1->addPrisoner(p1);
+    v1->addPrisoner(p2);
+    v2->addPrisoner(p3);
+
+    prisonersVec.push_back(p1);
+    prisonersVec.push_back(p2);
+    prisonersVec.push_back(p3);
+    sortPrisonersByDeliveryTime(prisonersVec);
+
+    vehiclesVec.push_back(v1);
+    vehiclesVec.push_back(v2);
+
+    cout << "SETUP DONE!" << endl;
 }

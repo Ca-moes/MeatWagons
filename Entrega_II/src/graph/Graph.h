@@ -12,6 +12,7 @@
 #include <cmath>
 #include <functional>
 #include <unordered_map>
+#include <map>
 #include "MutablePriorityQueue.h"
 #include "Path.h"
 #include "prison/Prisoner.h"
@@ -45,6 +46,7 @@ class Vertex {
 
     // A-Star
     double dist;
+    double actualDist;
     Vertex<T> * path;
 
 public:
@@ -129,8 +131,9 @@ class Graph {
     void dfsVisit(Vertex<T> *v, vector<int> & res) const;
 
     // ALT Algorithm
-    unordered_map< Vertex<T>* , unordered_map< Vertex<T>* , double>> fromLandmark;
-    unordered_map< Vertex<T>* , unordered_map< Vertex<T>* , double>> toLandmark;
+    vector<Vertex<T>*> landmarks;
+    vector<map< Vertex<T>* , double>> fromLandmark;
+    vector<map< Vertex<T>* , double>> toLandmark;
     double getEstimateCost(Vertex<T>* src, Vertex<T>* dest);
 public:
 	vector<Vertex<T>*> getVertexSet() const;
@@ -526,11 +529,11 @@ Path Graph<T>::dijkstraShortestPath(const int &origin, const int &destination) {
     dijkstratqueue.insert(og);
     Vertex<T>* temp;
     while(!dijkstratqueue.empty()){
-        temp=dijkstratqueue.extractMin();
+        temp = dijkstratqueue.extractMin();
         for(Edge<T>* edge: temp->outgoing){
-            if(edge->dest->getDist()>temp->getDist()+edge->weight){
-                edge->dest->dist=temp->getDist()+edge->weight;
-                edge->dest->path=temp;
+            if(edge->dest->dist > temp->dist + edge->weight){
+                edge->dest->dist = temp->dist + edge->weight;
+                edge->dest->path = temp;
                 if(!dijkstratqueue.found(edge->dest))
                     dijkstratqueue.insert(edge->dest);
                 else
@@ -544,7 +547,7 @@ Path Graph<T>::dijkstraShortestPath(const int &origin, const int &destination) {
     double length=0;
 
     while (vertex->path != NULL) {
-        length+= vertex->path->getCostTo(vertex->getID());
+        length+= vertex->path->getCostTo(vertex->id);
         vertex = vertex->path;
         path.emplace(path.begin(), vertex->id);
     }
@@ -562,12 +565,13 @@ template<class T>
 Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<double (pair<double, double>, pair<double, double>)> h) {
     for (Vertex<T> *vert: vertexSet) {
         vert->dist = INT_MAX;
+        vert->actualDist = 0;
         vert->path = NULL;
         vert->queueIndex = 0;
     }
 
     Vertex<T> *src = findVertex(id_src), *dest = findVertex(id_dest), *v;
-    src->dist = h(src->getInfo(), dest->getInfo()) / ROAD_VEL_MS;
+    src->dist = h(src->info, dest->info) / ROAD_VEL_MS;
     MutablePriorityQueue<Vertex<T>> Q;
     Q.insert(src);
 
@@ -581,11 +585,13 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
             break;
         }
 
-        for (Edge<T> *w : v->getAdj()){
-            double f = v->dist - (h(v->getInfo(), dest->getInfo()) / ROAD_VEL_MS) +  w->getWeight() + (h(w->dest->getInfo(), dest->getInfo()) / ROAD_VEL_MS);
-            if (w->dest->getDist() > f){
-                double d = w->dest->getDist();
+        for (Edge<T> *w : v->outgoing){
+            double newDist = v->actualDist + w->weight;
+            double f = newDist + (h(w->dest->info, dest->info) / ROAD_VEL_MS);
+            if (w->dest->dist > f){
+                double d = w->dest->dist;
                 w->dest->dist = f;
+                w->dest->actualDist = newDist;
                 w->dest->path = v;
                 if (d == INT_MAX){
                     Q.insert(w->dest);
@@ -607,7 +613,7 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
     double length=0;
 
     while (vertex->path != NULL) {
-        length+= vertex->path->getCostTo(vertex->getID());
+        length+= vertex->path->getCostTo(vertex->id);
         vertex = vertex->path;
         path.emplace(path.begin(), vertex->id);
     }
@@ -733,6 +739,7 @@ template<class T>
 Path Graph<T>::ALTShortestPath(int id_src, int id_dest) {
     for (Vertex<T> *vert: vertexSet) {
         vert->dist = INT_MAX;
+        vert->actualDist = 0;
         vert->path = NULL;
         vert->queueIndex = 0;
     }
@@ -752,11 +759,13 @@ Path Graph<T>::ALTShortestPath(int id_src, int id_dest) {
             break;
         }
 
-        for (Edge<T> *w : v->getAdj()){
-            double f = (v->dist - getEstimateCost(v, dest)) +  w->getWeight() + getEstimateCost(w->dest, dest);
-            if (w->dest->getDist() > f){
-                double d = w->dest->getDist();
+        for (Edge<T> *w : v->outgoing){
+            double newDist = v->dist + w->weight;
+            double f = newDist + getEstimateCost(w->dest, dest);
+            if (w->dest->dist > f){
+                double d = w->dest->dist;
                 w->dest->dist = f;
+                w->dest->actualDist = newDist;
                 w->dest->path = v;
                 if (d == INT_MAX){
                     Q.insert(w->dest);
@@ -774,7 +783,7 @@ Path Graph<T>::ALTShortestPath(int id_src, int id_dest) {
     double length=0;
 
     while (vertex->path != NULL) {
-        length+= vertex->path->getCostTo(vertex->getID());
+        length+= vertex->path->getCostTo(vertex->id);
         vertex = vertex->path;
         path.emplace(path.begin(), vertex->id);
     }
@@ -792,17 +801,19 @@ double Graph<T>::getEstimateCost(Vertex<T>* src, Vertex<T>* dest) {
     if (src == dest)
         return maxEstimate;
 
-    // Source is Landmark
-    if (fromLandmark.find(src) != fromLandmark.end())
-        return fromLandmark.at(src).at(dest);
+    for (int i = 0; i < landmarks.size(); i++) {
+        // Source is Landmark
+        if (landmarks[i] == src)
+            return fromLandmark.at(i).at(dest);
 
-    // Destiny is Landmark
-    if (toLandmark.find(dest) != toLandmark.end())
-        return toLandmark.at(dest).at(src);
+        // Destiny is Landmark
+        if (landmarks[i] == dest)
+            return toLandmark.at(i).at(src);
+    }
 
-    for (auto it : fromLandmark) {
-        unordered_map<Vertex<T>*,double> from = fromLandmark.at(it.first);
-        unordered_map<Vertex<T>*,double> to = toLandmark.at(it.first);
+    for (int i = 0; i < landmarks.size(); i++) {
+        map<Vertex<T>*,double> from = fromLandmark.at(i);
+        map<Vertex<T>*,double> to = toLandmark.at(i);
         double estimate = max(to.at(src) - to.at(dest), from.at(dest) - from.at(src));
         if (estimate != INT_MAX)
             maxEstimate = max(maxEstimate, estimate);
@@ -815,27 +826,29 @@ template<class T>
 void Graph<T>::preComputeLandmarks(vector<int> id_landmarks) {
     fromLandmark.clear();
     toLandmark.clear();
+    landmarks.clear();
 
     Vertex<T>* v;
     for (int id : id_landmarks) {
         v = findVertex(id);
+        landmarks.push_back(v);
 
         // From Landmark Distances
         this->dijkstraShortestPath(v->getInfo());
-        unordered_map<Vertex<T>*,double> fromLandmarkDistances;
+        map<Vertex<T>*,double> fromLandmarkDistances;
         for (Vertex<T> * ver : vertexSet) {
             fromLandmarkDistances.insert(make_pair(ver, ver->dist));
         }
-        fromLandmark.insert(make_pair(v, fromLandmarkDistances));
+        fromLandmark.push_back(fromLandmarkDistances);
 
         // To Landmark Distances
         reverseEdges();
         this->dijkstraShortestPath(v->getInfo());
-        unordered_map<Vertex<T>*,double> toLandmarkDistances;
+        map<Vertex<T>*,double> toLandmarkDistances;
         for (Vertex<T> * ver : vertexSet) {
             toLandmarkDistances.insert(make_pair(ver, ver->dist));
         }
-        toLandmark.insert(make_pair(v, toLandmarkDistances));
+        toLandmark.push_back(toLandmarkDistances);
         reverseEdges();
     }
 }
