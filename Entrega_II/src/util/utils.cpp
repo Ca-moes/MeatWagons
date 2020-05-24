@@ -154,37 +154,56 @@ void compareALTandDijkstra(Graph<coord> graph, const int id_src, const vector<in
     cout << "Ran Dijkstra Search in " << durationDijkstra << " microseconds" << endl;
 }
 
-void compareAStarandDijkstra(Graph<coord> graph, const int id_src, const vector<int>& POIs,const vector<Prisoner*>& Prisoners) {
-    Path path1, path2;
-    vector<int> p1 = POIs, p2 = POIs;
-    vector<Prisoner*>pr=Prisoners;
-    auto t1 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchAStar(id_src, p1, pr,path1, euclidianDistance,false);
-    auto t2 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourDijkstra(id_src, p2, path2);
-    auto t3 = chrono::high_resolution_clock::now();
+void compareAStarandDijkstra(Graph<coord> graph, const vector<int> POIs) {
+    /*
+    ofstream outputFile;
+    string fileName = "AStarandDijkstraComparison.csv";
+    outputFile.open(fileName);
+    if(!outputFile.is_open()){
+        cout<<"Couldn't open csv file!\n";
+    }
+    outputFile<<"Path Size;DurationAStar;DurationDijkstra\n";*/
+    for(auto poi: POIs){
+        for(auto poi2: POIs) {
+            cout<<"Src: "<<poi<<" Dest: "<<poi2<<endl;
+            Path path1, path2;
+            vector<int> p1 = {poi2}, p2 = {poi2};
+            auto *prisoner = new Prisoner(0, "test", 1, poi2, Time(12, 00));
+            vector<Prisoner *> pr = {prisoner};
+            auto t1 = chrono::steady_clock::now();
+            graph.nearestNeighbourSearchAStar(poi, p1, pr, path1, euclidianDistance, false);
+            auto t2 = chrono::steady_clock::now();
+            graph.nearestNeighbourDijkstra(poi, p2, path2);
+            auto t3 = chrono::steady_clock::now();
 
-    auto durationAStar = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
-    auto durationDijkstra = std::chrono::duration_cast<std::chrono::microseconds>( t3 - t2 ).count();
+            auto durationAStar = std::chrono::duration_cast<std::chrono::microseconds>(t2 - t1).count();
+            auto durationDijkstra = std::chrono::duration_cast<std::chrono::microseconds>(t3 - t2).count();
 
-    cout << "Ran AStar Search in " << durationAStar << " microseconds" << endl;
-    cout << "Ran Dijkstra Search in " << durationDijkstra << " microseconds" << endl;
+            cout << "Ran AStar Search in " << durationAStar << " microseconds" << endl;
+            cout << "Ran Dijkstra Search in " << durationDijkstra << " microseconds" << endl;
+            cout<<path1.getLength()<<" , "<<path2.getLength()<<" , "<<durationAStar<<" , "<<durationDijkstra<<"\n";
+            //outputFile<< path1.getLength()<<";"<<durationAStar<<";"<<durationDijkstra<<"\n";
+        }
+    }
+    //outputFile.close(); //UNCOMMENT FOR FILE OUTPUT
+
 }
 
-void compareDFSandBFS(vector<Graph<coord>> graphs) {
-    /*ofstream outputFile;
+void compareDFSandBFS(const vector<Graph<coord>> graphs) {
+    /*
+    ofstream outputFile;
     string fileName = "DFSandBFSComparison.csv";
     outputFile.open(fileName);
     if(!outputFile.is_open()){
         cout<<"Couldn't open csv file!\n";
     }
     cout<<graphs.size()<<endl;
-    outputFile<<"Graph Size;DurationDFS;DurationBFS\n";*/
-
+    outputFile<<"Graph Size;DurationDFS;DurationBFS\n";
+    */
     for(auto & graph : graphs){
         //cout<<"New Graph"<<endl;
         auto t1 = chrono::steady_clock::now();
-        graph.dfs(graph.getVertexSet()[0]->getID());
+        graph.dfs();
         //cout<<"Calculated DFS"<<endl;
         auto t2 = chrono::steady_clock::now();
         graph.bfs(graph.getVertexSet()[0]->getID());
@@ -199,7 +218,7 @@ void compareDFSandBFS(vector<Graph<coord>> graphs) {
         //cout<<graph.getVertexSet().size()<<" , "<<durationDFS<<" , "<<durationBFS<<"\n";
         //outputFile<< graph.getVertexSet().size()<<";"<<durationDFS<<";"<<durationBFS<<"\n";
     }
-    //outputFile.close(); UNCOMMENT FOR FILE OUTPUT
+    //outputFile.close(); //UNCOMMENT FOR FILE OUTPUT
 
 }
 

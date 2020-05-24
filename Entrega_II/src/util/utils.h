@@ -27,8 +27,8 @@ bool allVehiclesFull(vector<Vehicle*>& vehicles);
 double euclidianDistance(pair<double, double> point1, pair<double, double> point2);
 void compareALTandAStar(Graph<coord> graph, int id_src, const vector<int>& POIs,const vector<Prisoner*>& Prisoners);
 void compareALTandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs);
-void compareAStarandDijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs, const vector<Prisoner*>& Prisoners);
-void compareDFSandBFS(vector<Graph<coord>> graphs);
+void compareAStarandDijkstra(Graph<coord> graph, const vector<int> POIs);
+void compareDFSandBFS(const vector<Graph<coord>> graphs);
 
 void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path);
 

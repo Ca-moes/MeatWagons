@@ -34,7 +34,7 @@ template <class T>
 class Vertex {
 	int id;
 	int tag; // 0, for normal ; 1, for relevant ; 2, for highways
-	int dp;
+	//int dp;
 	T info;
 	vector<Edge<T> *> outgoing;
 	vector<Edge<T>*> incoming;
@@ -56,10 +56,10 @@ public:
 	int getTag() const;
 	T getInfo() const;
 	vector<Edge<T> *> getAdj() const;
-    vector<Edge<T> *> getIncoming() const;
+    //vector<Edge<T> *> getIncoming() const;
     double getCostTo(int dest_id) const;
     double getDist() const;
-    void setTag(int tag);
+    //void setTag(int tag);
 
     bool operator<(const Vertex &v2) const;
     bool operator>(const Vertex &v2) const;
@@ -138,10 +138,11 @@ class Graph {
 public:
 	vector<Vertex<T>*> getVertexSet() const;
 	vector<POI<T>*> getPOIs() const;
+	vector<int> getPOIsbyID() const;
 	vector<int> getHighways() const;
     void setHighways(vector<int> ids);
 
-    void addVertex(Vertex<T> *vertex);
+    //void addVertex(Vertex<T> *vertex);
     Vertex<T> * addVertex (const int & id, const T &info, const int &tag);
     Vertex<T> * findVertex (const int &id) const;
 
@@ -159,7 +160,7 @@ public:
 
     void reverseEdges();
 
-    vector<int> dfs(const int & source) const;
+    vector<int> dfs() const;
     vector<int> bfs(const int & source) const;
 
     Path dijkstraShortestPath(const int &origin, const int &destination);
@@ -174,7 +175,7 @@ public:
     Path nearestNeighbourDijkstra(const int id_src, vector<int> &POIs, Path &path);
     Path ALTShortestPath(int id_src, int id_dest);
 
-    void preComputeLandmarks(vector<int> id_landmarks);
+    //void preComputeLandmarks(vector<int> id_landmarks);
 };
 
 /* ================================================================================================
@@ -206,11 +207,12 @@ vector<Edge<T> *> Vertex<T>::getAdj() const {
     return this->outgoing;
 }
 
+/*
 template<class T>
 vector<Edge<T> *> Vertex<T>::getIncoming() const {
     return this->incoming;
 }
-
+*/
 template<class T>
 T Vertex<T>::getInfo() const {
     return this->info;
@@ -256,10 +258,11 @@ bool Vertex<T>::operator>=(const Vertex &v2) const {
     return !(*this < v2);
 }
 
+/*
 template<class T>
 void Vertex<T>::setTag(int tag) {
     this->tag = tag;
-}
+}*/
 
 /* ================================================================================================
  * Class Edge
@@ -310,10 +313,11 @@ string POI<T>::toString() const {
  * Class Graph
  * ================================================================================================
  */
+/*
 template<class T>
 void Graph<T>::addVertex(Vertex<T>* vertex) {
     vertexSet.push_back(vertex);
-}
+}*/
 
 template<class T>
 Vertex<T> *Graph<T>::addVertex(const int &id, const T &info, const int &tag) {
@@ -377,6 +381,15 @@ vector<POI<T>*> Graph<T>::getPOIs() const{
     return pois;
 }
 
+template<class T>
+vector<int> Graph<T>::getPOIsbyID() const {
+    vector<int> vec;
+    for(auto poi: pois){
+        if(find(vec.begin(),vec.end(),poi->getID())==vec.end())
+            vec.push_back(poi->getID());
+    }
+    return vec;
+}
 
 template<class T>
 POI<T>* Graph<T>::addPOI(const string &name, const int &id) {
@@ -423,15 +436,18 @@ POI<T>* Graph<T>::findPOI(const int &id) {
  * Follows the algorithm described in theoretical classes.
  */
 template <class T>
-vector<int> Graph<T>::dfs(const int & source) const {
+vector<int> Graph<T>::dfs() const {
     // DONE (7 lines)
     vector<int> res;
 
     for(Vertex<T> *vertex:this->vertexSet){
         vertex->visited=false;
     }
-    Vertex<T>*vertex1 = findVertex(source);
-    dfsVisit(vertex1,res);
+    for(auto vertex1: this->vertexSet){
+        if(!vertex1->visited){
+            dfsVisit(vertex1,res);
+        }
+    }
 
     return res;
 }
@@ -446,13 +462,14 @@ void Graph<T>::dfsVisit(Vertex<T> *v, vector<int> & res) const {
     if(!v->visited){
         v->visited=true;
         res.push_back(v->id); //inserts the vertex
-    }
-
-    for(Edge<T> * edge:v->outgoing){
-        if(!edge->dest->visited){
-            dfsVisit(edge->dest,res);
+        for(Edge<T> * edge:v->outgoing){
+            if(!edge->dest->visited){
+                dfsVisit(edge->dest,res);
+            }
         }
     }
+
+
 }
 
 
@@ -821,7 +838,7 @@ double Graph<T>::getEstimateCost(Vertex<T>* src, Vertex<T>* dest) {
 
     return maxEstimate;
 }
-
+/*
 template<class T>
 void Graph<T>::preComputeLandmarks(vector<int> id_landmarks) {
     fromLandmark.clear();
@@ -852,6 +869,7 @@ void Graph<T>::preComputeLandmarks(vector<int> id_landmarks) {
         reverseEdges();
     }
 }
+ */
 
 template<class T>
 void Graph<T>::reverseEdges() {

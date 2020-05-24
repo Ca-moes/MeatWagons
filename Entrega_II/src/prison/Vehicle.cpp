@@ -10,31 +10,6 @@ Vehicle::Vehicle(int capacity, int maxVelHighWay, int maxVelRoad) {
     this->maxVelRoad = maxVelRoad;
 }
 
-int Vehicle::getCapacity() {
-    return 0;
-}
-
-void Vehicle::setCapacity(int capacity) {
-    Vehicle::capacity = capacity;
-}
-
-int Vehicle::getMaxVelHighWay() const {
-    return maxVelHighWay;
-}
-
-void Vehicle::setMaxVelHighWay(int maxVelHighWay) {
-    Vehicle::maxVelHighWay = maxVelHighWay;
-}
-
-int Vehicle::getMaxVelRoad() const {
-    return maxVelRoad;
-}
-
-void Vehicle::setMaxVelRoad(int maxVelRoad) {
-    Vehicle::maxVelRoad = maxVelRoad;
-}
-
-
 void Vehicle::addPrisoner(Prisoner *prisoner) {
     this->prisoners.push_back(prisoner);
 }
@@ -45,10 +20,6 @@ bool Vehicle::isAtMaxCapacity() {
 
 const vector<Prisoner*> &Vehicle::getPrisoners() const{
     return prisoners;
-}
-
-void Vehicle::setPrisoners(const vector<Prisoner*> &prisoners) {
-    Vehicle::prisoners = prisoners;
 }
 
 Car::Car(int capacity) : Vehicle(capacity, 120, 90) {

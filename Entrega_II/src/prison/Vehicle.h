@@ -22,14 +22,7 @@ public:
     Vehicle(int capacity, int maxVelHighWay, int maxVelRoad);
     virtual ~Vehicle();
 
-    int getCapacity();
-    void setCapacity(int capacity);
-    int getMaxVelHighWay() const;
-    void setMaxVelHighWay(int maxVelHighWay);
-    int getMaxVelRoad() const;
-    void setMaxVelRoad(int maxVelRoad);
     const vector<Prisoner*> & getPrisoners() const;
-    void setPrisoners(const vector<Prisoner*> & prisoners);
 
     void addPrisoner(Prisoner *prisoner);
     bool removePrisoner(Prisoner *prisoner);

@@ -29,7 +29,7 @@ int main() {
 
     // Testar Conectividade e eliminar nodes nao necessarios
     Graph<coord> graphconnecteddfs;
-    constructGraphByPath(graphSelect, graphconnecteddfs, graphSelect.dfs(1));
+    constructGraphByPath(graphSelect, graphconnecteddfs, graphSelect.dfs());
     Graph<coord> graphconnectedbfs;
     constructGraphByPath(graphSelect, graphconnectedbfs, graphSelect.bfs(1));
 
@@ -155,8 +155,7 @@ int main() {
                             system("pause");
                             break;
                         case 3:
-                            pois = getPrisonersDestinies(prisonerVec);
-                            compareAStarandDijkstra(graph, originID, pois,prisonerVec);
+                            compareAStarandDijkstra(strong,strong.getPOIsbyID());
                             system("pause");
                             break;
                         case 4:
