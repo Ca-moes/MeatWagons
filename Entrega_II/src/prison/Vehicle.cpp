@@ -23,7 +23,7 @@ Car::Car(int capacity) : Vehicle(capacity, 120, 50) {
 
 Car::~Car() {}
 
-Bus::Bus(int capacity) : Vehicle(capacity, 90, 30) {
+Bus::Bus(int capacity) : Vehicle(capacity, 90, 50) {
 }
 
 Bus::~Bus() {}
