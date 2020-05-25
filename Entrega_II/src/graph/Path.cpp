@@ -1,7 +1,3 @@
-//
-// Created by GoncaloAlves on 16/05/2020.
-//
-
 #include "Path.h"
 
 Path::Path() {

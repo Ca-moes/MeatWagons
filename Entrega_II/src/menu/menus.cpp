@@ -1,7 +1,3 @@
-//
-// Created by pedro on 05/05/2020.
-//
-
 #include "menus.h"
 
 int mainMenu() {
@@ -34,7 +30,7 @@ int prisonerMenu() {
     return chooseMenuOption(8);
 }
 
-int GraphMenu() {
+int graphMenu() {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "GRAPH MENU" << endl;
     cout << "__________________________________________________\n" << endl;
@@ -52,7 +48,7 @@ int GraphMenu() {
     return chooseMenuOption(9);
 }
 
-int GraphOpsMenu() {
+int performanceMenu() {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "ALGORITHMS MENU" << endl;
     cout << "__________________________________________________\n" << endl;
@@ -99,6 +95,18 @@ void removePrisoner(vector<Prisoner *> &vec, vector<Vehicle *> &vehiclesVec) {
         }
         vehiclesVec.at(indexx)->removePrisoner(prisoner);
     }
+}
+
+void showCurrentVehicles(vector<Vehicle *> vector) {
+    if (vector.empty())
+        cout << "No available Vehicles" << endl;
+    else {
+        for (int i = 0; i < vector.size(); ++i) {
+            string type = dynamic_cast<Car*>(vector[i]) != nullptr ? "Car" : "Bus";
+            cout << " " << i + 1 << " - " << type << " - " << *vector[i] << endl;
+        }
+    }
+    cout << "__________________________________________________\n" << endl;
 }
 
 Vehicle *addVehicle(vector<Vehicle *> &vector) {
@@ -148,18 +156,6 @@ void removeVehicle(vector<Vehicle *> &vector) {
     }
 
 }
-void showCurrentVehicles(vector<Vehicle *> vector) {
-    if (vector.empty())
-        cout << "No available Vehicles" << endl;
-    else {
-        cout << "ID - Type of Vehicle - used places/capacity - Speed on Roads/Speed on Highways" << endl;
-        for (int i = 0; i < vector.size(); ++i) {
-            string type = dynamic_cast<Car*>(vector[i]) != nullptr ? "Car" : "Bus";
-            cout << " " << i + 1 << " - " << type << " - " << *vector[i] << endl;
-        }
-    }
-    cout << "__________________________________________________\n" << endl;
-}
 
 void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec) {
     if (vehiclesVec.size() > 1) {
@@ -170,7 +166,6 @@ void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> 
             if (index > 0) {
                 Prisoner *prisoner = prisonersVec.at(index - 1);
                 cout << "Change to which Vehicle?" << endl;
-                cout << "ID - Type of Vehicle - used places/capacity - Speed on Roads/Speed on Highways" << endl;
                 for (int i = 0; i < vehiclesVec.size(); i++) {
                     string type = dynamic_cast<Car *>(vehiclesVec[i]) != nullptr ? "Car" : "Bus";
 
@@ -198,6 +193,32 @@ void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> 
     } else cout << "No available Vehicles to switch to" << endl;
 }
 
+void setupExample(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec) {
+    prisonersVec.clear();
+    vehiclesVec.clear();
+
+    Prisoner * p1 = new Prisoner(prisonersVec.size() + 1, "Pedro Seixas", 19, 21947, Time(19));
+    Prisoner * p2 = new Prisoner(prisonersVec.size() + 1, "Goncalo Alves", 19, 52539, Time(19,3));
+    Prisoner * p3 = new Prisoner(prisonersVec.size() + 1, "Andre Gomes", 19, 40775, Time(19));
+
+    Bus * v1 = new Bus(2);
+    Car * v2 = new Car(1);
+
+    v1->addPrisoner(p1);
+    v1->addPrisoner(p2);
+    v2->addPrisoner(p3);
+
+    prisonersVec.push_back(p1);
+    prisonersVec.push_back(p2);
+    prisonersVec.push_back(p3);
+    sortPrisonersByDeliveryTime(prisonersVec);
+
+    vehiclesVec.push_back(v1);
+    vehiclesVec.push_back(v2);
+
+    cout << "SETUP DONE!" << endl;
+}
+
 Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "CHOOSE A GRAPH TO WORK ON" << endl;
@@ -219,11 +240,11 @@ vector<pair<Path, Time>> getBestPaths(Graph<coord> graph, int originID, vector<V
     vector<pair<Path,Time>> paths;
     for (int i = 0; i < vehiclesVec.size(); i++){
         Path path;
-        vector<Prisoner*> prisoners = vehiclesVec[i]->getPrisoners(); orderByTime(prisoners);
-        vector<Prisoner*> temp = vehiclesVec[i]->getPrisoners(); orderByTime(temp);
+        vector<Prisoner*> prisoners = vehiclesVec[i]->getPrisoners(); sortPrisonersByDeliveryTime(prisoners);
+        vector<Prisoner*> temp = vehiclesVec[i]->getPrisoners(); sortPrisonersByDeliveryTime(temp);
 
         vector<int> POIs = getPrisonersDestinies(prisoners);
-        path = graph.nearestNeighbourSearchAStar(originID, POIs, prisoners, path, euclidianDistance, time);
+        path = graph.nearestNeighbourSearchAStar(originID, POIs, prisoners, path, euclideanDistance, time);
 
         Time departureTime = getDepartureTime(path.getPOIsTimes(), temp);
 
@@ -259,30 +280,4 @@ void showBestPaths(GUI gui, vector<pair<Path,Time>> paths) {
         showPaths.push_back(paths.at(i).first);
     }
     gui.showMultiplePathsInMap(showPaths);
-}
-
-void setupExample(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec) {
-    prisonersVec.clear();
-    vehiclesVec.clear();
-
-    Prisoner * p1 = new Prisoner(prisonersVec.size() + 1, "Pedro Seixas", 19, 21947, Time(19));
-    Prisoner * p2 = new Prisoner(prisonersVec.size() + 1, "Goncalo Alves", 19, 52539, Time(19,5));
-    Prisoner * p3 = new Prisoner(prisonersVec.size() + 1, "Andre Gomes", 19, 40775, Time(19));
-
-    Vehicle * v1 = new Vehicle(2, 50, 50);
-    Vehicle * v2 = new Vehicle(1, 50, 50);
-
-    v1->addPrisoner(p1);
-    v1->addPrisoner(p2);
-    v2->addPrisoner(p3);
-
-    prisonersVec.push_back(p1);
-    prisonersVec.push_back(p2);
-    prisonersVec.push_back(p3);
-    sortPrisonersByDeliveryTime(prisonersVec);
-
-    vehiclesVec.push_back(v1);
-    vehiclesVec.push_back(v2);
-
-    cout << "SETUP DONE!" << endl;
 }

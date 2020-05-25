@@ -1,7 +1,3 @@
-//
-// Created by andre_4mxog39 on 18/05/2020.
-//
-
 #include "Vehicle.h"
 
 Vehicle::Vehicle(int capacity, int maxVelHighWay, int maxVelRoad) {
@@ -22,19 +18,19 @@ const vector<Prisoner*> &Vehicle::getPrisoners() const{
     return prisoners;
 }
 
-Car::Car(int capacity) : Vehicle(capacity, 120, 90) {
+Car::Car(int capacity) : Vehicle(capacity, 120, 50) {
 }
 
 Car::~Car() {}
 
-Bus::Bus(int capacity) : Vehicle(capacity, 100, 80) {
+Bus::Bus(int capacity) : Vehicle(capacity, 90, 30) {
 }
 
 Bus::~Bus() {}
 
 ostream& operator<<(ostream& os, const Vehicle& dt)
 {
-    os << dt.prisoners.size() << '/' << dt.capacity << " - " << dt.maxVelRoad << '/' << dt.maxVelHighWay;
+    os << "Capacity: " << dt.prisoners.size() << '/' << dt.capacity << " | Road Velocity: " << dt.maxVelRoad << " | Highway Velocity: " << dt.maxVelHighWay;
     return os;
 }
 

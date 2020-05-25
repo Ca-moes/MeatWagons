@@ -1,7 +1,3 @@
-//
-// Created by pedro on 05/05/2020.
-//
-
 #ifndef ENTREGA_II_PRISONER_H
 #define ENTREGA_II_PRISONER_H
 
@@ -13,12 +9,22 @@
 
 using namespace std;
 
+/**
+ * @brief Prisoner Class
+ */
 class Prisoner {
 private:
     int id;
     string name;
     int age;
+
+    /**
+     * @brief Destiny node id
+     */
     int dest;
+    /**
+     * @brief Delivery Time
+     */
     Time deliveryTime;
 
 public:
@@ -30,9 +36,5 @@ public:
     int getDest();
     Time getDeliveryTime() const;
 };
-
-vector<int> getPrisonersDestinies(vector<Prisoner*> vec);
-bool TimeCompare(Prisoner* p1, Prisoner* p2);
-void orderByTime(vector<Prisoner*> &vec);
 
 #endif //ENTREGA_II_PRISONER_H

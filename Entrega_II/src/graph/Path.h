@@ -1,7 +1,3 @@
-//
-// Created by GoncaloAlves on 16/05/2020.
-//
-
 #ifndef ENTREGA_II_PATH_H
 #define ENTREGA_II_PATH_H
 
@@ -11,11 +7,23 @@
 
 using namespace std;
 
+/**
+ * @brief Path Class
+ */
 class Path {
+    /**
+     * @brief Vector with path nodes IDs
+     */
     vector<int> path;
+
+    /**
+     * @brief Length of path (seconds)
+     */
     double path_length;
 
-    // Map with POIs and the corresponding cumulative time to get to that node
+    /**
+     * @brief Map with POIs and the corresponding cumulative time to get to that node
+     */
     unordered_map<int, Time> POIs;
 
 public:
@@ -27,6 +35,10 @@ public:
     int getLastNode() const;
     unordered_map<int, Time> getPOIsTimes() const;
 
+    /**
+     * @brief Join 2 paths
+     * @param p Path to be joined
+     */
     void joinPath(const Path &p);
     void addNode(const int &id);
     void addPOI(const int &id, const Time &time);

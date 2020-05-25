@@ -1,8 +1,3 @@
-//
-// Created by pedro on 05/05/2020.
-//
-
-
 #include "Prisoner.h"
 
 Prisoner::Prisoner(int id, string name, int age, int dest, Time deliveryTime) {
@@ -31,22 +26,4 @@ int Prisoner::getDest() {
 
 Time Prisoner::getDeliveryTime() const {
     return this->deliveryTime;
-}
-
-vector<int> getPrisonersDestinies(vector<Prisoner*> vec){
-    vector<int> des;
-    for(auto p:vec){
-        if(find(des.begin(),des.end(),p->getDest())==des.end())
-            des.push_back(p->getDest());
-    }
-    return des;
-}
-
-bool TimeCompare(Prisoner* p1, Prisoner* p2){
-    return (p1->getDeliveryTime()<p2->getDeliveryTime());
-}
-
-void orderByTime(vector<Prisoner*> &vec){
-   sort(vec.begin(),vec.end(),TimeCompare);
-
 }

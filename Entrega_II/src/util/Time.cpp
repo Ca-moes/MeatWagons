@@ -69,13 +69,6 @@ Time Time::operator-(const Time &t) {
     return time;
 }
 
-string Time::toString(bool withSeconds) const {
-    stringstream ss;
-    ss << setw(2) << setfill('0') << this->hour << ":" << setw(2) << setfill('0') << this->minute;
-    if (withSeconds) ss << ":" << setw(2) << setfill('0') << this->second;
-    return ss.str();
-}
-
 bool Time::operator<(const Time &t) {
     if (hour < t.hour) return true;
     else if (hour == t.hour) {
@@ -85,4 +78,12 @@ bool Time::operator<(const Time &t) {
     }
     else return false;
 }
+
+string Time::toString(bool withSeconds) const {
+    stringstream ss;
+    ss << setw(2) << setfill('0') << this->hour << ":" << setw(2) << setfill('0') << this->minute;
+    if (withSeconds) ss << ":" << setw(2) << setfill('0') << this->second;
+    return ss.str();
+}
+
 

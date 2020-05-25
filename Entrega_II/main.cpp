@@ -42,20 +42,13 @@ int main() {
     vector<Path> paths;
     vector<vector<int>> pathsToDisplay;
     vector<int> conect;
-    cout << "Waiting";
     GUI fullMap = GUI(graph, 1900, 1000);
-    cout << ".";
-    //GUI pathGui = GUI(graph, 1900, 1000);
-    //cout << ".";
     GUI dfsMap = GUI(graphconnecteddfs,1900,1000);
-    cout << ".\n";
     GUI bfsMap = GUI(graphconnectedbfs,1900,1000);
-    cout << ".\n";
 
     // Choose Origin
-    int originID = choosePlace(graph.getPOIs(), "ORIGIN", graph), newOrigin;
+    int originID = choosePlace(graph.getPOIs(), "ORIGIN"), newOrigin;
     if (originID == 0) return 0;
-
 
     while ((op = mainMenu()) != 0) {
         switch (op) {
@@ -64,7 +57,7 @@ int main() {
                     switch(op2) {
                         case 1:
                             addPrisoner(prisonerVec, graph, vehiclesVec);
-                            orderByTime(prisonerVec);
+                            sortPrisonersByDeliveryTime(prisonerVec);
                             break;
                         case 2:
                             removePrisoner(prisonerVec, vehiclesVec);
@@ -102,7 +95,7 @@ int main() {
                 }
                 break;
             case 2:
-                while((op2=GraphMenu())!=0){
+                while((op2= graphMenu()) != 0){
                     switch(op2) {
                         case 1:
                             graph=chooseGraph(graphVec);
@@ -110,7 +103,7 @@ int main() {
                             system("pause");
                             break;
                         case 2:
-                            newOrigin = choosePlace(graph.getPOIs(), "ORIGIN", graph);
+                            newOrigin = choosePlace(graph.getPOIs(), "ORIGIN");
                             if (newOrigin != 0) originID = newOrigin;
                             break;
                         case 3:
@@ -142,24 +135,24 @@ int main() {
                 break;
 
             case 3:
-                while((op2=GraphOpsMenu())!=0){
+                while((op2= performanceMenu()) != 0){
                     switch(op2) {
                         case 1:
                             pois = getPrisonersDestinies(prisonerVec);
-                            compareALTandAStar(graph, originID, pois,prisonerVec);
+                            compareALT_AStar(graph, originID, pois, prisonerVec);
                             system("pause");
                             break;
                         case 2:
                             pois = getPrisonersDestinies(prisonerVec);
-                            compareALTandDijkstra(graph, originID, pois);
+                            compareALT_Dijkstra(graph, originID, pois);
                             system("pause");
                             break;
                         case 3:
-                            compareAStarandDijkstra(strong,strong.getPOIsbyID());
+                            compareAStar_Dijkstra(strong, strong.getPOIsbyID());
                             system("pause");
                             break;
                         case 4:
-                            compareDFSandBFS(maps);
+                            compareDFS_BFS(maps);
                             system("pause");
                             break;
                         default:

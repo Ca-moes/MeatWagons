@@ -1,7 +1,3 @@
-//
-// Created by andre_4mxog39 on 18/05/2020.
-//
-
 #ifndef ENTREGA_II_VEHICLES_H
 #define ENTREGA_II_VEHICLES_H
 

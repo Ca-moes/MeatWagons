@@ -1,14 +1,5 @@
-//
-// Created by pedro on 05/05/2020.
-//
-
 #include "utils.h"
 
-/**
- * Retorna um numero i : 0 <= i <= maxOption
- * @param maxOption
- * @return Número que leu em forma de _int_
- */
 int chooseMenuOption(int maxOption) {
     int op;
 
@@ -108,8 +99,7 @@ string readString(const string& msg) {
     return line;
 }
 
-bool allVehiclesFull(vector<Vehicle*>& vehicles){
-    //TODO
+bool allVehiclesFull(vector<Vehicle*>& vehicles) {
     for (int i = 0; i < vehicles.size(); ++i) {
         if (!vehicles[i]->isAtMaxCapacity())
             return false;
@@ -117,18 +107,18 @@ bool allVehiclesFull(vector<Vehicle*>& vehicles){
     return true;
 }
 
-double euclidianDistance(pair<double, double> point1, pair<double, double> point2) {
+double euclideanDistance(pair<double, double> point1, pair<double, double> point2) {
     return sqrt(pow((point1.first - point2.first), 2) + pow((point1.second - point2.second), 2));
 }
 
-void compareALTandAStar(Graph<coord> graph, const int id_src, const vector<int>& POIs,const vector<Prisoner*>& Prisoners) {
+void compareALT_AStar(Graph<coord> graph, int id_src, const vector<int>& POIs, const vector<Prisoner*>& Prisoners) {
     Path path1, path2;
     vector<int> p1 = POIs, p2 = POIs;
     vector<Prisoner*>pr=Prisoners;
     auto t1 = chrono::high_resolution_clock::now();
     graph.nearestNeighbourSearchALT(id_src, p1, path1);
     auto t2 = chrono::high_resolution_clock::now();
-    graph.nearestNeighbourSearchAStar(id_src, p2,pr, path2, euclidianDistance,false);
+    graph.nearestNeighbourSearchAStar(id_src, p2, pr, path2, euclideanDistance, false);
     auto t3 = chrono::high_resolution_clock::now();
 
     auto durationALT = std::chrono::duration_cast<std::chrono::microseconds>( t2 - t1 ).count();
@@ -138,7 +128,7 @@ void compareALTandAStar(Graph<coord> graph, const int id_src, const vector<int>&
     cout << "Ran A-Star Search in " << durationAStar << " microseconds" << endl;
 }
 
-void compareALTandDijkstra(Graph<coord> graph, const int id_src, const vector<int>& POIs) {
+void compareALT_Dijkstra(Graph<coord> graph, int id_src, const vector<int>& POIs) {
     Path path1, path2;
     vector<int> p1 = POIs, p2 = POIs;
     auto t1 = chrono::high_resolution_clock::now();
@@ -154,7 +144,7 @@ void compareALTandDijkstra(Graph<coord> graph, const int id_src, const vector<in
     cout << "Ran Dijkstra Search in " << durationDijkstra << " microseconds" << endl;
 }
 
-void compareAStarandDijkstra(Graph<coord> graph, const vector<int> POIs) {
+void compareAStar_Dijkstra(Graph<coord> graph, const vector<int> &POIs) {
     /*
     ofstream outputFile;
     string fileName = "AStarandDijkstraComparison.csv";
@@ -171,7 +161,7 @@ void compareAStarandDijkstra(Graph<coord> graph, const vector<int> POIs) {
             auto *prisoner = new Prisoner(0, "test", 1, poi2, Time(12, 00));
             vector<Prisoner *> pr = {prisoner};
             auto t1 = chrono::steady_clock::now();
-            graph.nearestNeighbourSearchAStar(poi, p1, pr, path1, euclidianDistance, false);
+            graph.nearestNeighbourSearchAStar(poi, p1, pr, path1, euclideanDistance, false);
             auto t2 = chrono::steady_clock::now();
             graph.nearestNeighbourDijkstra(poi, p2, path2);
             auto t3 = chrono::steady_clock::now();
@@ -189,7 +179,7 @@ void compareAStarandDijkstra(Graph<coord> graph, const vector<int> POIs) {
 
 }
 
-void compareDFSandBFS(const vector<Graph<coord>> graphs) {
+void compareDFS_BFS(const vector<Graph<coord>> &graphs) {
     /*
     ofstream outputFile;
     string fileName = "DFSandBFSComparison.csv";
@@ -222,27 +212,25 @@ void compareDFSandBFS(const vector<Graph<coord>> graphs) {
 
 }
 
-void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newgraph, vector<int> path){
-
+void constructGraphByPath(const Graph<coord>& graph, Graph<coord>& newGraph, vector<int> path){
     Vertex<coord> * v1, *v2;
     for (int i = 0; i < path.size() - 1; i++) {
         v1 = graph.findVertex(path[i]);
         v2 = graph.findVertex(path[i+1]);
-        newgraph.addVertex(v1->getID(),v1->getInfo(),v1->getTag());
-        for(Edge<coord> * e : v1->getAdj()) {
+        newGraph.addVertex(v1->getID(), v1->getInfo(), v1->getTag());
+        for(Edge<coord> * e : v1->getOutgoing()) {
             if (e->getDest() == v2) {
-                newgraph.addVertex(v2->getID(),v2->getInfo(),v2->getTag());
-                newgraph.addEdge(v1->getID(), v2->getID(), e->getWeight());
+                newGraph.addVertex(v2->getID(), v2->getInfo(), v2->getTag());
+                newGraph.addEdge(v1->getID(), v2->getID(), e->getWeight());
                 break;
             }
         }
     }
 
     for(auto poi: graph.getPOIs()){
-        newgraph.addPOI(poi);
+        newGraph.addPOI(poi);
     }
 }
-
 
 void sortPrisonersByDeliveryTime(vector<Prisoner*> &prisoners) {
     sort(prisoners.begin(), prisoners.end(), [](const Prisoner* left, const Prisoner* right) {
@@ -250,10 +238,13 @@ void sortPrisonersByDeliveryTime(vector<Prisoner*> &prisoners) {
     });
 }
 
-void printPOIsTimeMap(const unordered_map<int, Time> &pois) {
-    for (auto p : pois) {
-        cout << "ID: " << p.first << " | Time to get there: " << p.second.toString(true) << endl;
+vector<int> getPrisonersDestinies(vector<Prisoner*> vec){
+    vector<int> des;
+    for(auto p:vec){
+        if(find(des.begin(),des.end(),p->getDest())==des.end())
+            des.push_back(p->getDest());
     }
+    return des;
 }
 
 Time getDepartureTime(const unordered_map<int, Time> &POIsTimes, const vector<Prisoner*> &prisoners) {

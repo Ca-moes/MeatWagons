@@ -9,6 +9,9 @@
 
 using namespace std;
 
+/**
+ * @brief Time class
+ */
 class Time {
     int hour;
     int minute;
@@ -29,9 +32,17 @@ public:
     Time operator-(const Time& t);
     bool operator<(const Time& t);
 
+    /**
+     * @brief Get the time in a formatted way
+     * @param withSeconds Print seconds if true
+     * @return String with time
+     */
     string toString(bool withSeconds) const;
 };
 
+/**
+ * @brief Exception thrown when creating a Time object if it is given invalid values
+ */
 class InvalidTime : public exception {
     string msg;
 public:

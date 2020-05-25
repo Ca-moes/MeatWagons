@@ -1,9 +1,4 @@
-//
-// Created by GoncaloAlves on 06/05/2020.
-//
-
 #include "GUI.h"
-
 
 GUI::GUI(Graph<coord> &graph, int w, int h) : graph(graph), gv_w(w), gv_h(h) {
 }
@@ -35,7 +30,7 @@ void GUI::show() {
 
     int id = 0;
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
-        for (Edge<coord>* edge : vertex->getAdj()) {
+        for (Edge<coord>* edge : vertex->getOutgoing()) {
             gv->addEdge(id, vertex->getID(), edge->getDest()->getID(), EdgeType::DIRECTED);
             gv->setEdgeLabel(id, ""/*to_string(edge->getWeight())*/);
             if (vertex->getTag() == 2 && edge->getDest()->getTag() == 2) {
@@ -61,19 +56,18 @@ void GUI::showMultiplePathsInMap(vector<Path> shortestPaths) {
         xPercent = (vertex->getInfo().first - graph.getMinX())/(graph.getMaxX() - graph.getMinX())*0.9 + 0.05;
 
         gv->addNode(vertex->getID(), (int)(xPercent*gv_w), (int)(yPercent*gv_h));
-
-        //gv->setVertexLabel(vertex->getID(),to_string(vertex->getID()));
         gv->setVertexSize(vertex->getID(), 5);
     }
 
     int id = 0;
     for (Vertex<coord>* vertex : graph.getVertexSet()) {
-        for (Edge<coord>* edge : vertex->getAdj()) {
+        for (Edge<coord>* edge : vertex->getOutgoing()) {
             gv->addEdge(id, vertex->getID(), edge->getDest()->getID(), EdgeType::UNDIRECTED);
             gv->setEdgeThickness(id, 0.5);
             id++;
         }
     }
+
     int colour=0;
     for(auto shortestPath: shortestPaths) {
         vector<int> path = shortestPath.getPath();
@@ -91,7 +85,6 @@ void GUI::showMultiplePathsInMap(vector<Path> shortestPaths) {
                 gv->setVertexColor(path[i], "YELLOW");
             }
             gv->addEdge(id, path[i], path[i + 1], EdgeType::DIRECTED);
-            //gv->setEdgeLabel(id, to_string(a->getCostTo(b->getID())));
             gv->setEdgeColor(id, colours[colour]);
             gv->setEdgeThickness(id, 10);
             id++;
@@ -104,7 +97,6 @@ void GUI::showMultiplePathsInMap(vector<Path> shortestPaths) {
     }
     gv->rearrange();
     closeGV();
-
 }
 
 void GUI::deleteGV() {
