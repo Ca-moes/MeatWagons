@@ -1,7 +1,3 @@
-//
-// Created by pedro on 05/05/2020.
-//
-
 #include "menus.h"
 
 int mainMenu() {
@@ -28,29 +24,31 @@ int prisonerMenu() {
     cout << " 5 - Remove Vehicle" << endl;
     cout << " 6 - Display Vehicles" << endl;
     cout << " 7 - Change Prisoner's Vehicle" << endl;
-    cout << endl << " 0 - Exit" << endl;
-    cout << "__________________________________________________\n" << endl;
-    return chooseMenuOption(7);
-}
-
-int GraphMenu() {
-    cout << "__________________________________________________\n" << endl;
-    cout << setw(23) << right << "GRAPH MENU" << endl;
-    cout << "__________________________________________________\n" << endl;
-    cout << " 1 - Change Type of Graph" << endl;
-    cout << " 2 - Show Current POI'S" << endl;
-    cout << " 3 - Show Graph" << endl;
-    cout << " 4 - Show Best Path" << endl;
-    cout << " 5 - Show Best Path in Map" << endl;
-    cout << " 6 - Change Origin Point" << endl;
-    cout << " 7 - Show Connectivity" << endl;
-    cout << " 8 - Show Connectivity from Origin" << endl;
+    cout << endl << " 8 - Example Setup" << endl;
     cout << endl << " 0 - Exit" << endl;
     cout << "__________________________________________________\n" << endl;
     return chooseMenuOption(8);
 }
 
-int GraphOpsMenu() {
+int graphMenu() {
+    cout << "__________________________________________________\n" << endl;
+    cout << setw(23) << right << "GRAPH MENU" << endl;
+    cout << "__________________________________________________\n" << endl;
+    cout << " 1 - Change Type of Graph" << endl;
+    cout << " 2 - Change Origin Point" << endl;
+    cout << " 3 - Show Current POI'S" << endl;
+    cout << " 4 - Show Full Graph" << endl;
+    cout << " 5 - Show Shortest Path (Nearest Neighbour)" << endl;
+    cout << " 6 - Show Shortest Path (Next Prisoner)" << endl;
+    cout << " 7 - Show Path with Latest Departure Time" << endl;
+    cout << " 8 - Show Connectivity" << endl;
+    cout << " 9 - Show Connectivity from Origin" << endl;
+    cout << endl << " 0 - Exit" << endl;
+    cout << "__________________________________________________\n" << endl;
+    return chooseMenuOption(9);
+}
+
+int performanceMenu() {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "ALGORITHMS MENU" << endl;
     cout << "__________________________________________________\n" << endl;
@@ -67,9 +65,10 @@ void showCurrentPrisoners(vector<Prisoner*> vec) {
     cout << "__________________________________________________\n" << endl;
     cout << setw(23) << right << "PRISONERS" << endl;
     cout << "__________________________________________________\n" << endl;
+    int i = 1;
     if (!vec.empty())
         for (Prisoner * p : vec)
-            cout << "Name: " << p->getName() << " (" << p->getID() << ")\tAge: " << p->getAge() << "\tDestination: " << p->getDest() << endl;
+            cout << i++ << " - " << p->getName() << " (ID: " << p->getID() << ") | Delivery Time: " << p->getDeliveryTime().toString(false) << " | Destination Node Id: " << p->getDest() << endl;
     else
         cout << "No prisoners to transport." << endl;
     cout << "__________________________________________________\n" << endl;
@@ -96,6 +95,18 @@ void removePrisoner(vector<Prisoner *> &vec, vector<Vehicle *> &vehiclesVec) {
         }
         vehiclesVec.at(indexx)->removePrisoner(prisoner);
     }
+}
+
+void showCurrentVehicles(vector<Vehicle *> vector) {
+    if (vector.empty())
+        cout << "No available Vehicles" << endl;
+    else {
+        for (int i = 0; i < vector.size(); ++i) {
+            string type = dynamic_cast<Car*>(vector[i]) != nullptr ? "Car" : "Bus";
+            cout << " " << i + 1 << " - " << type << " - " << *vector[i] << endl;
+        }
+    }
+    cout << "__________________________________________________\n" << endl;
 }
 
 Vehicle *addVehicle(vector<Vehicle *> &vector) {
@@ -145,18 +156,6 @@ void removeVehicle(vector<Vehicle *> &vector) {
     }
 
 }
-void showCurrentVehicles(vector<Vehicle *> vector) {
-    if (vector.empty())
-        cout << "No available Vehicles" << endl;
-    else {
-        cout << "ID - Type of Vehicle - used places/capacity - Speed on Roads/Speed on Highways" << endl;
-        for (int i = 0; i < vector.size(); ++i) {
-            string type = dynamic_cast<Car*>(vector[i]) != nullptr ? "Car" : "Bus";
-            cout << " " << i + 1 << " - " << type << " - " << *vector[i] << endl;
-        }
-    }
-    cout << "__________________________________________________\n" << endl;
-}
 
 void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec) {
     if (vehiclesVec.size() > 1) {
@@ -167,7 +166,6 @@ void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> 
             if (index > 0) {
                 Prisoner *prisoner = prisonersVec.at(index - 1);
                 cout << "Change to which Vehicle?" << endl;
-                cout << "ID - Type of Vehicle - used places/capacity - Speed on Roads/Speed on Highways" << endl;
                 for (int i = 0; i < vehiclesVec.size(); i++) {
                     string type = dynamic_cast<Car *>(vehiclesVec[i]) != nullptr ? "Car" : "Bus";
 
@@ -190,9 +188,35 @@ void changePrisonersVehicle(vector<Prisoner *> &prisonersVec, vector<Vehicle *> 
                     cout << "Change made!" << endl;
                 }
                 cout << "0 - Exit\n\n";
-            } else cout << "No prisoners available" << endl;
-        } else cout << "No available Vehicles to switch to" << endl;
-    }
+            }
+        } else cout << "No prisoners available" << endl;
+    } else cout << "No available Vehicles to switch to" << endl;
+}
+
+void setupExample(vector<Prisoner *> &prisonersVec, vector<Vehicle *> &vehiclesVec) {
+    prisonersVec.clear();
+    vehiclesVec.clear();
+
+    Prisoner * p1 = new Prisoner(prisonersVec.size() + 1, "Pedro Seixas", 19, 21947, Time(19));
+    Prisoner * p2 = new Prisoner(prisonersVec.size() + 1, "Goncalo Alves", 19, 52539, Time(19,3));
+    Prisoner * p3 = new Prisoner(prisonersVec.size() + 1, "Andre Gomes", 19, 40775, Time(19));
+
+    Bus * v1 = new Bus(2);
+    Car * v2 = new Car(1);
+
+    v1->addPrisoner(p1);
+    v1->addPrisoner(p2);
+    v2->addPrisoner(p3);
+
+    prisonersVec.push_back(p1);
+    prisonersVec.push_back(p2);
+    prisonersVec.push_back(p3);
+    sortPrisonersByDeliveryTime(prisonersVec);
+
+    vehiclesVec.push_back(v1);
+    vehiclesVec.push_back(v2);
+
+    cout << "SETUP DONE!" << endl;
 }
 
 Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
@@ -210,4 +234,50 @@ Graph<coord> chooseGraph(vector<Graph<coord>> graphVec){
         return graphVec.at(graphnum-1);
 
     return graphVec.at(0);
+}
+
+vector<pair<Path, Time>> getBestPaths(Graph<coord> graph, int originID, vector<Vehicle *> vehiclesVec, bool time) {
+    vector<pair<Path,Time>> paths;
+    for (int i = 0; i < vehiclesVec.size(); i++){
+        Path path;
+        vector<Prisoner*> prisoners = vehiclesVec[i]->getPrisoners(); sortPrisonersByDeliveryTime(prisoners);
+        vector<Prisoner*> temp = vehiclesVec[i]->getPrisoners(); sortPrisonersByDeliveryTime(temp);
+
+        vector<int> POIs = getPrisonersDestinies(prisoners);
+        path = graph.nearestNeighbourSearchAStar(originID, POIs, prisoners, path, euclideanDistance, time);
+
+        Time departureTime = getDepartureTime(path.getPOIsTimes(), temp);
+
+        paths.push_back(make_pair(path, departureTime));
+    }
+    return paths;
+}
+
+vector<pair<Path,Time>> getLatestDeparturePaths(Graph<coord> graph, int originID, vector<Vehicle *> vehiclesVec) {
+    vector<pair<Path,Time>> paths;
+    cout << "Shortest Path" << endl;
+    vector<pair<Path,Time>> nearestNeighbourPaths = getBestPaths(graph, originID, vehiclesVec, false);
+    cout << "Best Path by Prisoner Order" << endl;
+    vector<pair<Path,Time>> nextPrisonerPaths = getBestPaths(graph, originID, vehiclesVec, true);
+    for (int i = 0; i < vehiclesVec.size(); i++){
+        pair<Path,Time> nearest = nearestNeighbourPaths.at(i);
+        pair<Path,Time> next = nextPrisonerPaths.at(i);
+        if (nearest.second < next.second) // The greater departure time the best
+            paths.push_back(next);
+        else
+            paths.push_back(nearest);
+    }
+    return paths;
+}
+
+void showBestPaths(GUI gui, vector<pair<Path,Time>> paths) {
+    vector<Path> showPaths;
+    for (int i = 0; i < paths.size(); i++) {
+        cout << "__________________________________________________" << endl;
+        cout << setw(23) << right << "Vehicle " << i + 1 << endl;
+        cout << "Departure Time: " << paths.at(i).second.toString(false) << endl;
+        cout << "Nodes in Path: " << paths.at(i).first.getPath().size() << endl;
+        showPaths.push_back(paths.at(i).first);
+    }
+    gui.showMultiplePathsInMap(showPaths);
 }

@@ -1,14 +1,14 @@
-//
-// Created by GoncaloAlves on 06/05/2020.
-//
-
 #ifndef ENTREGA_II_GUI_H
 #define ENTREGA_II_GUI_H
 
 #include "../graphviewer/graphviewer.h"
 #include "graph/Graph.h"
+
 using namespace std;
 
+/**
+ * @brief Graph Viewer interface
+ */
 class GUI{
 private:
     Graph<coord> graph;
@@ -18,21 +18,33 @@ private:
 public:
     GUI(Graph<coord> &graph,int w,int h);
     void setGraph(Graph<coord> &graph);
+    Graph<coord> getGraph();
+
+    /**
+     * @brief Show the full graph
+     */
     void show();
-    void showNodes(vector<int> ids);
-    void showPath(vector<int> path);
-    void showPath2(vector<vector<int>> paths);
-    void showPathInMap(vector<int> path);
-    void clearPath(vector<int> path);
-    void clearGraph();
 
-    void clearPaths(vector<vector<int>> vector);
+    /**
+     * @brief Show graph and the paths given
+     * @param shortestPath Vector with paths
+     */
+    void showMultiplePathsInMap(vector<Path> shortestPath);
 
-  void createGV();
+    /**
+     * @brief Create the GraphViewer
+     */
+    void createGV();
+
+    /**
+     * @brief Close the GraphViewer
+     */
     void closeGV();
+
+    /**
+     * @brief Delete GraphViewer
+     */
     void deleteGV();
-    void clearEdges(int numEdges);
-    void clearAllGraphNodes();
 };
 
 

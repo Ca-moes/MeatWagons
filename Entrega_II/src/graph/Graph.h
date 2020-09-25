@@ -1,6 +1,3 @@
-/*
- * Graph.h
- */
 #ifndef GRAPH_H_
 #define GRAPH_H_
 
@@ -12,8 +9,10 @@
 #include <cmath>
 #include <functional>
 #include <unordered_map>
+#include <map>
 #include "MutablePriorityQueue.h"
 #include "Path.h"
+#include "prison/Prisoner.h"
 
 using namespace std;
 
@@ -23,6 +22,8 @@ typedef pair<double, double> coord;
 
 constexpr auto INF = std::numeric_limits<double>::max();
 
+#define ROAD_VEL_MS 50 * 1000 / 3600
+
 /*
  * ================================================================================================
  * Class Vertex
@@ -31,19 +32,42 @@ constexpr auto INF = std::numeric_limits<double>::max();
 template <class T>
 class Vertex {
 	int id;
-	int tag; // 0, for normal ; 1, for relevant ; 2, for highways
-	int dp;
+
+	/**
+	 * @brief Tag of a vertex
+	 * 0 - Normal
+	 * 1 - Relevant
+	 * 2 - Highways
+	 */
+	int tag;
 	T info;
+	/**
+	 * @brief Outgoing edges
+	 */
 	vector<Edge<T> *> outgoing;
+	/**
+	 * Incoming edges
+	 */
 	vector<Edge<T>*> incoming;
     Edge<T>* addEdge(Vertex *dest, double w);
 	Vertex(int id);
     Vertex(T info);
 
-	bool visited;  // for path finding
-
-    // A-Star
+    /**
+     * @brief Path finding auxiliary variable
+     */
+	bool visited;
+    /**
+     * @brief A-Star auiliary Variable
+     */
     double dist;
+    /**
+     * @brief A-Star auiliary Variable
+     */
+    double actualDist;
+    /**
+     * @brief A-Star auiliary Variable
+     */
     Vertex<T> * path;
 
 public:
@@ -52,11 +76,9 @@ public:
 	int getID() const;
 	int getTag() const;
 	T getInfo() const;
-	vector<Edge<T> *> getAdj() const;
-    vector<Edge<T> *> getIncoming() const;
+	vector<Edge<T> *> getOutgoing() const;
     double getCostTo(int dest_id) const;
     double getDist() const;
-    void setTag(int tag);
 
     bool operator<(const Vertex &v2) const;
     bool operator>(const Vertex &v2) const;
@@ -95,12 +117,12 @@ public:
 template <class T>
 class POI {
     string name;
-    vector<int> id;
+    int id;
 
 public:
-    POI(string name,vector<int> id) ;
+    POI(string name, int id) ;
     string getName() const;
-    vector<int> getIDs() const;
+    int getID() const;
 
     string toString() const;
 };
@@ -118,33 +140,39 @@ class Graph {
     vector<POI<T>*> pois;
     vector<int> highways;
 
-	double maxX;
+    // GraphViewer
+    double maxX;
     double minX;
     double maxY;
     double minY;
 
-    Vertex<T> * findVertex(const T &info) const;
-
-    void dfsVisit(Vertex<T> *v, vector<int> & res) const;
-
     // ALT Algorithm
-    unordered_map< Vertex<T>* , unordered_map< Vertex<T>* , double>> fromLandmark;
-    unordered_map< Vertex<T>* , unordered_map< Vertex<T>* , double>> toLandmark;
+    vector<Vertex<T>*> landmarks;
+    vector<map< Vertex<T>* , double>> fromLandmark;
+    vector<map< Vertex<T>* , double>> toLandmark;
     double getEstimateCost(Vertex<T>* src, Vertex<T>* dest);
+
+    Vertex<T> * findVertex(const T &info) const;
+    /**
+     * @brief Auxiliary function that visits a vertex (v) and its adjacent not yet visited, recursively
+     * @param v Vertex to be visited
+     * @param res List of visited nodes to be updated
+     */
+    void dfsVisit(Vertex<T> *v, vector<int> & res) const;
 public:
 	vector<Vertex<T>*> getVertexSet() const;
 	vector<POI<T>*> getPOIs() const;
+	vector<int> getPOIsbyID() const;
 	vector<int> getHighways() const;
     void setHighways(vector<int> ids);
 
-    void addVertex(Vertex<T> *vertex);
     Vertex<T> * addVertex (const int & id, const T &info, const int &tag);
     Vertex<T> * findVertex (const int &id) const;
 
 	Edge<T> * addEdge (const int &source, const int &dest, double w);
 
     void addPOI(POI<T>* poi);
-    POI<T> * addPOI (const string &name, const vector<int> &ids);
+    POI<T> * addPOI (const string &name, const int &id);
     POI<T> * findPOI (const string &name);
     POI<T> * findPOI (const int &id);
 
@@ -153,26 +181,130 @@ public:
     double getMaxY() {return this->maxY;}
     double getMinY() {return this->minY;}
 
-    void reverseEdges();
+    /**
+     * @brief Performs a depth-first search (dfs) in a graph (this)
+     * Follows the algorithm described in theoretical classes
+     * @return Vector with the contents of the vertices by dfs order
+     */
+    vector<int> dfs() const;
 
-    vector<int> dfs(const int & source) const;
+    /**
+     * @brief Performs a breadth-first search (bfs) in a graph (this)
+     * Follows the algorithm described in theoretical classes
+     * @param source Vertex to start the search
+     * @return Cector with the contents of the vertices by dfs order
+     */
     vector<int> bfs(const int & source) const;
 
-    Path dijkstraShortestPath(const int &origin, const int &destination);
+    /**
+     * @brief Performs Dijkstra's algorithm from a given origin to every vertex in a graph (this)
+     * @param origin Origin vertex
+     */
     void dijkstraShortestPath(const T &origin);
+
+    /**
+     * @brief Performs Dijkstra's algorithm from a given origin to a destination in a graph (this)
+     * @param origin Origin Vertex
+     * @param destination Destination Vertex
+     * @return Path from origin to destination
+     */
+    Path dijkstraShortestPath(const int &origin, const int &destination);
+
+    /**
+     * @brief Performs A-Star algorithm from a given origin to a destination in a graph (this)
+     * @param id_src Source Vertex
+     * @param id_dest Destination Vertex
+     * @param h Heuristic Function to be used (Euclidean Distance)
+     * @return Path from origin to destination
+     */
     Path aStarShortestPath(const int id_src, const int id_dest, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearestAStar(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearestATL(const int id_src, const vector<int> &POIs);
-    Path nearestDijkstra(const int id_src, const vector<int> &POIs);
-    Path nearestNeighbourSearchAStar(const int id_src, const int id_dest, vector<int> &POIs, Path &Path, function <double (pair<double, double>, pair<double, double>)> h);
-    Path nearestNeighbourSearchALT(const int id_src, const int id_dest, vector<int> &POIs, Path &path);
-    Path nearestNeighbourDijkstra(const int id_src, const int id_dest, vector<int> &POIs, Path &path);
+
+    /**
+     * @brief Performs ALT algorithm from a given origin to a destination in a graph (this)
+     * @param id_src Source Vertex
+     * @param id_dest Destination Vertex
+     * @return Path from origin to destination
+     */
     Path ALTShortestPath(int id_src, int id_dest);
 
-    void preComputeLandmarks(vector<int> id_landmarks);
-};
+    /**
+     * @brief Performs a Nearest Neighbour Search between source and every POI
+     * @param id_src Source Vertex
+     * @param POIs Vector with all the destinations
+     * @param h Heuristic Function to be used (Euclidean Distance)
+     * @return Path from origin to the nearest POI using A-Star
+     */
+    Path nearestAStarLength(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h);
 
-void setHighways(vector<int> ids);
+    /**
+     * @brief Path to the next POI
+     * @param id_src Source Vertex
+     * @param Prisoners Vector with prisoners sorted by time of delivery
+     * @param h Heuristic Function to be used (Euclidean Distance)
+     * @return Path from origin to the destination of the next prisoner to deliver using A-Star
+     */
+    Path nearestAStarTime(const int id_src, const vector<Prisoner*> &Prisoners, function <double (pair<double, double>, pair<double, double>)> h);
+
+    /**
+     * @brief Performs a Nearest Neighbour Search between source and every POI
+     * @param id_src Source Vertex
+     * @param POIs Vector with all the destinations
+     * @return Path from origin to the nearest POI using ALT algorithm
+     */
+    Path nearestALT(const int id_src, const vector<int> &POIs);
+
+    /**
+     * @brief Performs a Nearest Neighbour Search between source and every POI
+     * @param id_src Source Vertex
+     * @param POIs Vector with all the destinations
+     * @return Path from origin to the nearest POI using Dijkstra algorithm
+     */
+    Path nearestDijkstra(const int id_src, const vector<int> &POIs);
+
+    /**
+     * @brief Performs a Nearest Neighbour Search between source and every POI
+     * @param id_src Source Vertex
+     * @param POIs Vector with all the destinations
+     * @param Prisoners Vector with prisoners
+     * @param Path Path to be updated
+     * @param h Heuristic Function to be used (Euclidean Distance)
+     * @param time True to search the path using delivery time order, False to search using the nearest neighbour
+     * @return Path starting in origin and passing in every destination using A-Star
+     */
+    Path nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, vector<Prisoner*> &Prisoners, Path &Path, function <double (pair<double, double>, pair<double, double>)> h, bool time);
+
+    /**
+     * @brief Performs a Nearest Neighbour Search between source and every POI
+     * @param id_src Source Vertex
+     * @param POIs Vector with all the destinations
+     * @param Path Path to be updated
+     * @return Path starting in origin and passing in every destination using ALT
+     */
+    Path nearestNeighbourSearchALT(const int id_src, vector<int> &POIs, Path &path);
+
+    /**
+     * @brief Performs a Nearest Neighbour Search between source and every POI
+     * @param id_src Source Vertex
+     * @param POIs Vector with all the destinations
+     * @param Path Path to be updated
+     * @return Path starting in origin and passing in every destination using Dijkstra
+     */
+    Path nearestNeighbourDijkstra(const int id_src, vector<int> &POIs, Path &path);
+
+    /**
+     * @brief Auxiliary function to pre-compute landmraks for the ALT algorithm
+     * This function gets the shortest length from every landmark to every other vertex in graph (this) and also
+     * gets the shortest lenght from every node to every landmark
+     * @param id_landmarks Vector with landmarks IDs
+     */
+    void preComputeLandmarks(vector<int> id_landmarks);
+
+    /**
+     * @brief Auxiliary Function to reverse every edge in a graph (this)
+     * This helps in the pre-computing of ALT's algorithm Landmarks
+     */
+    void reverseEdges();
+};
 
 /* ================================================================================================
  * Class Vertex
@@ -199,13 +331,8 @@ int Vertex<T>::getID() const {
 }
 
 template<class T>
-vector<Edge<T> *> Vertex<T>::getAdj() const {
+vector<Edge<T> *> Vertex<T>::getOutgoing() const {
     return this->outgoing;
-}
-
-template<class T>
-vector<Edge<T> *> Vertex<T>::getIncoming() const {
-    return this->incoming;
 }
 
 template<class T>
@@ -253,10 +380,11 @@ bool Vertex<T>::operator>=(const Vertex &v2) const {
     return !(*this < v2);
 }
 
+/*
 template<class T>
 void Vertex<T>::setTag(int tag) {
     this->tag = tag;
-}
+}*/
 
 /* ================================================================================================
  * Class Edge
@@ -282,7 +410,7 @@ Vertex<T>* Edge<T>::getDest() const {
  */
 
 template<class T>
-POI<T>::POI(string name, vector<int> id) {
+POI<T>::POI(string name, int id) {
     this->name=name;
     this->id=id;
 }
@@ -293,20 +421,13 @@ string POI<T>::getName() const {
 }
 
 template<class T>
-vector<int> POI<T>::getIDs() const {
+int POI<T>::getID() const {
     return this->id;
 }
 
 template<class T>
 string POI<T>::toString() const {
-    string line;
-
-    line=name+" ID's:";
-
-    for(auto i: id){
-        line+=" "+to_string(i)+";";
-    }
-    return line;
+    return name + " (" + to_string(id) + ")";
 }
 
 
@@ -314,10 +435,6 @@ string POI<T>::toString() const {
  * Class Graph
  * ================================================================================================
  */
-template<class T>
-void Graph<T>::addVertex(Vertex<T>* vertex) {
-    vertexSet.push_back(vertex);
-}
 
 template<class T>
 Vertex<T> *Graph<T>::addVertex(const int &id, const T &info, const int &tag) {
@@ -375,30 +492,34 @@ Vertex<T> *Graph<T>::findVertex(const T &info) const {
     return nullptr;
 }
 
-
 template<class T>
 vector<POI<T>*> Graph<T>::getPOIs() const{
     return pois;
 }
 
+template<class T>
+vector<int> Graph<T>::getPOIsbyID() const {
+    vector<int> vec;
+    for(auto poi: pois){
+        if(find(vec.begin(),vec.end(),poi->getID())==vec.end())
+            vec.push_back(poi->getID());
+    }
+    return vec;
+}
 
 template<class T>
-POI<T>* Graph<T>::addPOI(const string &name, const vector<int> &ids) {
+POI<T>* Graph<T>::addPOI(const string &name, const int &id) {
     POI<T>* p = findPOI(name);
     if (p != nullptr)
         return p;
-    p = new POI<T>(name,ids);
+    p = new POI<T>(name,id);
     pois.push_back(p);
-    for (int id : ids)
-        findVertex(id)->setTag(5);
     return p;
 }
 
 template<class T>
 void Graph<T>::addPOI(POI<T>* poi) {
     pois.push_back(poi);
-    for (int id : poi->getIDs())
-        findVertex(id)->setTag(5);
 }
 
 template<class T>
@@ -413,69 +534,58 @@ POI<T>* Graph<T>::findPOI(const string &name) {
 template<class T>
 POI<T>* Graph<T>::findPOI(const int &id) {
     for(auto p: pois){
-        for(auto id_poi : p->getIDs())
-            if(id_poi==id)
-                return p;
+        if (p->getID() == id)
+            return p;
     }
     return nullptr;
 }
 
+template<class T>
+vector<int> Graph<T>::getHighways() const {
+    return highways;
+}
+
+template<class T>
+void Graph<T>::setHighways(vector<int> ids) {
+    highways = ids;
+}
 
 /* ================================================================================================
  * Algorithms
  * ================================================================================================
  */
 
-/*
- * Performs a depth-first search (dfs) in a graph (this).
- * Returns a vector with the contents of the vertices by dfs order.
- * Follows the algorithm described in theoretical classes.
- */
 template <class T>
-vector<int> Graph<T>::dfs(const int & source) const {
-    // DONE (7 lines)
+vector<int> Graph<T>::dfs() const {
     vector<int> res;
 
     for(Vertex<T> *vertex:this->vertexSet){
         vertex->visited=false;
     }
-    Vertex<T>*vertex1 = findVertex(source);
-    dfsVisit(vertex1,res);
+    for(auto vertex1: this->vertexSet){
+        if(!vertex1->visited){
+            dfsVisit(vertex1,res);
+        }
+    }
 
     return res;
 }
 
-/*
- * Auxiliary function that visits a vertex (v) and its adjacent not yet visited, recursively.
- * Updates a parameter with the list of visited node contents.
- */
 template <class T>
 void Graph<T>::dfsVisit(Vertex<T> *v, vector<int> & res) const {
-    // DONE (7 lines)
     if(!v->visited){
         v->visited=true;
         res.push_back(v->id); //inserts the vertex
-    }
-
-    for(Edge<T> * edge:v->outgoing){
-        if(!edge->dest->visited){
-            dfsVisit(edge->dest,res);
+        for(Edge<T> * edge:v->outgoing){
+            if(!edge->dest->visited){
+                dfsVisit(edge->dest,res);
+            }
         }
     }
 }
 
-
-/*
- * Performs a breadth-first search (bfs) in a graph (this), starting
- * from the vertex with the given source contents (source).
- * Returns a vector with the contents of the vertices by dfs order.
- * Follows the algorithm described in theoretical classes.
- */
 template <class T>
 vector<int> Graph<T>::bfs(const int & source) const {
-    // DONE (22 lines)
-    // HINT: Use the flag "visited" to mark newly discovered vertices .
-    // HINT: Use the "queue<>" class to temporarily store the vertices.
     vector<int> res; queue<Vertex<T>*> aux;
     for(Vertex<T> *vertex:vertexSet){vertex->visited=false;} //no visited
     Vertex<T> *vertex= findVertex(source);  //Find Source Vertex
@@ -496,30 +606,27 @@ vector<int> Graph<T>::bfs(const int & source) const {
     return res;
 }
 
-//Dijkstra
-
 template<class T>
 void Graph<T>::dijkstraShortestPath(const T &origin) {
-
     for(Vertex<T>* vertex: vertexSet){
         vertex->dist=INT_MAX;
         vertex->path=NULL;
     }
     Vertex<T> * og = findVertex(origin);
     og->dist=0;
-    MutablePriorityQueue<Vertex<T>> dijkstratqueue;
-    dijkstratqueue.insert(og);
+    MutablePriorityQueue<Vertex<T>> dijkstraQueue;
+    dijkstraQueue.insert(og);
     Vertex<T>* temp;
-    while(!dijkstratqueue.empty()){
-        temp=dijkstratqueue.extractMin();
+    while(!dijkstraQueue.empty()){
+        temp=dijkstraQueue.extractMin();
         for(Edge<T>* edge: temp->outgoing){
             if(edge->dest->getDist()>temp->getDist()+edge->weight){
                 edge->dest->dist=temp->getDist()+edge->weight;
                 edge->dest->path=temp;
-                if(!dijkstratqueue.found(edge->dest))
-                    dijkstratqueue.insert(edge->dest);
+                if(!dijkstraQueue.found(edge->dest))
+                    dijkstraQueue.insert(edge->dest);
                 else
-                    dijkstratqueue.decreaseKey(edge->dest);
+                    dijkstraQueue.decreaseKey(edge->dest);
             }
         }
     }
@@ -527,26 +634,25 @@ void Graph<T>::dijkstraShortestPath(const T &origin) {
 
 template<class T>
 Path Graph<T>::dijkstraShortestPath(const int &origin, const int &destination) {
-
     for(Vertex<T>* vertex: vertexSet){
         vertex->dist=INT_MAX;
         vertex->path=NULL;
     }
     Vertex<T> * og = findVertex(origin), *dest=findVertex(destination);
     og->dist=0;
-    MutablePriorityQueue<Vertex<T>> dijkstratqueue;
-    dijkstratqueue.insert(og);
+    MutablePriorityQueue<Vertex<T>> dijkstraQueue;
+    dijkstraQueue.insert(og);
     Vertex<T>* temp;
-    while(!dijkstratqueue.empty()){
-        temp=dijkstratqueue.extractMin();
+    while(!dijkstraQueue.empty()){
+        temp = dijkstraQueue.extractMin();
         for(Edge<T>* edge: temp->outgoing){
-            if(edge->dest->getDist()>temp->getDist()+edge->weight){
-                edge->dest->dist=temp->getDist()+edge->weight;
-                edge->dest->path=temp;
-                if(!dijkstratqueue.found(edge->dest))
-                    dijkstratqueue.insert(edge->dest);
+            if(edge->dest->dist > temp->dist + edge->weight){
+                edge->dest->dist = temp->dist + edge->weight;
+                edge->dest->path = temp;
+                if(!dijkstraQueue.found(edge->dest))
+                    dijkstraQueue.insert(edge->dest);
                 else
-                    dijkstratqueue.decreaseKey(edge->dest);
+                    dijkstraQueue.decreaseKey(edge->dest);
             }
         }
     }
@@ -556,30 +662,25 @@ Path Graph<T>::dijkstraShortestPath(const int &origin, const int &destination) {
     double length=0;
 
     while (vertex->path != NULL) {
-        length+= vertex->path->getCostTo(vertex->getID());
+        length+= vertex->path->getCostTo(vertex->id);
         vertex = vertex->path;
         path.emplace(path.begin(), vertex->id);
     }
 
-    //cout << "Size: " << path.size() << " Length: "<<length<<" Begin: "<<path.front()<<" End: "<<path.back()<<endl;
-
     return Path(length,path);
 }
-
-//A-Star
-
-#define ROAD_VEL_MS 50 * 1000 / 3600
 
 template<class T>
 Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<double (pair<double, double>, pair<double, double>)> h) {
     for (Vertex<T> *vert: vertexSet) {
         vert->dist = INT_MAX;
+        vert->actualDist = 0;
         vert->path = NULL;
         vert->queueIndex = 0;
     }
 
     Vertex<T> *src = findVertex(id_src), *dest = findVertex(id_dest), *v;
-    src->dist = h(src->getInfo(), dest->getInfo()) / ROAD_VEL_MS;
+    src->dist = h(src->info, dest->info) / ROAD_VEL_MS;
     MutablePriorityQueue<Vertex<T>> Q;
     Q.insert(src);
 
@@ -593,11 +694,13 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
             break;
         }
 
-        for (Edge<T> *w : v->getAdj()){
-            double f = v->dist - (h(v->getInfo(), dest->getInfo()) / ROAD_VEL_MS) +  w->getWeight() + (h(w->dest->getInfo(), dest->getInfo()) / ROAD_VEL_MS);
-            if (w->dest->getDist() > f){
-                double d = w->dest->getDist();
+        for (Edge<T> *w : v->outgoing){
+            double newDist = v->actualDist + w->weight;
+            double f = newDist + (h(w->dest->info, dest->info) / ROAD_VEL_MS);
+            if (w->dest->dist > f){
+                double d = w->dest->dist;
                 w->dest->dist = f;
+                w->dest->actualDist = newDist;
                 w->dest->path = v;
                 if (d == INT_MAX){
                     Q.insert(w->dest);
@@ -609,52 +712,51 @@ Path Graph<T>::aStarShortestPath(const int id_src, const int id_dest, function<d
         }
     }
 
-    //cout << iter << endl;
-
-    cout << "iter: " << iter << endl;
-
     vector<int> path;
     path.push_back(dest->id);
     Vertex<T>* vertex = dest;
     double length=0;
 
     while (vertex->path != NULL) {
-        length+= vertex->path->getCostTo(vertex->getID());
+        length+= vertex->path->getCostTo(vertex->id);
         vertex = vertex->path;
         path.emplace(path.begin(), vertex->id);
     }
 
-    //cout << "Size: " << path.size() << " Length: "<<length<<" Begin: "<<path.front()<<" End: "<<path.back()<<endl;
-
     return Path(length,path);
 }
 
-//Nearest Neighbour Search
 template<class T>
-Path Graph<T>::nearestAStar(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h) {
+Path Graph<T>::nearestAStarLength(const int id_src, const vector<int> &POIs, function <double (pair<double, double>, pair<double, double>)> h) {
     Path path = Path(INT_MAX,vector<int>());
 
     for(auto i: POIs){
-        //cout<<"POI: "<<i<<endl;
         Path newPath = aStarShortestPath(id_src,i,h);
         if(newPath.getLength()<path.getLength()) {
             path = newPath;
-            //cout<<"Nearest POI is: "<<i<<endl;
         }
     }
     return path;
 }
 
 template<class T>
-Path Graph<T>::nearestATL(const int id_src, const vector<int> &POIs) {
+Path Graph<T>::nearestAStarTime(const int id_src, const vector<Prisoner*> &Prisoners, function<double(pair<double, double>, pair<double, double>)> h) {
+    Path path;
+
+    path = aStarShortestPath(id_src,Prisoners.at(0)->getDest(),h);
+
+    return path;
+}
+
+
+template<class T>
+Path Graph<T>::nearestALT(const int id_src, const vector<int> &POIs) {
     Path path = Path(INT_MAX,vector<int>());
 
     for(auto i: POIs){
-        //cout<<"POI: "<<i<<endl;
         Path newPath = ALTShortestPath(id_src,i);
         if(newPath.getLength()<path.getLength()) {
             path = newPath;
-            //cout<<"Nearest POI is: "<<i<<endl;
         }
     }
     return path;
@@ -665,74 +767,71 @@ Path Graph<T>::nearestDijkstra(const int id_src, const vector<int> &POIs) {
     Path path = Path(INT_MAX,vector<int>());
 
     for(auto i: POIs){
-        //cout<<"POI: "<<i<<endl;
         Path newPath = dijkstraShortestPath(id_src,i);
         if(newPath.getLength()<path.getLength()) {
             path = newPath;
-            //cout<<"Nearest POI is: "<<i<<endl;
         }
     }
     return path;
 }
 
 template<class T>
-Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, const int id_dest, vector<int> &POIs, Path &path, function<double(pair<double, double>, pair<double, double>)> h) {
-    //cout<<"POI's left: "<<POIs.size()<<endl;
+Path Graph<T>::nearestNeighbourSearchAStar(const int id_src, vector<int> &POIs, vector<Prisoner*> &Prisoners, Path &path, function<double(pair<double, double>, pair<double, double>)> h, bool time) {
     if(path.getPath().empty()){
         path.addNode(id_src);
     }
-    if(POIs.empty()){
-        Path end = aStarShortestPath(path.getLastNode(),id_dest,h);
-        path.joinPath(end);
+    if(POIs.empty()||Prisoners.empty()){
         return path;
     }
-    Path next= nearestAStar(id_src, POIs, h);
-    path.joinPath(next);
-    POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
+    Path next;
+    if(!time)
+        next = nearestAStarLength(id_src, POIs, h);
+    else
+        next = nearestAStarTime(id_src, Prisoners, h);
 
-    return nearestNeighbourSearchAStar(path.getLastNode(), id_dest, POIs, path, h);
+    path.joinPath(next);
+    path.addPOI(path.getLastNode(), Time(path.getLength()));
+    POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
+    Prisoners.erase(Prisoners.begin());
+
+    return nearestNeighbourSearchAStar(path.getLastNode(), POIs, Prisoners, path, h,time);
 }
 
 template <class T>
-Path Graph<T>::nearestNeighbourSearchALT(const int id_src, const int id_dest, vector<int> &POIs, Path &path) {
-    //cout<<"POI's left: "<<POIs.size()<<endl;
+Path Graph<T>::nearestNeighbourSearchALT(const int id_src, vector<int> &POIs, Path &path) {
     if(path.getPath().empty()){
         path.addNode(id_src);
     }
     if(POIs.empty()){
-        Path end = ALTShortestPath(path.getLastNode(),id_dest);
-        path.joinPath(end);
         return path;
     }
-    Path next= nearestATL(id_src, POIs);
+    Path next= nearestALT(id_src, POIs);
     path.joinPath(next);
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
-    return nearestNeighbourSearchALT(path.getLastNode(), id_dest, POIs, path);
+    return nearestNeighbourSearchALT(path.getLastNode(), POIs, path);
 }
 
 template<class T>
-Path Graph<T>::nearestNeighbourDijkstra(const int id_src, const int id_dest, vector<int> &POIs, Path &path) {
-    //cout<<"POI's left: "<<POIs.size()<<endl;
+Path Graph<T>::nearestNeighbourDijkstra(const int id_src, vector<int> &POIs, Path &path) {
     if(path.getPath().empty()){
         path.addNode(id_src);
     }
     if(POIs.empty()){
-        Path end = dijkstraShortestPath(path.getLastNode(),id_dest);
-        path.joinPath(end);
         return path;
     }
     Path next= nearestDijkstra(id_src, POIs);
     path.joinPath(next);
     POIs.erase(find(POIs.begin(),POIs.end(),path.getLastNode()));
 
-    return nearestNeighbourDijkstra(path.getLastNode(), id_dest, POIs, path);
+    return nearestNeighbourDijkstra(path.getLastNode(), POIs, path);
 }
 
 template<class T>
 Path Graph<T>::ALTShortestPath(int id_src, int id_dest) {
     for (Vertex<T> *vert: vertexSet) {
         vert->dist = INT_MAX;
+        vert->actualDist = 0;
         vert->path = NULL;
         vert->queueIndex = 0;
     }
@@ -752,11 +851,13 @@ Path Graph<T>::ALTShortestPath(int id_src, int id_dest) {
             break;
         }
 
-        for (Edge<T> *w : v->getAdj()){
-            double f = (v->dist - getEstimateCost(v, dest)) +  w->getWeight() + getEstimateCost(w->dest, dest);
-            if (w->dest->getDist() > f){
-                double d = w->dest->getDist();
+        for (Edge<T> *w : v->outgoing){
+            double newDist = v->dist + w->weight;
+            double f = newDist + getEstimateCost(w->dest, dest);
+            if (w->dest->dist > f){
+                double d = w->dest->dist;
                 w->dest->dist = f;
+                w->dest->actualDist = newDist;
                 w->dest->path = v;
                 if (d == INT_MAX){
                     Q.insert(w->dest);
@@ -774,12 +875,10 @@ Path Graph<T>::ALTShortestPath(int id_src, int id_dest) {
     double length=0;
 
     while (vertex->path != NULL) {
-        length+= vertex->path->getCostTo(vertex->getID());
+        length+= vertex->path->getCostTo(vertex->id);
         vertex = vertex->path;
         path.emplace(path.begin(), vertex->id);
     }
-
-    //cout << "Size: " << path.size() << " Length: "<<length<<" Begin: "<<path.front()<<" End: "<<path.back()<<endl;
 
     return Path(length,path);
 }
@@ -792,17 +891,19 @@ double Graph<T>::getEstimateCost(Vertex<T>* src, Vertex<T>* dest) {
     if (src == dest)
         return maxEstimate;
 
-    // Source is Landmark
-    if (fromLandmark.find(src) != fromLandmark.end())
-        return fromLandmark.at(src).at(dest);
+    for (int i = 0; i < landmarks.size(); i++) {
+        // Source is Landmark
+        if (landmarks[i] == src)
+            return fromLandmark.at(i).at(dest);
 
-    // Destiny is Landmark
-    if (toLandmark.find(dest) != toLandmark.end())
-        return toLandmark.at(dest).at(src);
+        // Destiny is Landmark
+        if (landmarks[i] == dest)
+            return toLandmark.at(i).at(src);
+    }
 
-    for (auto it : fromLandmark) {
-        unordered_map<Vertex<T>*,double> from = fromLandmark.at(it.first);
-        unordered_map<Vertex<T>*,double> to = toLandmark.at(it.first);
+    for (int i = 0; i < landmarks.size(); i++) {
+        map<Vertex<T>*,double> from = fromLandmark.at(i);
+        map<Vertex<T>*,double> to = toLandmark.at(i);
         double estimate = max(to.at(src) - to.at(dest), from.at(dest) - from.at(src));
         if (estimate != INT_MAX)
             maxEstimate = max(maxEstimate, estimate);
@@ -815,27 +916,29 @@ template<class T>
 void Graph<T>::preComputeLandmarks(vector<int> id_landmarks) {
     fromLandmark.clear();
     toLandmark.clear();
+    landmarks.clear();
 
     Vertex<T>* v;
     for (int id : id_landmarks) {
         v = findVertex(id);
+        landmarks.push_back(v);
 
         // From Landmark Distances
         this->dijkstraShortestPath(v->getInfo());
-        unordered_map<Vertex<T>*,double> fromLandmarkDistances;
+        map<Vertex<T>*,double> fromLandmarkDistances;
         for (Vertex<T> * ver : vertexSet) {
             fromLandmarkDistances.insert(make_pair(ver, ver->dist));
         }
-        fromLandmark.insert(make_pair(v, fromLandmarkDistances));
+        fromLandmark.push_back(fromLandmarkDistances);
 
         // To Landmark Distances
         reverseEdges();
         this->dijkstraShortestPath(v->getInfo());
-        unordered_map<Vertex<T>*,double> toLandmarkDistances;
+        map<Vertex<T>*,double> toLandmarkDistances;
         for (Vertex<T> * ver : vertexSet) {
             toLandmarkDistances.insert(make_pair(ver, ver->dist));
         }
-        toLandmark.insert(make_pair(v, toLandmarkDistances));
+        toLandmark.push_back(toLandmarkDistances);
         reverseEdges();
     }
 }
@@ -856,17 +959,5 @@ void Graph<T>::reverseEdges() {
         }
     }
 }
-
-template<class T>
-vector<int> Graph<T>::getHighways() const {
-    return highways;
-}
-
-template<class T>
-void Graph<T>::setHighways(vector<int> ids) {
-    highways = ids;
-}
-
-
 
 #endif /* GRAPH_H_ */

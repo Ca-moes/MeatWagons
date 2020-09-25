@@ -1,28 +1,28 @@
-//
-// Created by GoncaloAlves on 06/05/2020.
-//
-
-
 #include "Parser.h"
 
 void parseMap(Graph<coord> &graph, const string &location, bool grid) {
 
     string node_file;
     string edge_file;
+    string loc = location.substr(0,location.find('_'));
 
     if (grid) {
         node_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/nodes.txt";
         edge_file = "../Mapas/GridGraphs/GridGraphs/" + location + "/edges.txt";
     }
     else {
-        //node_file = "../Mapas/" + location + "/nodes_x_y_" + location + ".txt";
-        node_file = "../Mapas/portomaps/"+location+"_nodes_xy.txt";
-        //edge_file = "../Mapas/" + location + "/edges_" + location + ".txt";
-        edge_file = "../Mapas/portomaps/"+location+"_edges.txt";
+        node_file = "../Mapas/"+loc+"/"+location+"_nodes_xy.txt";
+        edge_file = "../Mapas/"+loc+"/"+location+"_edges.txt";
     }
 
     if (location == "16x16")
         parseHighways(graph, location);
+
+    if (!grid && loc=="porto") {
+        parseTag(graph, "Policia");
+        parseTag(graph, "Prisoes");
+        parseTag(graph, "Tribunais");
+    }
 
     string line;
 
@@ -45,21 +45,18 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         x=stod(temp);
         getline(ss,temp,',');
         y=stod(temp);
-        //cout<<id<<"\t"<<x<<"\t"<<y<<"\t"<<endl;
         tag=0;
         for (auto idH : graph.getHighways()) {
             if (idH == id)
                 tag = 2;
         }
         for(auto p : graph.getPOIs()){
-            for(auto id_poi : p->getIDs())
-                if(id_poi==id)
-                    tag=1;
+            if(p->getID() == id)
+                tag=1;
         }
         graph.addVertex(id,make_pair(x, y),tag);
 
     }
-    cout<<"Done Nodes\n";
     node.close();
 
     ifstream edge;
@@ -79,7 +76,7 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         o=stoi(temp);
         getline(ss,temp,',');
         d=stoi(temp);
-        double weight = euclidianDistance(graph.findVertex(o)->getInfo(),graph.findVertex(d)->getInfo());
+        double weight = euclideanDistance(graph.findVertex(o)->getInfo(), graph.findVertex(d)->getInfo());
         if (graph.findVertex(o)->getTag() == 2 && graph.findVertex(d)->getTag() == 2)
             weight /= (120.0 * 1000 / 3600);
         else
@@ -88,15 +85,11 @@ void parseMap(Graph<coord> &graph, const string &location, bool grid) {
         if (grid)
             graph.addEdge(d, o, weight);
     }
-    cout<<"Done Edges\n";
     edge.close();
-
-    if (!edge)
-        parseTag(graph, location);
 }
 
 void parseTag(Graph<coord> &graph, const string &location) {
-    string tag_file = "../Mapas/Tags/tags_"+location+".txt";
+    string tag_file = "../Mapas/Tags/tags"+location+".txt";
     string line;
 
     ifstream tag;
@@ -107,19 +100,10 @@ void parseTag(Graph<coord> &graph, const string &location) {
         getline(tag, line);
         string name = line;
         getline(tag, line);
-        int num_tags = stoi(line);
-        vector<int> ids;
-        for (int i = 0; i < num_tags; i++) {
-            getline(tag, line);
-            int id=stoi(line);
-            ids.push_back(id);
-
-        }
-        graph.addPOI(name,ids);
-
+        int id = stoi(line);
+        graph.addPOI(name,id);
     }
 
-    cout<<"Done Tags\n";
     tag.close();
 
 }
@@ -142,7 +126,6 @@ void parseHighways(Graph<coord> &graph, const string &location) {
     }
     graph.setHighways(ids);
 
-    cout<<"Done Tags\n";
     tag.close();
 
 }
